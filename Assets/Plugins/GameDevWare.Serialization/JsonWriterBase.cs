@@ -1,23 +1,24 @@
-﻿/* 
+﻿/*
 Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 https://www.assetstore.unity3d.com/#!/content/56706
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Serialization.Json
+// ReSharper disable once CheckNamespace
+namespace GameDevWare.Serialization
 {
 	public abstract class JsonWriterBase : IJsonWriter
 	{
@@ -38,7 +39,7 @@ namespace Serialization.Json
 		private const double JS_NUMBER_MAX_VALUE_SINGLE = 9007199254740992.0f;
 		private const decimal JS_NUMBER_MAX_VALUE_DECIMAL = 9007199254740992.0m;
 
-		private static readonly char[] Tabs = new char[] {'\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t'};
+		private static readonly char[] Tabs = new char[] { '\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t', '\t' };
 		private static readonly char[] Newline = "\r\n".ToCharArray();
 		private static readonly char[] NameSeparator = ":".ToCharArray();
 		private static readonly char[] ValueSeparator = ",".ToCharArray();
@@ -46,7 +47,6 @@ namespace Serialization.Json
 		private static readonly char[] ArrayEnd = "]".ToCharArray();
 		private static readonly char[] ObjectBegin = "{".ToCharArray();
 		private static readonly char[] ObjectEnd = "}".ToCharArray();
-		private static readonly char[] Quote = "\"".ToCharArray();
 		private static readonly char[] Null = "null".ToCharArray();
 		private static readonly char[] True = "true".ToCharArray();
 		private static readonly char[] False = "false".ToCharArray();

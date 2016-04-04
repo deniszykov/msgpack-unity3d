@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 https://www.assetstore.unity3d.com/#!/content/56706
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System;
@@ -18,9 +18,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Serialization.Json.Exceptions;
+using GameDevWare.Serialization.Exceptions;
 
-namespace Serialization.Json.MessagePack
+// ReSharper disable once CheckNamespace
+namespace GameDevWare.Serialization.MessagePack
 {
 	public class MsgPackReader : IJsonReader
 	{
@@ -28,8 +29,6 @@ namespace Serialization.Json.MessagePack
 		{
 			private readonly MsgPackReader reader;
 			private object value;
-			private bool hasValue;
-			private int position;
 
 			internal MsgPackValueInfo(MsgPackReader reader)
 			{
@@ -39,21 +38,21 @@ namespace Serialization.Json.MessagePack
 			}
 
 			public JsonToken Token { get; private set; }
-			public bool HasValue { get { return this.hasValue; } }
+			public bool HasValue { get; private set; }
 			public object Raw
 			{
 				get { return this.value; }
 				set
 				{
 					this.value = value;
-					this.hasValue = true;
+					this.HasValue = true;
 				}
 			}
 			public Type ProbableType
 			{
 				get
 				{
-					if (this.hasValue && value != null)
+					if (this.HasValue && value != null)
 						return value.GetType();
 					else
 					{
@@ -68,14 +67,14 @@ namespace Serialization.Json.MessagePack
 							case JsonToken.DateTime:
 								return typeof(DateTime);
 							case JsonToken.Boolean:
-								return typeof(Boolean);
+								return typeof(bool);
 						}
 						return typeof(object);
 					}
 				}
 			}
 			public int LineNumber { get { return 0; } }
-			public int ColumnNumber { get { return this.position; } }
+			public int ColumnNumber { get; private set; }
 			public bool AsBoolean { get { return Convert.ToBoolean(this.Raw, reader.Context.Format); } }
 			public byte AsByte { get { return Convert.ToByte(this.Raw, reader.Context.Format); } }
 			public short AsInt16 { get { return Convert.ToInt16(this.Raw, reader.Context.Format); } }
@@ -113,14 +112,14 @@ namespace Serialization.Json.MessagePack
 
 			public void CopyJsonTo(StringBuilder stringBuilder)
 			{
-				if (this.hasValue && this.value is JsonString)
+				if (this.HasValue && this.value is JsonString)
 					stringBuilder.Append((this.value as JsonString).ToString());
 				else
 					throw new InvalidOperationException("This operation available only for JsonString data type.");
 			}
 			public void CopyJsonTo(TextWriter writer)
 			{
-				if (this.hasValue && this.value is JsonString)
+				if (this.HasValue && this.value is JsonString)
 					writer.Write((this.value as JsonString).ToString());
 				else
 					throw new InvalidOperationException("This operation available only for JsonString data type.");
@@ -132,7 +131,7 @@ namespace Serialization.Json.MessagePack
 			}
 			public void CopyJsonTo(IJsonWriter writer)
 			{
-				if (this.hasValue && this.value is JsonString)
+				if (this.HasValue && this.value is JsonString)
 					writer.WriteJson((this.value as JsonString).ToString());
 				else
 					throw new InvalidOperationException("This operation available only for JsonString data type.");
@@ -141,21 +140,21 @@ namespace Serialization.Json.MessagePack
 			public void Reset()
 			{
 				this.value = null;
-				this.hasValue = false;
+				this.HasValue = false;
 				this.Token = JsonToken.None;
-				this.position = 0;
+				this.ColumnNumber = 0;
 			}
 			public void SetValue(object rawValue, JsonToken token, int position)
 			{
-				this.hasValue = true;
+				this.HasValue = true;
 				this.value = rawValue;
 				this.Token = token;
-				this.position = position;
+				this.ColumnNumber = position;
 			}
 
 			public override string ToString()
 			{
-				if (this.hasValue)
+				if (this.HasValue)
 					return Convert.ToString(this.value);
 				else
 					return "<no value>";
@@ -441,15 +440,15 @@ namespace Serialization.Json.MessagePack
 						break;
 					case MsgPackType.UInt16:
 						this.ReadToBuffer(2, throwOnEos: true);
-						this.Value.SetValue((UInt16)bitConverter.ToInt16(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue((ushort)bitConverter.ToInt16(buffer, 0), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt32:
 						this.ReadToBuffer(4, throwOnEos: true);
-						this.Value.SetValue((UInt32)bitConverter.ToInt32(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue((uint)bitConverter.ToInt32(buffer, 0), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt64:
 						this.ReadToBuffer(8, throwOnEos: true);
-						this.Value.SetValue((UInt64)bitConverter.ToInt64(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue((ulong)bitConverter.ToInt64(buffer, 0), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt8:
 						this.ReadToBuffer(1, throwOnEos: true);

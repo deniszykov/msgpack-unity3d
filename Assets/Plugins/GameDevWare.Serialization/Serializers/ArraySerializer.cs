@@ -1,35 +1,33 @@
-﻿/* 
+﻿/*
 Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 https://www.assetstore.unity3d.com/#!/content/56706
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Serialization.Json.Exceptions;
+using GameDevWare.Serialization.Exceptions;
 
-namespace Serialization.Json.Serializers
+// ReSharper disable once CheckNamespace
+namespace GameDevWare.Serialization.Serializers
 {
 	public sealed class ArraySerializer : TypeSerializer
 	{
 		private Type arrayType;
 		private Type elementType;
 
-		public override Type SerializedType
-		{
-			get { return this.arrayType; }
-		}
+		public override Type SerializedType { get { return this.arrayType; } }
 
 		public ArraySerializer(Type enumerableType)
 		{
@@ -87,12 +85,12 @@ namespace Serialization.Json.Serializers
 			}
 			var size = 0;
 			if (value is ICollection)
-				size = ((ICollection) value).Count;
+				size = ((ICollection)value).Count;
 			else
-				size = ((IEnumerable) value).Cast<object>().Count();
+				size = ((IEnumerable)value).Cast<object>().Count();
 
 			writer.WriteArrayBegin(size);
-			foreach (var item in (IEnumerable) value)
+			foreach (var item in (IEnumerable)value)
 				writer.WriteValue(item, elementType);
 			writer.WriteArrayEnd();
 		}
@@ -103,23 +101,23 @@ namespace Serialization.Json.Serializers
 				throw new ArgumentNullException("arrayType");
 
 
-			var elementType = (Type) null;
+			var elementType = (Type)null;
 			if (arrayType.IsArray)
 			{
 				elementType = arrayType.GetElementType();
 				return elementType;
 			}
 
-			if (arrayType.IsInstantiationOf(typeof (IEnumerable<>)))
+			if (arrayType.IsInstantiationOf(typeof(IEnumerable<>)))
 			{
-				if (arrayType.HasMultipleInstantiations(typeof (IEnumerable<>)))
+				if (arrayType.HasMultipleInstantiations(typeof(IEnumerable<>)))
 					throw new TypeContractViolation(this.GetType(), "have only one generic IEnumerable interface");
 
-				elementType = arrayType.GetInstantiationArguments(typeof (IEnumerable<>))[0];
+				elementType = arrayType.GetInstantiationArguments(typeof(IEnumerable<>))[0];
 			}
 
-			if (elementType == null && typeof (IEnumerable).IsAssignableFrom(arrayType))
-				elementType = typeof (object);
+			if (elementType == null && typeof(IEnumerable).IsAssignableFrom(arrayType))
+				elementType = typeof(object);
 			else if (elementType == null)
 				throw new TypeContractViolation(this.GetType(), "be enumerable");
 

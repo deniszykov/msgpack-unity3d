@@ -21,7 +21,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Serialization.Json.Metadata
+namespace GameDevWare.Serialization.Metadata
 {
 	internal static class GettersAndSetters
 	{

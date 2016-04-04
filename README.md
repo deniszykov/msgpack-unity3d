@@ -1,6 +1,8 @@
 # Introduction
 
-This package provides the software interface for data serialization/de-serialization into [MessagePack](https://en.wikipedia.org/wiki/MessagePack) and [JSON](https://ru.wikipedia.org/wiki/JSON) format. 
+This package provides API for data serialization/de-serialization into [MessagePack](https://en.wikipedia.org/wiki/MessagePack) and [JSON](https://ru.wikipedia.org/wiki/JSON) format. 
+
+ [Unity Asset Store](https://www.assetstore.unity3d.com/#!/content/59918).
 
 Supported Platforms:
 * PC/Mac
@@ -34,7 +36,10 @@ MsgPack.Deserialize<MyObject>(inputStream); -> instance of MyObject
 ## Mapping Types
 
 MessagePack/Json serializer is guided by [Data Contract](https://msdn.microsoft.com/en-us/library/ms733127%28v=vs.110%29.aspx) rules. 
-Its behavior can be changed with [DataContract](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datacontractattribute%28v=vs.110%29.aspx), [DataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datamemberattribute%28v=vs.110%29.aspx), [IgnoreDataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ignoredatamemberattribute%28v=vs.110%29.aspx) attributes. Other attributes are ignored. 
+Its behavior can be changed with [DataContract](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datacontractattribute%28v=vs.110%29.aspx), [DataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datamemberattribute%28v=vs.110%29.aspx), [IgnoreDataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ignoredatamemberattribute%28v=vs.110%29.aspx) attributes. 
+
+Other attributes are ignored. 
+
 **Only public fields/properties could be serialized.**
 
 ## Supported Types
@@ -49,12 +54,12 @@ Its behavior can be changed with [DataContract](https://msdn.microsoft.com/en-us
 * Objects
 
 ## Extra type information
-With each serialized object additional information about its type is stored. This can lead to an increased size of the serialized data. If you do not want to store object's type information, specify **SerializationOptions.SuppressTypeInformation** when calling **Serialize** method.
+With each serialized object additional information about its type is stored. This can lead to an increased size of the serialized data. If you do not want to store object's type information, specify *SuppressTypeInformation* when calling **Serialize** method.
 ```csharp
 var outputStream = new MemoryStream();
 MsgPack.Serialize(new { field1 = 1, field2 = 2 }, outputStream, SerializationOptions.SuppressTypeInformation);
 ```
-If you want to ignore type information when de-serializing object, specify **SerializationOptions.SuppressTypeInformation** when calling **Deserialize** method.
+If you want to ignore type information when de-serializing object, specify *SuppressTypeInformation* when calling **Deserialize** method.
 ```csharp
 Stream inputStream;
 MsgPack.Deserialize(typeof(MyObject), inputStream, SerializationOptions.SuppressTypeInformation);

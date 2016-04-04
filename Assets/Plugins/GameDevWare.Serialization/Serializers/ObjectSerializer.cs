@@ -1,26 +1,27 @@
-﻿/* 
+﻿/*
 Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 https://www.assetstore.unity3d.com/#!/content/56706
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using Serialization.Json.Exceptions;
-using Serialization.Json.Metadata;
+using GameDevWare.Serialization.Exceptions;
+using GameDevWare.Serialization.Metadata;
 
-namespace Serialization.Json.Serializers
+// ReSharper disable once CheckNamespace
+namespace GameDevWare.Serialization.Serializers
 {
 	public class ObjectSerializer : TypeSerializer
 	{
@@ -36,6 +37,7 @@ namespace Serialization.Json.Serializers
 		private readonly ISerializationContext context;
 
 		public override Type SerializedType { get { return this.objectType; } }
+
 		public bool SuppressTypeInformation { get; set; }
 
 		public ObjectSerializer(ISerializationContext context, Type type)
@@ -181,7 +183,7 @@ namespace Serialization.Json.Serializers
 				}
 				catch (Exception e)
 				{
-					throw new SerializationException($"Failed to read value for member '{memberName}' of '{this.objectType.Name}' type.\r\nMore detailed information in inner exception.", e);
+					throw new SerializationException(string.Format("Failed to read value for member '{0}' of '{1}' type.\r\nMore detailed information in inner exception.", memberName, this.objectType.Name), e);
 				}
 
 				container[memberName] = value;
@@ -234,8 +236,8 @@ namespace Serialization.Json.Serializers
 				}
 				catch (Exception e)
 				{
-					throw new SerializationException(
-						$"Failed to set member '{memberName}' to value '{value}' of type {(value != null ? value.GetType().FullName : "<null>")}.\r\n More detailed information in inner exception.", e);
+					throw new SerializationException(string.Format("Failed to set member '{0}' to value '{1}' of type {2}.\r\n More detailed information in inner exception.",
+						memberName, value, value != null ? value.GetType().FullName : "<null>"), e);
 				}
 			}
 
@@ -288,7 +290,7 @@ namespace Serialization.Json.Serializers
 
 		public override string ToString()
 		{
-			return $"object, {objectType}";
+			return string.Format("object, {0}", objectType);
 		}
 	}
 }

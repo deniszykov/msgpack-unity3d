@@ -1,22 +1,23 @@
-﻿/* 
+﻿/*
 Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 https://www.assetstore.unity3d.com/#!/content/56706
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System;
-using Serialization.Json.Exceptions;
+using GameDevWare.Serialization.Exceptions;
 
-namespace Serialization.Json
+// ReSharper disable once CheckNamespace
+namespace GameDevWare.Serialization
 {
 	public static class JsonReaderExtentions
 	{
@@ -92,13 +93,13 @@ namespace Serialization.Json
 			return memberName;
 		}
 
-		public static Byte ReadByte(this IJsonReader reader, bool advance = true)
+		public static byte ReadByte(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Byte);
+			var value = default(byte);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsByte;
 			else
@@ -110,13 +111,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Byte? ReadByteOrNull(this IJsonReader reader, bool advance = true)
+		public static byte? ReadByteOrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Byte?);
+			var value = default(byte?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -133,13 +134,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static SByte ReadSByte(this IJsonReader reader, bool advance = true)
+		public static sbyte ReadSByte(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(SByte);
+			var value = default(sbyte);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsSByte;
 			else
@@ -151,13 +152,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static SByte? ReadSByteOrNull(this IJsonReader reader, bool advance = true)
+		public static sbyte? ReadSByteOrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(SByte?);
+			var value = default(sbyte?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -174,13 +175,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Int16 ReadInt16(this IJsonReader reader, bool advance = true)
+		public static short ReadInt16(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Int16);
+			var value = default(short);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt16;
 			else
@@ -192,13 +193,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Int16? ReadInt16OrNull(this IJsonReader reader, bool advance = true)
+		public static short? ReadInt16OrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Int16?);
+			var value = default(short?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -215,13 +216,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Int32 ReadInt32(this IJsonReader reader, bool advance = true)
+		public static int ReadInt32(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Int32);
+			var value = default(int);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt32;
 			else
@@ -233,13 +234,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Int32? ReadInt32OrNull(this IJsonReader reader, bool advance = true)
+		public static int? ReadInt32OrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Int32?);
+			var value = default(int?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -256,13 +257,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Int64 ReadInt64(this IJsonReader reader, bool advance = true)
+		public static long ReadInt64(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Int64);
+			var value = default(long);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt64;
 			else
@@ -274,13 +275,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Int64? ReadInt64OrNull(this IJsonReader reader, bool advance = true)
+		public static long? ReadInt64OrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Int64?);
+			var value = default(long?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -297,13 +298,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static UInt16 ReadUInt16(this IJsonReader reader, bool advance = true)
+		public static ushort ReadUInt16(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(UInt16);
+			var value = default(ushort);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt16;
 			else
@@ -315,13 +316,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static UInt16? ReadUInt16OrNull(this IJsonReader reader, bool advance = true)
+		public static ushort? ReadUInt16OrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(UInt16?);
+			var value = default(ushort?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -338,13 +339,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static UInt32 ReadUInt32(this IJsonReader reader, bool advance = true)
+		public static uint ReadUInt32(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(UInt32);
+			var value = default(uint);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt32;
 			else
@@ -356,13 +357,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static UInt32? ReadUInt32OrNull(this IJsonReader reader, bool advance = true)
+		public static uint? ReadUInt32OrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(UInt32?);
+			var value = default(uint?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -379,13 +380,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static UInt64 ReadUInt64(this IJsonReader reader, bool advance = true)
+		public static ulong ReadUInt64(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(UInt64);
+			var value = default(ulong);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt64;
 			else
@@ -397,13 +398,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static UInt64? ReadUInt64OrNull(this IJsonReader reader, bool advance = true)
+		public static ulong? ReadUInt64OrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(UInt64?);
+			var value = default(ulong?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -420,13 +421,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Single ReadSingle(this IJsonReader reader, bool advance = true)
+		public static float ReadSingle(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Single);
+			var value = default(float);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsSingle;
 			else
@@ -438,13 +439,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Single? ReadSingleOrNull(this IJsonReader reader, bool advance = true)
+		public static float? ReadSingleOrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Single?);
+			var value = default(float?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -461,13 +462,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Double ReadDouble(this IJsonReader reader, bool advance = true)
+		public static double ReadDouble(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Double);
+			var value = default(double);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsDouble;
 			else
@@ -479,13 +480,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Double? ReadDoubleOrNull(this IJsonReader reader, bool advance = true)
+		public static double? ReadDoubleOrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Double?);
+			var value = default(double?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -502,13 +503,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Decimal ReadDecimal(this IJsonReader reader, bool advance = true)
+		public static decimal ReadDecimal(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Decimal);
+			var value = default(decimal);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsDecimal;
 			else
@@ -520,13 +521,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Decimal? ReadDecimalOrNull(this IJsonReader reader, bool advance = true)
+		public static decimal? ReadDecimalOrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Decimal?);
+			var value = default(decimal?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -543,13 +544,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Boolean ReadBoolean(this IJsonReader reader, bool advance = true)
+		public static bool ReadBoolean(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Boolean);
+			var value = default(bool);
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Boolean)
 				value = reader.Value.AsBoolean;
 			else
@@ -561,13 +562,13 @@ namespace Serialization.Json
 			return value;
 		}
 
-		public static Boolean? ReadBooleanOrNull(this IJsonReader reader, bool advance = true)
+		public static bool? ReadBooleanOrNull(this IJsonReader reader, bool advance = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 
 
-			var value = default(Boolean?);
+			var value = default(bool?);
 			if (reader.Token == JsonToken.Null)
 			{
 				value = null;
@@ -674,7 +675,7 @@ namespace Serialization.Json
 			{
 				if (reader.Token == JsonToken.Null)
 					return null;
-				
+
 				valueType = valueType.GetGenericArguments()[0];
 			}
 
@@ -696,11 +697,6 @@ namespace Serialization.Json
 		{
 			if (reader.IsEndOfStream())
 				throw new UnexpectedToken(reader, expectedToken);
-		}
-
-		public static void ThrowStackImbalance(IJsonReader reader)
-		{
-			throw new Exception("stack imbalance");
 		}
 
 		public static void ThrowIfMemberNameIsEmpty(IJsonReader reader, string memberName)

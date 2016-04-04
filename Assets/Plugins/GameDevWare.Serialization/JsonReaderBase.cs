@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 https://www.assetstore.unity3d.com/#!/content/56706
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
@@ -20,9 +20,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Serialization.Json.Exceptions;
+using GameDevWare.Serialization.Exceptions;
 
-namespace Serialization.Json
+// ReSharper disable once CheckNamespace
+namespace GameDevWare.Serialization
 {
 	public abstract class JsonReaderBase : IJsonReader
 	{
@@ -31,22 +32,20 @@ namespace Serialization.Json
 
 		private sealed class Buffer : IList<char>
 		{
-			public const float SHIFT_THRESHOLD = 0.5f; // postition over 50% of buffer
-			public const float GROW_THRESHOLD = 0.1f; // when less that 10% of space is free
+			private const float SHIFT_THRESHOLD = 0.5f; // position over 50% of buffer
+			private const float GROW_THRESHOLD = 0.1f; // when less that 10% of space is free
 
 			private readonly JsonReaderBase reader;
 			private char[] buffer;
-			private int offset;
 			private int? lazyFixation;
 			private int end;
-			private int initialSize;
+			private readonly int initialSize;
 			private bool isLast;
 			private int lineNumber;
 			private long lineStartIndex;
 			private long charsReaded;
-			private bool dontCountLines;
 
-			public int Capacity
+			private int Capacity
 			{
 				get { return buffer.Length; }
 				set
@@ -60,32 +59,10 @@ namespace Serialization.Json
 				}
 			}
 
-			public int Offset
-			{
-				get { return offset; }
-			}
-
-			public bool DontCountLines
-			{
-				get { return this.dontCountLines; }
-				set { this.dontCountLines = value; }
-			}
-
-			public long CharactersReaded
-			{
-				get { return charsReaded + offset; }
-			}
-
-			public int LineNumber
-			{
-				get { return lineNumber + 1; }
-			}
-
-			public int ColumnNumber
-			{
-				get { return (int)(this.CharactersReaded - lineStartIndex + 1); }
-			}
-
+			public int Offset { get; private set; }
+			public long CharactersReaded { get { return charsReaded + Offset; } }
+			public int LineNumber { get { return lineNumber + 1; } }
+			public int ColumnNumber { get { return (int)(this.CharactersReaded - lineStartIndex + 1); } }
 			public char this[int index]
 			{
 				get
@@ -96,16 +73,14 @@ namespace Serialization.Json
 					if (this.IsBeyondOfStream(index))
 						return (char)0;
 
-					return buffer[offset + index];
+					return buffer[Offset + index];
 				}
 			}
 
 			public Buffer(int size, JsonReaderBase reader)
 			{
-				if (size <= 0)
-					throw new ArgumentOutOfRangeException("size");
-				if (reader == null)
-					throw new ArgumentNullOrEmptyException("reader");
+				if (size <= 0) throw new ArgumentOutOfRangeException("size");
+				if (reader == null) throw new ArgumentNullOrEmptyException("reader");
 
 
 				if (size < 10)
@@ -115,51 +90,40 @@ namespace Serialization.Json
 				this.buffer = new char[size];
 				this.initialSize = size;
 				this.end = 0;
-				this.offset = 0;
+				this.Offset = 0;
 			}
 
 			public void FixateNow()
 			{
-				if (lazyFixation != null)
-				{
-					this.Fixate(lazyFixation.Value);
-					lazyFixation = null;
-				}
-			}
+				if (lazyFixation == null) return;
 
+				this.Fixate(lazyFixation.Value);
+				lazyFixation = null;
+			}
 			public void Fixate(int atIndex)
 			{
-				if (atIndex < 0)
-					throw new ArgumentOutOfRangeException("position");
+				if (atIndex < 0) throw new ArgumentOutOfRangeException("atIndex");
 
-
-				if (!dontCountLines)
+				for (var i = 0; i < atIndex; i++)
 				{
-					for (var i = 0; i < atIndex; i++)
-					{
-						if (this[i] == '\n')
-						{
-							lineNumber++;
-							lineStartIndex = this.CharactersReaded + i;
-						}
-					}
+					if (this[i] != '\n') continue;
+
+					lineNumber++;
+					lineStartIndex = this.CharactersReaded + i;
 				}
 
 				// ensure that fixation point in loaded range
 				IsBeyondOfStream(atIndex);
 
-				offset += atIndex;
+				Offset += atIndex;
 
 				// when we are at second half of buffer - we need to shift back
-				if ((offset / (float)buffer.Length) > SHIFT_THRESHOLD)
+				if ((Offset / (float)buffer.Length) > SHIFT_THRESHOLD)
 					this.ShiftToZero();
 			}
-
 			public void FixateLater(int atIndex)
 			{
-				if (atIndex < 0)
-					throw new ArgumentOutOfRangeException("position");
-
+				if (atIndex < 0) throw new ArgumentOutOfRangeException("atIndex");
 
 				if (lazyFixation != null)
 					lazyFixation += atIndex;
@@ -169,10 +133,10 @@ namespace Serialization.Json
 
 			public bool IsBeyondOfStream(int index)
 			{
-				if (!isLast && offset + index >= end)
+				if (!isLast && Offset + index >= end)
 					this.ReadNextBlock();
 
-				if (isLast && offset + index >= end)
+				if (isLast && Offset + index >= end)
 					return true;
 
 				return false;
@@ -195,7 +159,7 @@ namespace Serialization.Json
 			private void ReadNextBlock()
 			{
 				// when we are at second half of buffer - we need to shift back
-				if ((offset / (float)buffer.Length) > SHIFT_THRESHOLD)
+				if ((Offset / (float)buffer.Length) > SHIFT_THRESHOLD)
 					this.ShiftToZero();
 
 				// check for free space
@@ -210,10 +174,10 @@ namespace Serialization.Json
 
 			private void ShiftToZero()
 			{
-				charsReaded += offset;
+				charsReaded += Offset;
 
-				var block = Math.Min(offset, end - offset);
-				var start = offset;
+				var block = Math.Min(Offset, end - Offset);
+				var start = Offset;
 				var lastBlock = 0;
 				while (start < end)
 				{
@@ -221,8 +185,8 @@ namespace Serialization.Json
 					lastBlock += block;
 					start += block;
 				}
-				end = end - offset;
-				offset = 0;
+				end = end - Offset;
+				Offset = 0;
 #if DEBUG
 				if (end < buffer.Length) // zero unused space(just for debug)
 					Array.Clear(buffer, end, buffer.Length - end);
@@ -238,7 +202,7 @@ namespace Serialization.Json
 
 			public override string ToString()
 			{
-				return new string(buffer, offset, end - offset);
+				return new string(buffer, Offset, end - Offset);
 			}
 
 			#region IList<char> Members
@@ -376,7 +340,7 @@ namespace Serialization.Json
 							case JsonToken.DateTime:
 								return typeof(DateTime);
 							case JsonToken.Boolean:
-								return typeof(Boolean);
+								return typeof(bool);
 						}
 					}
 
@@ -738,34 +702,34 @@ namespace Serialization.Json
 							else
 								part = FRAC_PART;
 						}
-						else if (Char.ToUpper(ch) == EXP)
+						else if (char.ToUpper(ch) == EXP)
 						{
 							if (i == start)
 								return false; // exp at first character
 							else
 								part = EXP_PART;
 						}
-						else if (!Char.IsDigit(ch))
+						else if (!char.IsDigit(ch))
 							return false; // non digit character in int part
 						break;
 					case FRAC_PART:
-						if (Char.ToUpper(ch) == EXP)
+						if (char.ToUpper(ch) == EXP)
 						{
 							if (i == start)
 								return false; // exp at first character
 							else
 								part = EXP_PART;
 						}
-						else if (!Char.IsDigit(ch))
+						else if (!char.IsDigit(ch))
 							return false; // non digit character in frac part
 						break;
 					case EXP_PART:
 						if ((ch == PLUS || ch == MINUS))
 						{
-							if (Char.ToUpper(buffer[i - 1]) != EXP)
+							if (char.ToUpper(buffer[i - 1]) != EXP)
 								return false; // sign not at start of exp part
 						}
-						else if (!Char.IsDigit(ch))
+						else if (!char.IsDigit(ch))
 							return false; // non digit character in exp part
 						break;
 				}

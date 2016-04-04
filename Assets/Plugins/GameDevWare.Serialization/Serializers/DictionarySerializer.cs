@@ -1,25 +1,26 @@
-﻿/* 
+﻿/*
 Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 https://www.assetstore.unity3d.com/#!/content/56706
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Serialization.Json.Exceptions;
+using GameDevWare.Serialization.Exceptions;
 
-namespace Serialization.Json.Serializers
+// ReSharper disable once CheckNamespace
+namespace GameDevWare.Serialization.Serializers
 {
 	public sealed class DictionarySerializer : TypeSerializer
 	{
@@ -28,10 +29,7 @@ namespace Serialization.Json.Serializers
 		private readonly Type valueType;
 		private readonly bool isStringKeyType;
 
-		public override Type SerializedType
-		{
-			get { return dictionaryType; }
-		}
+		public override Type SerializedType { get { return dictionaryType; } }
 
 		public DictionarySerializer(Type dictionaryType)
 		{
@@ -39,19 +37,19 @@ namespace Serialization.Json.Serializers
 				throw new ArgumentNullException("dictionaryType");
 
 			this.dictionaryType = dictionaryType;
-			this.keyType = typeof (object);
-			this.valueType = typeof (object);
+			this.keyType = typeof(object);
+			this.valueType = typeof(object);
 
-			if (dictionaryType.HasMultipleInstantiations(typeof (IDictionary<,>)))
+			if (dictionaryType.HasMultipleInstantiations(typeof(IDictionary<,>)))
 				throw new TypeContractViolation(this.GetType(), "have only one generic IDictionary interface");
 
-			if (dictionaryType.IsInstantiationOf(typeof (IDictionary<,>)))
+			if (dictionaryType.IsInstantiationOf(typeof(IDictionary<,>)))
 			{
-				var genArgs = dictionaryType.GetInstantiationArguments(typeof (IDictionary<,>));
+				var genArgs = dictionaryType.GetInstantiationArguments(typeof(IDictionary<,>));
 				keyType = genArgs[0];
 				valueType = genArgs[1];
 			}
-			else if (typeof (IDictionary).IsAssignableFrom(dictionaryType))
+			else if (typeof(IDictionary).IsAssignableFrom(dictionaryType))
 				return; // do nothink
 			else
 				throw new TypeContractViolation(this.GetType(), "be dictionary");
@@ -87,8 +85,7 @@ namespace Serialization.Json.Serializers
 						}
 						catch (Exception e)
 						{
-							throw new SerializationException(
-								$"Failed to read '{keyType.Name}' key of dictionary: {e.Message}\r\nMore detailed information in inner exception.", e);
+							throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e);
 						}
 
 						if (!reader.NextToken())
@@ -101,8 +98,7 @@ namespace Serialization.Json.Serializers
 						}
 						catch (Exception e)
 						{
-							throw new SerializationException(
-								$"Failed to read '{valueType.Name}' value for key '{key}' in dictionary: {e.Message}\r\nMore detailed information in inner exception.", e);
+							throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, key, e.Message), e);
 						}
 
 
@@ -128,8 +124,7 @@ namespace Serialization.Json.Serializers
 						}
 						catch (Exception e)
 						{
-							throw new SerializationException(
-								$"Failed to read '{keyType.Name}' key of dictionary: {e.Message}\r\nMore detailed information in inner exception.", e);
+							throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e);
 						}
 
 						if (!reader.NextToken())
@@ -141,8 +136,7 @@ namespace Serialization.Json.Serializers
 						}
 						catch (Exception e)
 						{
-							throw new SerializationException(
-								$"Failed to read '{valueType.Name}' value for key '{key}' in dictionary: {e.Message}\r\nMore detailed information in inner exception.", e);
+							throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, key, e.Message), e);
 						}
 
 
@@ -154,7 +148,7 @@ namespace Serialization.Json.Serializers
 					throw new UnexpectedToken(reader, JsonToken.BeginObject, JsonToken.BeginArray);
 				}
 
-				var dictionary = (IDictionary) Activator.CreateInstance(this.dictionaryType);
+				var dictionary = (IDictionary)Activator.CreateInstance(this.dictionaryType);
 				foreach (var kv in container)
 				{
 					var key = kv.Key;
@@ -162,7 +156,7 @@ namespace Serialization.Json.Serializers
 
 					if (this.keyType.IsEnum)
 						key = Enum.Parse(this.keyType, Convert.ToString(key));
-					else if (this.keyType != typeof (string) && this.keyType != typeof (object))
+					else if (this.keyType != typeof(string) && this.keyType != typeof(object))
 						key = Convert.ChangeType(key, this.keyType);
 
 					if (dictionary.Contains(key))
@@ -203,10 +197,10 @@ namespace Serialization.Json.Serializers
 				foreach (DictionaryEntry pair in (dictionary as IDictionary))
 				{
 					var keyStr = default(string);
-					if (pair.Key is Single)
-						keyStr = ((Single) pair.Key).ToString("R", writer.Context.Format);
-					else if (pair.Key is Double)
-						keyStr = ((Double) pair.Key).ToString("R", writer.Context.Format);
+					if (pair.Key is float)
+						keyStr = ((float)pair.Key).ToString("R", writer.Context.Format);
+					else if (pair.Key is double)
+						keyStr = ((double)pair.Key).ToString("R", writer.Context.Format);
 					else
 						keyStr = Convert.ToString(pair.Key, writer.Context.Format);
 
@@ -237,7 +231,7 @@ namespace Serialization.Json.Serializers
 		{
 			if (keyType == null) throw new ArgumentNullException("keyType");
 
-			return keyType == typeof (String);
+			return keyType == typeof(string);
 			//keyType == typeof(Byte) ||
 			//keyType == typeof(SByte) ||
 			//keyType == typeof(Int16) ||
