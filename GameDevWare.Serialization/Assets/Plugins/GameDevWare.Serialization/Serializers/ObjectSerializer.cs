@@ -1,0 +1,294 @@
+﻿/* 
+Copyright (c) 2016 Denis Zykov, GameDevWare.com
+
+https://www.assetstore.unity3d.com/#!/content/56706
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using Serialization.Json.Exceptions;
+using Serialization.Json.Metadata;
+
+namespace Serialization.Json.Serializers
+{
+	public class ObjectSerializer : TypeSerializer
+	{
+		public const string TYPE_MEMBER_NAME = "_type";
+
+		private static readonly Dictionary<Type, TypeDescription> TypeDescriptions = new Dictionary<Type, TypeDescription>();
+		private static readonly Regex VersionRegEx = new Regex(@", Version=[^\]]+", RegexOptions.None);
+
+		private readonly Type objectType;
+		private readonly string objectTypeNameWithoutVersion;
+		private readonly TypeDescription objectTypeDescription;
+		private readonly ObjectSerializer baseTypeSerializer;
+		private readonly ISerializationContext context;
+
+		public override Type SerializedType { get { return this.objectType; } }
+		public bool SuppressTypeInformation { get; set; }
+
+		public ObjectSerializer(ISerializationContext context, Type type)
+		{
+			if (type == null) throw new ArgumentNullException("type");
+			if (context == null) throw new ArgumentNullException("context");
+
+			this.context = context;
+			this.objectType = type;
+			this.objectTypeNameWithoutVersion = GetVersionInvariantObjectTypeName(this.objectType);
+			this.SuppressTypeInformation = (context.Options & SerializationOptions.SuppressTypeInformation) ==
+										   SerializationOptions.SuppressTypeInformation;
+
+			if (this.objectType.BaseType != null && this.objectType.BaseType != typeof(object))
+				this.baseTypeSerializer = (ObjectSerializer)context.GetSerializerForType(this.objectType.BaseType);
+
+			lock (TypeDescriptions)
+			{
+				if (!TypeDescriptions.TryGetValue(type, out this.objectTypeDescription))
+					this.objectTypeDescription = new TypeDescription(type);
+			}
+		}
+
+		public override object Deserialize(IJsonReader reader)
+		{
+			if (reader == null)
+				throw new ArgumentNullException("reader");
+
+			if (reader.Token == JsonToken.Null)
+				return null;
+
+			if (reader.Token != JsonToken.BeginObject)
+				throw new UnexpectedToken(reader, JsonToken.BeginObject);
+
+			var serializerOverride = default(ObjectSerializer);
+			var container = new Dictionary<string, object>(10);
+			reader.Context.Hierarchy.Push(container);
+			var instance = this.DeserializeMembers(reader, container, ref serializerOverride);
+			reader.Context.Hierarchy.Pop();
+
+			if (reader.Token != JsonToken.EndOfObject)
+				throw new UnexpectedToken(reader, JsonToken.EndOfObject);
+
+			if (instance != null)
+				return instance;
+			else if (serializerOverride != null)
+				return serializerOverride.PopulateInstance(container, null);
+			else
+				return this.PopulateInstance(container, null);
+		}
+		public override void Serialize(IJsonWriter writer, object value)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (value == null)
+			{
+				writer.WriteNull();
+				return;
+			}
+
+			var container = new Dictionary<DataMemberDescription, object>();
+
+			this.CollectMemberValues(value, container);
+
+			if (this.SuppressTypeInformation == false)
+			{
+				writer.WriteObjectBegin(container.Count + 1);
+
+				writer.WriteMember(TYPE_MEMBER_NAME);
+				writer.WriteString(objectTypeNameWithoutVersion);
+			}
+			else
+			{
+				writer.WriteObjectBegin(container.Count);
+			}
+
+			foreach (var kv in container)
+			{
+				writer.WriteMember(kv.Key.Name);
+				writer.WriteValue(kv.Value, kv.Key.ValueType);
+			}
+
+			writer.WriteObjectEnd();
+		}
+
+		private void CollectMemberValues(object instance, Dictionary<DataMemberDescription, object> container)
+		{
+			if (this.baseTypeSerializer != null)
+				this.baseTypeSerializer.CollectMemberValues(instance, container);
+
+			foreach (var member in this.objectTypeDescription.Members)
+			{
+				var value = member.GetValue(instance);
+
+				container[member] = value;
+			}
+		}
+		private object DeserializeMembers(IJsonReader reader, Dictionary<string, object> container,
+			ref ObjectSerializer serializerOverride)
+		{
+			while (reader.NextToken() && reader.Token != JsonToken.EndOfObject)
+			{
+				if (reader.Token != JsonToken.Member)
+					throw new UnexpectedToken(reader, JsonToken.Member);
+
+				string memberName = null;
+				object value = null;
+
+				memberName = reader.Value.AsString; // string
+				if (string.Equals(memberName, TYPE_MEMBER_NAME) && this.SuppressTypeInformation == false)
+				{
+					reader.NextToken();
+					var typeName = reader.ReadString(false);
+					var type = reader.Context.GetType(typeName, true, true);
+					var serializer = reader.Context.GetSerializerForType(type);
+					if (serializer is ObjectSerializer)
+					{
+						serializerOverride = (ObjectSerializer)serializer;
+						serializerOverride.DeserializeMembers(reader, container, ref serializerOverride);
+						return null;
+					}
+					else
+					{
+						reader.NextToken(); // advance to next member
+						serializerOverride = null;
+						return serializer.Deserialize(reader);
+					}
+				}
+
+				var member = default(DataMemberDescription);
+				var valueType = typeof(object);
+
+				if (this.TryGetMember(memberName, out member))
+					valueType = member.ValueType;
+
+				reader.NextToken();
+
+				try
+				{
+					value = reader.ReadValue(valueType, false);
+				}
+				catch (Exception e)
+				{
+					throw new SerializationException($"Failed to read value for member '{memberName}' of '{this.objectType.Name}' type.\r\nMore detailed information in inner exception.", e);
+				}
+
+				container[memberName] = value;
+			}
+
+			return null;
+		}
+		private object PopulateInstance(Dictionary<string, object> container, object instance)
+		{
+			if (instance == null && objectType == typeof(object))
+				return container;
+
+			if (instance == null)
+				instance = Activator.CreateInstance(objectType);
+
+			foreach (var member in this.objectTypeDescription.Members)
+			{
+				var memberName = member.Name;
+				var memberType = member.ValueType;
+				var defaultValue = member.DefaultValue;
+
+				if (defaultValue == null || container.ContainsKey(memberName))
+					continue;
+
+				if (defaultValue.GetType() == memberType)
+					container[memberName] = defaultValue;
+				else if ("[]".Equals(defaultValue) || "{}".Equals(defaultValue))
+					container[memberName] = memberType.IsArray
+						? Array.CreateInstance(memberType.GetElementType(), 0)
+						: Activator.CreateInstance(memberType);
+				else if (defaultValue is string)
+					container[memberName] = Json.Deserialize(memberType, (string)defaultValue, context);
+				else
+					container[memberName] = Convert.ChangeType(defaultValue, memberType, context.Format);
+			}
+
+
+			foreach (var kv in container)
+			{
+				var memberName = kv.Key;
+				var value = kv.Value;
+				var member = default(DataMemberDescription);
+
+				if (!this.TryGetMember(memberName, out member))
+					continue;
+
+				try
+				{
+					member.SetValue(instance, value);
+				}
+				catch (Exception e)
+				{
+					throw new SerializationException(
+						$"Failed to set member '{memberName}' to value '{value}' of type {(value != null ? value.GetType().FullName : "<null>")}.\r\n More detailed information in inner exception.", e);
+				}
+			}
+
+			if (this.baseTypeSerializer != null)
+				this.baseTypeSerializer.PopulateInstance(container, instance);
+
+			return instance;
+		}
+		private bool TryGetMember(string memberName, out DataMemberDescription member)
+		{
+			if (memberName == null) throw new ArgumentNullException("memberName");
+
+			if (this.objectTypeDescription.TryGetMember(memberName, out member))
+				return true;
+
+			if (this.baseTypeSerializer == null)
+				return false;
+
+			return this.baseTypeSerializer.TryGetMember(memberName, out member);
+		}
+
+		public static object CreateInstance(Dictionary<string, object> values)
+		{
+			if (values == null) throw new ArgumentNullException("values");
+
+			var instanceType = typeof(object);
+			var instanceTypeName = default(object);
+			if (values.TryGetValue(TYPE_MEMBER_NAME, out instanceTypeName))
+			{
+				values.Remove(TYPE_MEMBER_NAME);
+				instanceType = Type.GetType((string)instanceTypeName, true);
+			}
+			return CreateInstance(values, instanceType);
+		}
+		public static object CreateInstance(Dictionary<string, object> values, Type instanceType)
+		{
+			if (instanceType == null) throw new ArgumentNullException("instanceType");
+			if (values == null) throw new ArgumentNullException("values");
+
+			var context = new DefaultSerializationContext();
+			var serializer = new ObjectSerializer(context, instanceType);
+			return serializer.PopulateInstance(values, null);
+		}
+		public static string GetVersionInvariantObjectTypeName(Type type)
+		{
+			if (type == null) throw new ArgumentNullException("type");
+
+			return VersionRegEx.Replace(type.AssemblyQualifiedName, string.Empty);
+		}
+
+		public override string ToString()
+		{
+			return $"object, {objectType}";
+		}
+	}
+}

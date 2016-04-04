@@ -1,0 +1,69 @@
+﻿/* 
+Copyright (c) 2016 Denis Zykov, GameDevWare.com
+
+https://www.assetstore.unity3d.com/#!/content/56706
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+using System;
+using System.IO;
+using System.Text;
+
+namespace Serialization.Json
+{
+	public interface IJsonReader
+	{
+		ISerializationContext Context { get; }
+
+		JsonToken Token { get; }
+		object RawValue { get; }
+		IValueInfo Value { get; }
+		long CharactersReaded { get; }
+
+		bool NextToken();
+
+		bool IsEndOfStream();
+
+		/// <summary>
+		///     Resets Line/Column numbers, CharactersReaded and Token information of reader
+		/// </summary>
+		void Reset();
+	}
+
+	public interface IValueInfo
+	{
+		bool HasValue { get; }
+		object Raw { get; }
+		Type ProbableType { get; }
+		bool AsBoolean { get; }
+		byte AsByte { get; }
+		short AsInt16 { get; }
+		int AsInt32 { get; }
+		long AsInt64 { get; }
+		sbyte AsSByte { get; }
+		ushort AsUInt16 { get; }
+		uint AsUInt32 { get; }
+		ulong AsUInt64 { get; }
+		float AsSingle { get; }
+		double AsDouble { get; }
+		decimal AsDecimal { get; }
+		string AsString { get; }
+		DateTime AsDateTime { get; }
+
+		int LineNumber { get; }
+		int ColumnNumber { get; }
+
+		void CopyJsonTo(StringBuilder stringBuilder);
+		void CopyJsonTo(TextWriter writer);
+		void CopyJsonTo(Stream stream);
+		void CopyJsonTo(IJsonWriter writer);
+	}
+}
