@@ -37,9 +37,9 @@ namespace GameDevWare.Serialization
 		void Write(decimal number);
 		void Write(bool value);
 		void Write(DateTime datetime);
-		void WriteObjectBegin(int size);
+		void WriteObjectBegin(int numberOfMembers);
 		void WriteObjectEnd();
-		void WriteArrayBegin(int size);
+		void WriteArrayBegin(int numberOfMembers);
 		void WriteArrayEnd();
 		void WriteNull();
 

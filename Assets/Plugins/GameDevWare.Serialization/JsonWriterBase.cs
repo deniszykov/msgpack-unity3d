@@ -51,24 +51,16 @@ namespace GameDevWare.Serialization
 		private static readonly char[] True = "true".ToCharArray();
 		private static readonly char[] False = "false".ToCharArray();
 
-		private Stack<Structure> structStack = new Stack<Structure>(10);
-		private long charsWriten = 0;
-		private char[] outputBuffer = new char[512];
+		private readonly Stack<Structure> structStack = new Stack<Structure>(10);
+		private readonly char[] outputBuffer = new char[512];
 
 		public ISerializationContext Context { get; private set; }
+		public long CharactersWritten { get; protected set; }
 		public int InitialPadding { get; set; }
-
-		public long CharactersWritten
-		{
-			get { return charsWriten; }
-			protected set { charsWriten = value; }
-		}
 
 		protected JsonWriterBase(ISerializationContext context)
 		{
-			if (context == null)
-				throw new ArgumentNullException("context");
-
+			if (context == null) throw new ArgumentNullException("context");
 
 			this.Context = context;
 		}
@@ -94,7 +86,6 @@ namespace GameDevWare.Serialization
 			outputBuffer[0] = '"';
 			this.WriteJson(outputBuffer, 0, 1);
 		}
-
 		public void Write(JsonMember member)
 		{
 			this.WriteFormatting(JsonToken.Member);
@@ -116,7 +107,6 @@ namespace GameDevWare.Serialization
 				this.WriteJson(NameSeparator, 0, NameSeparator.Length);
 			}
 		}
-
 		public void Write(int number)
 		{
 			this.WriteFormatting(JsonToken.Number);
@@ -124,7 +114,6 @@ namespace GameDevWare.Serialization
 			var len = JsonUtils.Int32ToBuffer(number, outputBuffer, 0, this.Context.Format);
 			this.WriteJson(outputBuffer, 0, len);
 		}
-
 		public void Write(uint number)
 		{
 			this.WriteFormatting(JsonToken.Number);
@@ -132,7 +121,6 @@ namespace GameDevWare.Serialization
 			var len = JsonUtils.UInt32ToBuffer(number, outputBuffer, 0, this.Context.Format);
 			this.WriteJson(outputBuffer, 0, len);
 		}
-
 		public void Write(long number)
 		{
 			this.WriteFormatting(JsonToken.Number);
@@ -144,7 +132,6 @@ namespace GameDevWare.Serialization
 			else
 				this.WriteJson(outputBuffer, 0, len);
 		}
-
 		public void Write(ulong number)
 		{
 			this.WriteFormatting(JsonToken.Number);
@@ -156,7 +143,6 @@ namespace GameDevWare.Serialization
 			else
 				this.WriteJson(outputBuffer, 0, len);
 		}
-
 		public void Write(float number)
 		{
 			this.WriteFormatting(JsonToken.Number);
@@ -167,7 +153,6 @@ namespace GameDevWare.Serialization
 			else
 				this.WriteJson(outputBuffer, 0, len);
 		}
-
 		public void Write(double number)
 		{
 			this.WriteFormatting(JsonToken.Number);
@@ -178,7 +163,6 @@ namespace GameDevWare.Serialization
 			else
 				this.WriteJson(outputBuffer, 0, len);
 		}
-
 		public void Write(decimal number)
 		{
 			this.WriteFormatting(JsonToken.Number);
@@ -189,7 +173,6 @@ namespace GameDevWare.Serialization
 			else
 				this.WriteJson(outputBuffer, 0, len);
 		}
-
 		public void Write(DateTime datetime)
 		{
 			this.WriteFormatting(JsonToken.DateTime);
@@ -206,7 +189,6 @@ namespace GameDevWare.Serialization
 
 			this.Write(dateString);
 		}
-
 		public void Write(bool value)
 		{
 			this.WriteFormatting(JsonToken.Boolean);
@@ -216,15 +198,13 @@ namespace GameDevWare.Serialization
 			else
 				this.WriteJson(False, 0, False.Length);
 		}
-
-		public void WriteObjectBegin(int size)
+		public void WriteObjectBegin(int numberOfMembers)
 		{
 			this.WriteFormatting(JsonToken.BeginObject);
 
 			structStack.Push(Structure.IsObject | Structure.IsBegining);
 			this.WriteJson(ObjectBegin, 0, ObjectBegin.Length);
 		}
-
 		public void WriteObjectEnd()
 		{
 			this.WriteFormatting(JsonToken.EndOfObject);
@@ -233,15 +213,13 @@ namespace GameDevWare.Serialization
 			this.WriteNewlineAndPad(0);
 			this.WriteJson(ObjectEnd, 0, ObjectEnd.Length);
 		}
-
-		public void WriteArrayBegin(int size)
+		public void WriteArrayBegin(int numberOfMembers)
 		{
 			this.WriteFormatting(JsonToken.BeginArray);
 
 			structStack.Push(Structure.IsArray | Structure.IsBegining);
 			this.WriteJson(ArrayBegin, 0, ArrayBegin.Length);
 		}
-
 		public void WriteArrayEnd()
 		{
 			this.WriteFormatting(JsonToken.EndOfObject);
@@ -249,7 +227,6 @@ namespace GameDevWare.Serialization
 			structStack.Pop();
 			this.WriteJson(ArrayEnd, 0, ArrayEnd.Length);
 		}
-
 		public void WriteNull()
 		{
 			this.WriteJson(Null, 0, Null.Length);
@@ -257,8 +234,8 @@ namespace GameDevWare.Serialization
 
 		public void Reset()
 		{
-			charsWriten = 0;
-			structStack.Clear();
+			this.CharactersWritten = 0;
+			this.structStack.Clear();
 		}
 
 		private void WriteNewlineAndPad(int correction)
@@ -275,32 +252,31 @@ namespace GameDevWare.Serialization
 				tabs -= Tabs.Length;
 			}
 		}
-
 		private void WriteFormatting(JsonToken token)
 		{
-			if (this.structStack.Count > 0)
+			if (this.structStack.Count < 0)
+				return;
+
+			var stackPeek = this.structStack.Peek();
+			var isNotMemberValue = ((stackPeek & Structure.IsObject) != Structure.IsObject || token == JsonToken.Member);
+			var isEndToken = token == JsonToken.EndOfArray || token == JsonToken.EndOfObject;
+
+			if ((stackPeek & Structure.IsContainer) != Structure.IsContainer || !isNotMemberValue)
+				return;
+
+			// it's a begining of container we add padding and remove "is begining" flag
+			if ((stackPeek & Structure.IsBeginingOfContainer) == Structure.IsBeginingOfContainer)
 			{
-				var structPeek = this.structStack.Peek();
-				var isNotMemberValue = ((structPeek & Structure.IsObject) != Structure.IsObject || token == JsonToken.Member);
-				var isEndToken = token == JsonToken.EndOfArray || token == JsonToken.EndOfObject;
-
-				if ((structPeek & Structure.IsContainer) == Structure.IsContainer && isNotMemberValue)
-				{
-					// it's a begining of container we add padding and remove "is begining" flag
-					if ((structPeek & Structure.IsBeginingOfContainer) == Structure.IsBeginingOfContainer)
-					{
-						structPeek = this.structStack.Pop();
-						this.structStack.Push(structPeek ^ Structure.IsBegining); // revert "is begining"
-					}
-					// else if it's new array's value or new object's member put comman and padding
-					else if (!isEndToken)
-						this.WriteJson(ValueSeparator, 0, ValueSeparator.Length);
-
-					// padding
-					// pad only before member in object container(not before value, it's ugly)
-					this.WriteNewlineAndPad(this.InitialPadding + (isEndToken ? -1 : 0));
-				}
+				stackPeek = this.structStack.Pop();
+				this.structStack.Push(stackPeek ^ Structure.IsBegining); // revert "is begining"
 			}
+			// else if it's new array's value or new object's member put comman and padding
+			else if (!isEndToken)
+				this.WriteJson(ValueSeparator, 0, ValueSeparator.Length);
+
+			// padding
+			// pad only before member in object container(not before value, it's ugly)
+			this.WriteNewlineAndPad(this.InitialPadding + (isEndToken ? -1 : 0));
 		}
 	}
 }

@@ -26,8 +26,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException("reader");
+			if (reader == null) throw new ArgumentNullException("reader");
 
 			if (reader.Value.Raw is JsonString)
 				return reader.Value.Raw as JsonString;
@@ -38,17 +37,13 @@ namespace GameDevWare.Serialization.Serializers
 			return jsonString;
 		}
 
-		public override void Serialize(IJsonWriter writer, object valueObj)
+		public override void Serialize(IJsonWriter writer, object value)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
 
-			var value = (JsonString)valueObj;
-
-			if (value == null)
-				writer.WriteNull();
-			else
-				writer.WriteJson(value.ToString());
+			var jsonString = (JsonString)value;
+			writer.WriteJson(jsonString.ToString());
 		}
 
 		private static void CopyValue(IJsonReader reader, StringBuilder buffer)

@@ -13,47 +13,60 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 using System;
-using System.Globalization;
-using System.Runtime.Serialization;
+using UnityEngine;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
 {
-	public sealed class DateTimeSerializer : TypeSerializer
+	public sealed class QuaternionSerializer : TypeSerializer
 	{
-		public override Type SerializedType { get { return typeof(DateTime); } }
+		public override Type SerializedType { get { return typeof(Quaternion); } }
 
 		public override object Deserialize(IJsonReader reader)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
 
-			if (reader.Token == JsonToken.DateTime)
-				return reader.Value.AsDateTime;
+			if (reader.Token == JsonToken.Null)
+				return null;
 
-			var dateTimeStr = reader.ReadString(false);
-			try
+			var value = new Quaternion();
+			reader.ReadObjectBegin();
+			while (reader.Token != JsonToken.EndOfObject)
 			{
-				var value = default(DateTime);
-				if (!DateTime.TryParse(dateTimeStr, reader.Context.Format, DateTimeStyles.RoundtripKind, out value))
-					value = DateTime.ParseExact(dateTimeStr, reader.Context.DateTimeFormats, reader.Context.Format,
-						DateTimeStyles.AdjustToUniversal);
-
-				return value;
+				var memberName = reader.ReadMember();
+				if (memberName == "x")
+					value.x = reader.ReadSingle();
+				else if (memberName == "y")
+					value.y = reader.ReadSingle();
+				else if (memberName == "z")
+					value.z = reader.ReadSingle();
+				else if (memberName == "w")
+					value.w = reader.ReadSingle();
+				else
+					reader.ReadValue(typeof(object));
 			}
-			catch (FormatException fe)
-			{
-				throw new SerializationException(string.Format("Failed to parse date '{0}' in with pattern '{1}'.", dateTimeStr, reader.Context.DateTimeFormats[0]), fe);
-			}
+			reader.ReadObjectEnd(advance: false);
+			return value;
 		}
-
 		public override void Serialize(IJsonWriter writer, object value)
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
 
-			var dataTime = (DateTime)value;
-			writer.Write(dataTime);
+			var quaternion = (Quaternion)value;
+			writer.WriteObjectBegin(4);
+			writer.WriteMember("x");
+			writer.Write(quaternion.x);
+			writer.WriteMember("y");
+			writer.Write(quaternion.y);
+			writer.WriteMember("z");
+			writer.Write(quaternion.z);
+			writer.WriteMember("w");
+			writer.Write(quaternion.w);
+			writer.WriteObjectEnd();
 		}
 	}
 }
+#endif

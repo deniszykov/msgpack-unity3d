@@ -25,8 +25,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException("reader");
+			if (reader == null) throw new ArgumentNullException("reader");
 
 
 			var value = reader.RawValue as string;
@@ -39,17 +38,10 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override void Serialize(IJsonWriter writer, object value)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
 
-			if (value != null && value as byte[] == null)
-				throw new TypeContractViolation(this.GetType(), "be array of bytes");
-
-			if (value == null)
-			{
-				writer.WriteNull();
-				return;
-			}
+			if (value != null && value is byte[] == false) throw new TypeContractViolation(this.GetType(), "be array of bytes");
 
 			var base64String = Convert.ToBase64String(value as byte[]);
 			writer.WriteString(base64String);

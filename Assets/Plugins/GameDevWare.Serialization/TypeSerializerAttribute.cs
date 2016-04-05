@@ -19,7 +19,7 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, Inherited = false)]
 	public class TypeSerializerAttribute : Attribute
 	{
 		public Type SerializerType { get; private set; }

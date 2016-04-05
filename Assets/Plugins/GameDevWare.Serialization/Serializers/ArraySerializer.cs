@@ -74,15 +74,9 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override void Serialize(IJsonWriter writer, object value)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
 
-
-			if (value == null)
-			{
-				writer.WriteNull();
-				return;
-			}
 			var size = 0;
 			if (value is ICollection)
 				size = ((ICollection)value).Count;

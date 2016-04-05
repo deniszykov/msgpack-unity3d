@@ -23,263 +23,18 @@ namespace GameDevWare.Serialization
 	{
 		public static void WriteMember(this IJsonWriter writer, string memberName)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-			if (memberName == null)
-				throw new ArgumentNullException("memberName");
-
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (memberName == null) throw new ArgumentNullException("memberName");
 
 			writer.Write((JsonMember)memberName);
 		}
 
-		public static void WriteNumber(this IJsonWriter writer, byte number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, sbyte number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, short number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, ushort number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, int number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, uint number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, long number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, ulong number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, float number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, double number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, decimal number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(number);
-		}
-
 		public static void WriteDateTime(this IJsonWriter writer, DateTime date)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
+			if (writer == null) throw new ArgumentNullException("writer");
 
 			writer.Write(date);
 		}
-
-		public static void WriteBoolean(this IJsonWriter writer, bool value)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			writer.Write(value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, byte? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, sbyte? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, short? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, ushort? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, int? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, uint? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, long? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, ulong? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, float? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, double? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
-		public static void WriteNumber(this IJsonWriter writer, decimal? number)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (number == null)
-				writer.WriteNull();
-			else
-				writer.Write(number.Value);
-		}
-
 		public static void WriteDateTime(this IJsonWriter writer, DateTime? date)
 		{
 			if (writer == null)
@@ -292,6 +47,12 @@ namespace GameDevWare.Serialization
 				writer.Write(date.Value);
 		}
 
+		public static void WriteBoolean(this IJsonWriter writer, bool value)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(value);
+		}
 		public static void WriteBoolean(this IJsonWriter writer, bool? value)
 		{
 			if (writer == null)
@@ -302,6 +63,192 @@ namespace GameDevWare.Serialization
 				writer.WriteNull();
 			else
 				writer.Write(value.Value);
+		}
+
+		public static void WriteNumber(this IJsonWriter writer, byte number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, sbyte number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, short number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, ushort number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, int number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, uint number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, long number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, ulong number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, float number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, double number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, decimal number)
+		{
+			if (writer == null) throw new ArgumentNullException("writer");
+
+			writer.Write(number);
+		}
+		public static void WriteNumber(this IJsonWriter writer, byte? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, sbyte? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, short? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, ushort? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, int? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, uint? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, long? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, ulong? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, float? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, double? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
+		}
+		public static void WriteNumber(this IJsonWriter writer, decimal? number)
+		{
+			if (writer == null)
+				throw new ArgumentNullException("writer");
+
+
+			if (number == null)
+				writer.WriteNull();
+			else
+				writer.Write(number.Value);
 		}
 
 		public static void WriteString(this IJsonWriter writer, string literal)
@@ -318,8 +265,7 @@ namespace GameDevWare.Serialization
 
 		public static void WriteValue(this IJsonWriter writer, object value, Type valueType)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
+			if (writer == null) throw new ArgumentNullException("writer");
 
 			if (value == null)
 			{
@@ -335,11 +281,6 @@ namespace GameDevWare.Serialization
 				objectSerializer.SuppressTypeInformation = true; // no need to write type information on when type is obvious
 
 			serializer.Serialize(writer, value);
-		}
-
-		public static void ThrowStackImbalance(IJsonWriter reader)
-		{
-			throw new Exception("stack imbalance");
 		}
 	}
 }

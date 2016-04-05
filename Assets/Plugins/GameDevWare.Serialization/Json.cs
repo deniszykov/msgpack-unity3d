@@ -14,12 +14,13 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTH
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using GameDevWare.Serialization.Exceptions;
 using GameDevWare.Serialization.Serializers;
+using UnityEngine;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
@@ -28,21 +29,7 @@ namespace GameDevWare.Serialization
 	{
 		private static IFormatProvider _DefaultFormat = CultureInfo.InvariantCulture;
 		private static Encoding _DefaultEncoding = new UTF8Encoding(false, true);
-
-		private static string[] _DefaultDateTimeFormats = new string[]
-		{
-			"yyyy-MM-ddTHH:mm:ss.fffzzz", // ISO 8601, with timezone
-			"yyyy-MM-ddTHH:mm:ss.ffzzz", // ISO 8601, with timezone
-			"yyyy-MM-ddTHH:mm:ss.fzzz", // ISO 8601, with timezone
-			"yyyy-MM-ddTHH:mm:ssZ", // also ISO 8601, without timezone and without microseconds
-			"yyyy-MM-ddTHH:mm:ss.fZ", // also ISO 8601, without timezone
-			"yyyy-MM-ddTHH:mm:ss.ffZ", // also ISO 8601, without timezone
-			"yyyy-MM-ddTHH:mm:ss.fffZ", // also ISO 8601, without timezone
-			"yyyy-MM-ddTHH:mm:ss.ffffZ", // also ISO 8601, without timezone
-			"yyyy-MM-ddTHH:mm:ss.fffffZ", // also ISO 8601, without timezone
-			"yyyy-MM-ddTHH:mm:ss.ffffffZ", // also ISO 8601, without timezone
-			"yyyy-MM-ddTHH:mm:ss.fffffffZ"  // also ISO 8601, without timezone
-		};
+		private static string[] _DefaultDateTimeFormats;
 
 		public static string[] DefaultDateTimeFormats
 		{
@@ -55,7 +42,6 @@ namespace GameDevWare.Serialization
 				_DefaultDateTimeFormats = value;
 			}
 		}
-
 		public static IFormatProvider DefaultFormat
 		{
 			get { return _DefaultFormat; }
@@ -66,7 +52,6 @@ namespace GameDevWare.Serialization
 				_DefaultFormat = value;
 			}
 		}
-
 		public static Encoding DefaultEncoding
 		{
 			get { return _DefaultEncoding; }
@@ -77,12 +62,26 @@ namespace GameDevWare.Serialization
 				_DefaultEncoding = value;
 			}
 		}
-
-		public static ReadOnlyCollection<TypeSerializer> DefaultSerializers { get; private set; }
+		public static List<TypeSerializer> DefaultSerializers { get; private set; }
 
 		static Json()
 		{
-			DefaultSerializers = new ReadOnlyCollection<TypeSerializer>(new TypeSerializer[]
+			_DefaultDateTimeFormats = new string[]
+			{
+				"yyyy-MM-ddTHH:mm:ss.fffzzz", // ISO 8601, with timezone
+				"yyyy-MM-ddTHH:mm:ss.ffzzz", // ISO 8601, with timezone
+				"yyyy-MM-ddTHH:mm:ss.fzzz", // ISO 8601, with timezone
+				"yyyy-MM-ddTHH:mm:ssZ", // also ISO 8601, without timezone and without microseconds
+				"yyyy-MM-ddTHH:mm:ss.fZ", // also ISO 8601, without timezone
+				"yyyy-MM-ddTHH:mm:ss.ffZ", // also ISO 8601, without timezone
+				"yyyy-MM-ddTHH:mm:ss.fffZ", // also ISO 8601, without timezone
+				"yyyy-MM-ddTHH:mm:ss.ffffZ", // also ISO 8601, without timezone
+				"yyyy-MM-ddTHH:mm:ss.fffffZ", // also ISO 8601, without timezone
+				"yyyy-MM-ddTHH:mm:ss.ffffffZ", // also ISO 8601, without timezone
+				"yyyy-MM-ddTHH:mm:ss.fffffffZ" // also ISO 8601, without timezone
+			};
+
+			DefaultSerializers = new List<TypeSerializer>
 			{
 				new Base64Serializer(),
 				new DateTimeOffsetSerializer(),
@@ -93,6 +92,15 @@ namespace GameDevWare.Serialization
 				new UriSerializer(),
 				new VersionSerializer(),
 				new TimeSpanSerializer(),
+#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
+				new BoundsSerializer(),
+				new Matrix4x4Serializer(),
+				new QuaternionSerializer(),
+				new RectSerializer(),
+				new Vector2Serializer(),
+				new Vector3Serializer(),
+				new Vector4Serializer(),
+#endif
 				new PrimitiveSerializer(typeof (bool)),
 				new PrimitiveSerializer(typeof (byte)),
 				new PrimitiveSerializer(typeof (decimal)),
@@ -106,7 +114,7 @@ namespace GameDevWare.Serialization
 				new PrimitiveSerializer(typeof (uint)),
 				new PrimitiveSerializer(typeof (ulong)),
 				new PrimitiveSerializer(typeof (string)),
-			});
+			};
 		}
 
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput)
@@ -342,7 +350,6 @@ namespace GameDevWare.Serialization
 			var serializer = reader.Context.GetSerializerForType(typeof(T));
 			return (T)serializer.Deserialize(reader);
 		}
-
 
 		private static ISerializationContext CreateDefaultContext(SerializationOptions options)
 		{

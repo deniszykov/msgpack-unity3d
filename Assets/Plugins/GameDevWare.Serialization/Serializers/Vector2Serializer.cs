@@ -13,47 +13,52 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 using System;
-using System.Globalization;
-using System.Runtime.Serialization;
+using UnityEngine;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
 {
-	public sealed class DateTimeSerializer : TypeSerializer
+	public sealed class Vector2Serializer : TypeSerializer
 	{
-		public override Type SerializedType { get { return typeof(DateTime); } }
+		public override Type SerializedType { get { return typeof(Vector2); } }
 
 		public override object Deserialize(IJsonReader reader)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
 
-			if (reader.Token == JsonToken.DateTime)
-				return reader.Value.AsDateTime;
+			if (reader.Token == JsonToken.Null)
+				return null;
 
-			var dateTimeStr = reader.ReadString(false);
-			try
+			var value = new Vector2();
+			reader.ReadObjectBegin();
+			while (reader.Token != JsonToken.EndOfObject)
 			{
-				var value = default(DateTime);
-				if (!DateTime.TryParse(dateTimeStr, reader.Context.Format, DateTimeStyles.RoundtripKind, out value))
-					value = DateTime.ParseExact(dateTimeStr, reader.Context.DateTimeFormats, reader.Context.Format,
-						DateTimeStyles.AdjustToUniversal);
-
-				return value;
+				var memberName = reader.ReadMember();
+				switch (memberName)
+				{
+					case "x": value.x = reader.ReadSingle(); break;
+					case "y": value.y = reader.ReadSingle(); break;
+					default: reader.ReadValue(typeof(object)); break;
+				}
 			}
-			catch (FormatException fe)
-			{
-				throw new SerializationException(string.Format("Failed to parse date '{0}' in with pattern '{1}'.", dateTimeStr, reader.Context.DateTimeFormats[0]), fe);
-			}
+			reader.ReadObjectEnd(advance: false);
+			return value;
 		}
-
 		public override void Serialize(IJsonWriter writer, object value)
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
 
-			var dataTime = (DateTime)value;
-			writer.Write(dataTime);
+			var vector2 = (Vector2)value;
+			writer.WriteObjectBegin(2);
+			writer.WriteMember("x");
+			writer.Write(vector2.x);
+			writer.WriteMember("y");
+			writer.Write(vector2.y);
+			writer.WriteObjectEnd();
 		}
 	}
 }
+#endif

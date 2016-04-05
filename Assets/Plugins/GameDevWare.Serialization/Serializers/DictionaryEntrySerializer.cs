@@ -25,11 +25,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException("reader");
-
-			if (reader.Token == JsonToken.Null)
-				return null;
+			if (reader == null) throw new ArgumentNullException("reader");
 
 			var entry = new DictionaryEntry();
 			reader.ReadObjectBegin();
@@ -39,23 +35,17 @@ namespace GameDevWare.Serialization.Serializers
 				if (memberName == "Key")
 					entry.Key = reader.ReadValue(typeof(object));
 				else if (memberName == "Value")
-					entry.Key = reader.ReadValue(typeof(object));
+					entry.Value = reader.ReadValue(typeof(object));
 				else
 					reader.ReadValue(typeof(object));
 			}
 			reader.ReadObjectEnd(advance: false);
 			return entry;
 		}
-
 		public override void Serialize(IJsonWriter writer, object value)
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
-
-			if (value == null)
-			{
-				writer.WriteNull();
-				return;
-			}
+			if (value == null) throw new ArgumentNullException("value");
 
 			var entry = (DictionaryEntry)value;
 			writer.WriteObjectBegin(2);

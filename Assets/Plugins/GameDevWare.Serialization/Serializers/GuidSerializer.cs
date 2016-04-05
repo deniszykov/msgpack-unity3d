@@ -24,15 +24,20 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
+			if (reader == null) throw new ArgumentNullException("reader");
+
 			var guidStr = reader.ReadString(false);
 			var value = new Guid(guidStr);
 			return value;
 		}
 
-		public override void Serialize(IJsonWriter writer, object valueObj)
+		public override void Serialize(IJsonWriter writer, object value)
 		{
-			var value = (Guid)valueObj;
-			var guidStr = value.ToString();
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
+
+			var guid = (Guid)value;
+			var guidStr = guid.ToString();
 			writer.Write(guidStr);
 		}
 	}

@@ -35,7 +35,6 @@ namespace GameDevWare.Serialization
 		{
 			jsonString = string.Empty;
 		}
-
 		public JsonString(string jsonString)
 		{
 			if (jsonString == null)
@@ -44,7 +43,6 @@ namespace GameDevWare.Serialization
 
 			this.jsonString = jsonString;
 		}
-
 		public JsonString(StringBuilder jsonString)
 		{
 			if (jsonString == null)
@@ -53,7 +51,6 @@ namespace GameDevWare.Serialization
 
 			jsonStringBuilder = jsonString;
 		}
-
 		public JsonString(char[] jsonString, int index, int length)
 		{
 			if (jsonString == null)
@@ -67,7 +64,6 @@ namespace GameDevWare.Serialization
 			jsonStringBuilder = new StringBuilder(length + 1);
 			jsonStringBuilder.Append(jsonString, index, length);
 		}
-
 		public JsonString(string jsonString, int index, int length)
 		{
 			if (jsonString == null)
@@ -80,7 +76,6 @@ namespace GameDevWare.Serialization
 			jsonStringBuilder = new StringBuilder(length + 1);
 			jsonStringBuilder.Append(jsonString, index, length);
 		}
-
 		public JsonString(string[] jsonStrings)
 		{
 			if (jsonStrings == null)
@@ -115,12 +110,10 @@ namespace GameDevWare.Serialization
 
 			return jsonStringBuilder != null ? jsonStringBuilder.GetHashCode() : jsonString.GetHashCode();
 		}
-
 		public override bool Equals(object obj)
 		{
 			return this.Equals(obj as JsonString);
 		}
-
 		public bool Equals(JsonString jsString)
 		{
 			if (jsonString == null && jsonStringBuilder == null)
@@ -135,7 +128,6 @@ namespace GameDevWare.Serialization
 			else
 				return this.ToString().Equals(jsString.ToString());
 		}
-
 		public IJsonReader ToJsonReader(ISerializationContext context = null)
 		{
 			if (jsonString == null && jsonStringBuilder == null)
@@ -169,7 +161,6 @@ namespace GameDevWare.Serialization
 
 			return JsonUtils.UnescapeBuffer(stringToUnescape.ToCharArray(), 1, stringToUnescape.Length - 2);
 		}
-
 		public static string Unescape(string stringToUnescape)
 		{
 			if (stringToUnescape == null)
@@ -178,7 +169,6 @@ namespace GameDevWare.Serialization
 
 			return JsonUtils.UnescapeBuffer(stringToUnescape.ToCharArray(), 0, stringToUnescape.Length);
 		}
-
 		public static string Escape(string stringToEscape)
 		{
 			if (stringToEscape == null)

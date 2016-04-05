@@ -243,28 +243,28 @@ namespace GameDevWare.Serialization.MessagePack
 			this.bytesWritten += 9;
 		}
 
-		public void WriteObjectBegin(int size)
+		public void WriteObjectBegin(int numberOfMembers)
 		{
-			if (size < 0) throw new ArgumentOutOfRangeException("size");
+			if (numberOfMembers < 0) throw new ArgumentOutOfRangeException("numberOfMembers");
 
-			if (size < 16)
+			if (numberOfMembers < 16)
 			{
-				var formatByte = (byte) (size | (byte) MsgPackType.FixMapStart);
+				var formatByte = (byte) (numberOfMembers | (byte) MsgPackType.FixMapStart);
 				this.buffer[0] = formatByte;
 				this.outputStream.Write(buffer, 0, 1);
 				this.bytesWritten += 1;
 			}
-			else if (size <= ushort.MaxValue)
+			else if (numberOfMembers <= ushort.MaxValue)
 			{
 				this.Write(MsgPackType.Map16);
-				this.bitConverter.CopyBytes((ushort) size, buffer, 0);
+				this.bitConverter.CopyBytes((ushort) numberOfMembers, buffer, 0);
 				this.outputStream.Write(buffer, 0, 2);
 				this.bytesWritten += 2;
 			}
 			else
 			{
 				this.Write(MsgPackType.Map32);
-				this.bitConverter.CopyBytes((int) size, buffer, 0);
+				this.bitConverter.CopyBytes((int) numberOfMembers, buffer, 0);
 				this.outputStream.Write(buffer, 0, 4);
 				this.bytesWritten += 4;
 			}
@@ -274,28 +274,28 @@ namespace GameDevWare.Serialization.MessagePack
 		{
 		}
 
-		public void WriteArrayBegin(int size)
+		public void WriteArrayBegin(int numberOfMembers)
 		{
-			if (size < 0) throw new ArgumentOutOfRangeException("size");
+			if (numberOfMembers < 0) throw new ArgumentOutOfRangeException("numberOfMembers");
 
-			if (size < 16)
+			if (numberOfMembers < 16)
 			{
-				var formatByte = (byte) (size | (byte) MsgPackType.FixArrayStart);
+				var formatByte = (byte) (numberOfMembers | (byte) MsgPackType.FixArrayStart);
 				this.buffer[0] = formatByte;
 				this.outputStream.Write(buffer, 0, 1);
 				this.bytesWritten++;
 			}
-			else if (size <= ushort.MaxValue)
+			else if (numberOfMembers <= ushort.MaxValue)
 			{
 				this.Write(MsgPackType.Array16);
-				this.bitConverter.CopyBytes((ushort) size, buffer, 0);
+				this.bitConverter.CopyBytes((ushort) numberOfMembers, buffer, 0);
 				this.outputStream.Write(buffer, 0, 2);
 				this.bytesWritten += 2;
 			}
 			else
 			{
 				this.Write(MsgPackType.Array32);
-				this.bitConverter.CopyBytes((int) size, buffer, 0);
+				this.bitConverter.CopyBytes((int) numberOfMembers, buffer, 0);
 				this.outputStream.Write(buffer, 0, 4);
 				this.bytesWritten += 4;
 			}

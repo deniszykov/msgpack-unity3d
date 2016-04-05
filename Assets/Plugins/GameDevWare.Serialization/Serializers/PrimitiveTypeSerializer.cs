@@ -43,16 +43,14 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException("reader");
+			if (reader == null) throw new ArgumentNullException("reader");
 
 			if (reader.Token == JsonToken.Null)
 			{
 				if (this.primitiveTypeCode == TypeCode.String)
 					return null;
 
-				throw new UnexpectedToken(reader,
-					JsonToken.Boolean | JsonToken.DateTime | JsonToken.Null | JsonToken.Number | JsonToken.StringLiteral);
+				throw new UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Null, JsonToken.Number, JsonToken.StringLiteral);
 			}
 
 			var value = default(object);
@@ -109,12 +107,6 @@ namespace GameDevWare.Serialization.Serializers
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
-
-			if (value == null && primitiveTypeCode == TypeCode.String)
-			{
-				writer.WriteNull();
-				return;
-			}
 
 			switch (primitiveTypeCode)
 			{

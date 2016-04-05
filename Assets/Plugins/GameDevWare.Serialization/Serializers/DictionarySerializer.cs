@@ -59,11 +59,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException("reader");
-
-			if (reader.Token == JsonToken.Null)
-				return null;
+			if (reader == null) throw new ArgumentNullException("reader");
 
 			var container = new List<DictionaryEntry>();
 			reader.Context.Hierarchy.Push(container);
@@ -172,29 +168,21 @@ namespace GameDevWare.Serialization.Serializers
 				reader.Context.Hierarchy.Pop();
 			}
 		}
-
-		public override void Serialize(IJsonWriter writer, object dictionary)
+		public override void Serialize(IJsonWriter writer, object value)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (dictionary == null)
-			{
-				writer.WriteNull();
-				return;
-			}
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
 
 			// serialize generic dictionary
-			if (!(dictionary is IDictionary))
+			if (!(value is IDictionary))
 				throw new TypeContractViolation(this.GetType(), "be dictionary");
 
-			writer.Context.Hierarchy.Push(dictionary);
+			writer.Context.Hierarchy.Push(value);
 			// object
 			if (isStringKeyType)
 			{
-				writer.WriteObjectBegin((dictionary as IDictionary).Count);
-				foreach (DictionaryEntry pair in (dictionary as IDictionary))
+				writer.WriteObjectBegin((value as IDictionary).Count);
+				foreach (DictionaryEntry pair in (value as IDictionary))
 				{
 					var keyStr = default(string);
 					if (pair.Key is float)
@@ -213,8 +201,8 @@ namespace GameDevWare.Serialization.Serializers
 			}
 			else
 			{
-				writer.WriteArrayBegin((dictionary as IDictionary).Count);
-				foreach (DictionaryEntry pair in (dictionary as IDictionary))
+				writer.WriteArrayBegin((value as IDictionary).Count);
+				foreach (DictionaryEntry pair in (value as IDictionary))
 				{
 					writer.WriteArrayBegin(2);
 					writer.WriteValue(pair.Key, keyType);
@@ -232,20 +220,6 @@ namespace GameDevWare.Serialization.Serializers
 			if (keyType == null) throw new ArgumentNullException("keyType");
 
 			return keyType == typeof(string);
-			//keyType == typeof(Byte) ||
-			//keyType == typeof(SByte) ||
-			//keyType == typeof(Int16) ||
-			//keyType == typeof(UInt16) ||
-			//keyType == typeof(Int32) ||
-			//keyType == typeof(UInt32) ||
-			//keyType == typeof(Int64) ||
-			//keyType == typeof(UInt64) ||
-			//keyType == typeof(Single) ||
-			//keyType == typeof(Double) ||
-			//keyType == typeof(Decimal) ||
-			//keyType == typeof(String) ||
-			//keyType == typeof(Char) ||
-			//keyType.IsEnum;
 		}
 
 		public override string ToString()

@@ -63,9 +63,8 @@ namespace GameDevWare.Serialization
 			if (msgPackInput == null) throw new ArgumentNullException("msgPackInput");
 			if (!msgPackInput.CanRead) throw new UnreadableStream("msgPackInput");
 
-			var serializer = context.GetSerializerForType(objectType);
 			var reader = new MsgPackReader(msgPackInput, context);
-			return serializer.Deserialize(reader);
+			return reader.ReadValue(objectType, false);
 		}
 
 		public static T Deserialize<T>(Stream msgPackInput)

@@ -26,13 +26,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException("reader");
-
-
-			if (reader.Token == JsonToken.Null)
-				return null;
-
+			if (reader == null) throw new ArgumentNullException("reader");
 			var base64Str = Convert.ToString(reader.RawValue, reader.Context.Format);
 			var bytes = Convert.FromBase64String(base64Str);
 			return new MemoryStream(bytes);
@@ -40,15 +34,8 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override void Serialize(IJsonWriter writer, object value)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (value == null)
-			{
-				writer.WriteNull();
-				return;
-			}
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
 
 			var stream = value as Stream;
 

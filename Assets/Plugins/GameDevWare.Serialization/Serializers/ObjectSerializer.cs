@@ -63,11 +63,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException("reader");
-
-			if (reader.Token == JsonToken.Null)
-				return null;
+			if (reader == null) throw new ArgumentNullException("reader");
 
 			if (reader.Token != JsonToken.BeginObject)
 				throw new UnexpectedToken(reader, JsonToken.BeginObject);
@@ -90,15 +86,8 @@ namespace GameDevWare.Serialization.Serializers
 		}
 		public override void Serialize(IJsonWriter writer, object value)
 		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-
-
-			if (value == null)
-			{
-				writer.WriteNull();
-				return;
-			}
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
 
 			var container = new Dictionary<DataMemberDescription, object>();
 

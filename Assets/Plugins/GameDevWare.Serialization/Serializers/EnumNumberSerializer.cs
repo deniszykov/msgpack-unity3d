@@ -37,6 +37,8 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
+			if (reader == null) throw new ArgumentNullException("reader");
+
 			if (reader.Token == JsonToken.StringLiteral)
 				return Enum.Parse(this.enumType, reader.ReadString(false), true);
 			else if (reader.Token == JsonToken.Number)
@@ -47,6 +49,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override void Serialize(IJsonWriter writer, object value)
 		{
+			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
 
 			writer.WriteValue(Convert.ChangeType(value, this.enumBaseType), this.enumBaseType);

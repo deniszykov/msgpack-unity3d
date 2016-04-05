@@ -24,6 +24,8 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
+			if (reader == null) throw new ArgumentNullException("reader");
+
 			if (reader.Token == JsonToken.Number)
 				return new TimeSpan(reader.Value.AsInt64);
 
@@ -32,10 +34,13 @@ namespace GameDevWare.Serialization.Serializers
 			return value;
 		}
 
-		public override void Serialize(IJsonWriter writer, object valueObj)
+		public override void Serialize(IJsonWriter writer, object value)
 		{
-			var value = (TimeSpan)valueObj;
-			writer.Write((long)value.Ticks);
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
+
+			var timeSpan = (TimeSpan)value;
+			writer.Write((long)timeSpan.Ticks);
 		}
 	}
 }

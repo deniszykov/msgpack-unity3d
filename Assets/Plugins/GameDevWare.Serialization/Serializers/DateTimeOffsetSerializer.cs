@@ -27,6 +27,8 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override object Deserialize(IJsonReader reader)
 		{
+			if (reader == null) throw new ArgumentNullException("reader");
+
 			if (reader.Token == JsonToken.DateTime)
 				return new DateTimeOffset(reader.Value.AsDateTime, TimeSpan.Zero);
 
@@ -47,12 +49,15 @@ namespace GameDevWare.Serialization.Serializers
 			}
 		}
 
-		public override void Serialize(IJsonWriter writer, object valueObj)
+		public override void Serialize(IJsonWriter writer, object value)
 		{
-			var value = (DateTimeOffset)valueObj;
+			if (writer == null) throw new ArgumentNullException("writer");
+			if (value == null) throw new ArgumentNullException("value");
+
+			var dateTimeOffset = (DateTimeOffset)value;
 
 			var dateTimeFormat = Enumerable.FirstOrDefault(writer.Context.DateTimeFormats);
-			var valueStr = value.ToString(dateTimeFormat, writer.Context.Format);
+			var valueStr = dateTimeOffset.ToString(dateTimeFormat, writer.Context.Format);
 			writer.Write(valueStr);
 		}
 	}
