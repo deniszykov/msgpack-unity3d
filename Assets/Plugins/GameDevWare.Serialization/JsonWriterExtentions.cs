@@ -275,10 +275,9 @@ namespace GameDevWare.Serialization
 
 			var actualValueType = value.GetType();
 			var serializer = writer.Context.GetSerializerForType(actualValueType);
-			var objectSerializer = serializer as ObjectSerializer;
-
-			if (objectSerializer != null && valueType == actualValueType)
-				objectSerializer.SuppressTypeInformation = true; // no need to write type information on when type is obvious
+			//var objectSerializer = serializer as ObjectSerializer;
+			//if (objectSerializer != null && valueType == actualValueType)
+			//	objectSerializer.SuppressTypeInformation = true; // no need to write type information on when type is obvious
 
 			serializer.Serialize(writer, value);
 		}
