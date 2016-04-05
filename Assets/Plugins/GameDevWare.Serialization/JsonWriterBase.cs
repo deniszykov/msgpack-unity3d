@@ -254,7 +254,7 @@ namespace GameDevWare.Serialization
 		}
 		private void WriteFormatting(JsonToken token)
 		{
-			if (this.structStack.Count < 0)
+			if (this.structStack.Count <= 0)
 				return;
 
 			var stackPeek = this.structStack.Peek();

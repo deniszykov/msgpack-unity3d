@@ -119,11 +119,19 @@ namespace GameDevWare.Serialization
 
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput)
 		{
-			Serialize(objectToSerialize, jsonOutput, CreateDefaultContext(SerializationOptions.None));
+			Serialize<T>(objectToSerialize, jsonOutput, CreateDefaultContext(SerializationOptions.None));
+		}
+		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, Encoding encoding)
+		{
+			Serialize(objectToSerialize, jsonOutput, CreateDefaultContext(SerializationOptions.None, encoding));
 		}
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, SerializationOptions options)
 		{
-			Serialize(objectToSerialize, jsonOutput, CreateDefaultContext(options));
+			Serialize<T>(objectToSerialize, jsonOutput, CreateDefaultContext(options));
+		}
+		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, SerializationOptions options, Encoding encoding)
+		{
+			Serialize(objectToSerialize, jsonOutput, CreateDefaultContext(options, encoding));
 		}
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, ISerializationContext context)
 		{
@@ -133,7 +141,7 @@ namespace GameDevWare.Serialization
 
 			if (objectToSerialize == null)
 			{
-				var bytes = DefaultEncoding.GetBytes("null");
+				var bytes = context.Encoding.GetBytes("null");
 				jsonOutput.Write(bytes, 0, bytes.Length);
 				return;
 			}
@@ -211,9 +219,17 @@ namespace GameDevWare.Serialization
 		{
 			return Deserialize(objectType, jsonStream, CreateDefaultContext(SerializationOptions.None));
 		}
+		public static object Deserialize(Type objectType, Stream jsonStream, Encoding encoding)
+		{
+			return Deserialize(objectType, jsonStream, CreateDefaultContext(SerializationOptions.None, encoding));
+		}
 		public static object Deserialize(Type objectType, Stream jsonStream, SerializationOptions options)
 		{
 			return Deserialize(objectType, jsonStream, CreateDefaultContext(options));
+		}
+		public static object Deserialize(Type objectType, Stream jsonStream, SerializationOptions options, Encoding encoding)
+		{
+			return Deserialize(objectType, jsonStream, CreateDefaultContext(options, encoding));
 		}
 		public static object Deserialize(Type objectType, Stream jsonStream, ISerializationContext context)
 		{
@@ -294,9 +310,17 @@ namespace GameDevWare.Serialization
 		{
 			return (T)Deserialize(typeof(T), jsonStream, CreateDefaultContext(SerializationOptions.None));
 		}
+		public static T Deserialize<T>(Stream jsonStream, Encoding encoding)
+		{
+			return (T)Deserialize(typeof(T), jsonStream, CreateDefaultContext(SerializationOptions.None, encoding));
+		}
 		public static T Deserialize<T>(Stream jsonStream, SerializationOptions options)
 		{
 			return (T)Deserialize(typeof(T), jsonStream, CreateDefaultContext(options));
+		}
+		public static T Deserialize<T>(Stream jsonStream, SerializationOptions options, Encoding encoding)
+		{
+			return (T)Deserialize(typeof(T), jsonStream, CreateDefaultContext(options, encoding));
 		}
 		public static T Deserialize<T>(Stream jsonStream, ISerializationContext context)
 		{
@@ -351,10 +375,11 @@ namespace GameDevWare.Serialization
 			return (T)serializer.Deserialize(reader);
 		}
 
-		private static ISerializationContext CreateDefaultContext(SerializationOptions options)
+		private static ISerializationContext CreateDefaultContext(SerializationOptions options, Encoding encoding = null)
 		{
 			return new DefaultSerializationContext
 			{
+				Encoding = encoding ?? DefaultEncoding,
 				Options = options
 			};
 		}

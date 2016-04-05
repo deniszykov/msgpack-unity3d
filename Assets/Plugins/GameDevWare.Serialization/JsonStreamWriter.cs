@@ -15,6 +15,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 */
 using System;
 using System.IO;
+using System.Text;
 using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
@@ -22,20 +23,11 @@ namespace GameDevWare.Serialization
 {
 	public sealed class JsonStreamWriter : JsonWriterBase
 	{
-		private StreamWriter writer;
+		private readonly StreamWriter writer;
 
-		public Stream Stream
-		{
-			get { return writer.BaseStream; }
-		}
+		public Stream Stream { get { return writer.BaseStream; } }
 
-		private StreamWriter Writer
-		{
-			get { return writer; }
-		}
-
-		public JsonStreamWriter(Stream stream, ISerializationContext context)
-			: base(context)
+		public JsonStreamWriter(Stream stream, ISerializationContext context) : base(context)
 		{
 			if (stream == null)
 				throw new ArgumentNullException("stream");
@@ -73,6 +65,7 @@ namespace GameDevWare.Serialization
 
 			if (charactersToWrite == 0)
 				return;
+
 			writer.Write(jsonString, index, charactersToWrite);
 			this.CharactersWritten += charactersToWrite;
 		}
