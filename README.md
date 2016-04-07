@@ -1,6 +1,6 @@
 # Introduction
 
-This [package](https://www.assetstore.unity3d.com/#!/content/59918) provides API for data serialization/de-serialization into [MessagePack](https://en.wikipedia.org/wiki/MessagePack) and [JSON](https://ru.wikipedia.org/wiki/JSON) format. 
+This [package](https://www.assetstore.unity3d.com/#!/content/59918) provides API for data serialization/de-serialization into [MessagePack](https://en.wikipedia.org/wiki/MessagePack) and [JSON](https://ru.wikipedia.org/wiki/JSON) formats. 
 
 Supported Platforms:
 * PC/Mac
@@ -16,6 +16,16 @@ Supported Platforms:
 * MsgPack
 	* Serialize
 	* Deserialize
+
+##Installation
+Nuget
+```bash
+PM> Install-Package GameDevWare.Serialization 
+```
+Unity3D
+```bash
+[Json + MessagePack Serializer](https://www.assetstore.unity3d.com/#!/content/59918)
+```
 
 ## Example
 Serialize object into [Stream](https://msdn.microsoft.com/en-us/library/system.io.stream%28v=vs.90%29.aspx) using MessagePack serializer:

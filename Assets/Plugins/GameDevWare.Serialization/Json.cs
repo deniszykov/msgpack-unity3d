@@ -20,7 +20,6 @@ using System.IO;
 using System.Text;
 using GameDevWare.Serialization.Exceptions;
 using GameDevWare.Serialization.Serializers;
-using UnityEngine;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
@@ -66,7 +65,8 @@ namespace GameDevWare.Serialization
 
 		static Json()
 		{
-			_DefaultDateTimeFormats = new string[]
+			// ReSharper disable StringLiteralTypo
+			_DefaultDateTimeFormats = new[]
 			{
 				"yyyy-MM-ddTHH:mm:ss.fffzzz", // ISO 8601, with timezone
 				"yyyy-MM-ddTHH:mm:ss.ffzzz", // ISO 8601, with timezone
@@ -80,6 +80,7 @@ namespace GameDevWare.Serialization
 				"yyyy-MM-ddTHH:mm:ss.ffffffZ", // also ISO 8601, without timezone
 				"yyyy-MM-ddTHH:mm:ss.fffffffZ" // also ISO 8601, without timezone
 			};
+			// ReSharper restore StringLiteralTypo
 
 			DefaultSerializers = new List<TypeSerializer>
 			{
@@ -119,7 +120,7 @@ namespace GameDevWare.Serialization
 
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput)
 		{
-			Serialize<T>(objectToSerialize, jsonOutput, CreateDefaultContext(SerializationOptions.None));
+			Serialize(objectToSerialize, jsonOutput, CreateDefaultContext(SerializationOptions.None));
 		}
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, Encoding encoding)
 		{
@@ -127,7 +128,7 @@ namespace GameDevWare.Serialization
 		}
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, SerializationOptions options)
 		{
-			Serialize<T>(objectToSerialize, jsonOutput, CreateDefaultContext(options));
+			Serialize(objectToSerialize, jsonOutput, CreateDefaultContext(options));
 		}
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, SerializationOptions options, Encoding encoding)
 		{
