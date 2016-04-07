@@ -23,6 +23,7 @@ Nuget
 PM> Install-Package GameDevWare.Serialization 
 ```
 Unity3D
+
 [Json + MessagePack Serializer](https://www.assetstore.unity3d.com/#!/content/59918)
 
 ## Example
