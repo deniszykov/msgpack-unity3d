@@ -23,9 +23,7 @@ Nuget
 PM> Install-Package GameDevWare.Serialization 
 ```
 Unity3D
-```bash
 [Json + MessagePack Serializer](https://www.assetstore.unity3d.com/#!/content/59918)
-```
 
 ## Example
 Serialize object into [Stream](https://msdn.microsoft.com/en-us/library/system.io.stream%28v=vs.90%29.aspx) using MessagePack serializer:
