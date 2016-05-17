@@ -75,17 +75,17 @@ public class Benchmark : MonoBehaviour
 		var sw = Stopwatch.StartNew();
 
 		// warmup
-		UnityEngine.Debug.Log(string.Format("[{0}] Warming-up {1} Serializer", typeof(T).Name, serializeFn.Method.DeclaringType.Name));
+		//UnityEngine.Debug.Log(string.Format("[{0}] Warming-up {1} Serializer", typeof(T).Name, serializeFn.Method.DeclaringType.Name));
 		serializeFn(InfiniteEnumerable(value).Take(ItemsToSerialize / 100), output);
 
-		UnityEngine.Debug.Log(string.Format("[{0}] Running {1} Serializer", typeof(T).Name, serializeFn.Method.DeclaringType.Name));
+		//UnityEngine.Debug.Log(string.Format("[{0}] Running {1} Serializer", typeof(T).Name, serializeFn.Method.DeclaringType.Name));
 		// reset
 		GC.Collect();
 		output.SetLength(0);
 		sw.Start();
 		serializeFn(InfiniteEnumerable(value).Take(ItemsToSerialize), output);
 		sw.Stop();
-		UnityEngine.Debug.Log(string.Format("[{0}] {1} Serializer finished in {2:F2}ms, {3} bytes are written.", typeof(T).Name, serializeFn.Method.DeclaringType.Name, sw.ElapsedMilliseconds, output.Length));
+		//UnityEngine.Debug.Log(string.Format("[{0}] {1} Serializer finished in {2:F2}ms, {3} bytes are written.", typeof(T).Name, serializeFn.Method.DeclaringType.Name, sw.ElapsedMilliseconds, output.Length));
 		UnityEngine.Debug.Log(string.Format("[{0}] {1} | size(bytes) {2} | object/s {3:F0} | bandwidth {4:F2} Mb/s", typeof(T).Name, serializeFn.Method.DeclaringType.Name,
 			output.Length / ItemsToSerialize,
 			ItemsToSerialize * (1 / sw.Elapsed.TotalSeconds),
@@ -99,19 +99,19 @@ public class Benchmark : MonoBehaviour
 		var sw = Stopwatch.StartNew();
 
 		// warmup
-		UnityEngine.Debug.Log(string.Format("[{0}] Warming-up {1} deserializer", typeof(T).Name, serializeFn.Method.DeclaringType.Name));
+		//UnityEngine.Debug.Log(string.Format("[{0}] Warming-up {1} deserializer", typeof(T).Name, serializeFn.Method.DeclaringType.Name));
 		serializeFn(InfiniteEnumerable(value).Take(ItemsToSerialize / 100), output);
 		output.Position = 0;
 		deserializeFn(output);
 
-		UnityEngine.Debug.Log(string.Format("[{0}] Running {1} deserializer", typeof(T).Name, serializeFn.Method.DeclaringType.Name));
+		//UnityEngine.Debug.Log(string.Format("[{0}] Running {1} deserializer", typeof(T).Name, serializeFn.Method.DeclaringType.Name));
 		// reset
 		GC.Collect();
 		sw.Start();
 		output.Position = 0;
 		deserializeFn(output);
 		sw.Stop();
-		UnityEngine.Debug.Log(string.Format("[{0}] {1} Deserializer finished in {2:F2}ms, {3} bytes are readed.", typeof(T).Name, serializeFn.Method.DeclaringType.Name, sw.ElapsedMilliseconds, output.Length));
+		//UnityEngine.Debug.Log(string.Format("[{0}] {1} Deserializer finished in {2:F2}ms, {3} bytes are readed.", typeof(T).Name, serializeFn.Method.DeclaringType.Name, sw.ElapsedMilliseconds, output.Length));
 		UnityEngine.Debug.Log(string.Format("[{0}] {1} | size(bytes) {2} | object/s {3:F0} | bandwidth {4:F2} Mb/s", typeof(T).Name, serializeFn.Method.DeclaringType.Name,
 			output.Length / (ItemsToSerialize / 100),
 			ItemsToSerialize / 100.0 * (1 / sw.Elapsed.TotalSeconds),

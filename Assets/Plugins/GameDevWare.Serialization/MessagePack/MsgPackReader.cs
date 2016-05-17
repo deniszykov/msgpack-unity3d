@@ -170,8 +170,11 @@ namespace GameDevWare.Serialization.MessagePack
 		private readonly byte[] buffer;
 		private readonly EndianBitConverter bitConverter;
 		private readonly Stack<ClosingToken> closingTokens;
+		private int bufferOffset;
+		private int bufferReaded;
+		private int bufferAvailable;
 		private bool isEndOfStream;
-		private int bytesReaded;
+		private int totalBytesReaded;
 
 		public ISerializationContext Context { get; private set; }
 		JsonToken IJsonReader.Token
@@ -208,7 +211,7 @@ namespace GameDevWare.Serialization.MessagePack
 		}
 		long IJsonReader.CharactersReaded
 		{
-			get { return this.bytesReaded; }
+			get { return this.totalBytesReaded; }
 		}
 		internal MsgPackValueInfo Value { get; private set; }
 
@@ -220,7 +223,10 @@ namespace GameDevWare.Serialization.MessagePack
 
 			this.Context = context;
 			this.inputStream = stream;
-			this.buffer = new byte[16];
+			this.buffer = new byte[8 * 1024]; // 8kb
+			this.bufferOffset = 0;
+			this.bufferReaded = 0;
+			this.bufferAvailable = 0;
 			this.bitConverter = EndianBitConverter.Little;
 			this.closingTokens = new Stack<ClosingToken>();
 
@@ -234,7 +240,7 @@ namespace GameDevWare.Serialization.MessagePack
 			if (this.closingTokens.Count > 0 && this.closingTokens.Peek().Counter == 0)
 			{
 				var closingToken = this.closingTokens.Pop();
-				this.Value.SetValue(null, closingToken.Token, this.bytesReaded);
+				this.Value.SetValue(null, closingToken.Token, this.totalBytesReaded);
 
 				this.DecrementClosingTokenCounter();
 
@@ -247,8 +253,8 @@ namespace GameDevWare.Serialization.MessagePack
 				return false;
 			}
 
-			var pos = this.bytesReaded;
-			var formatValue = buffer[0];
+			var pos = this.totalBytesReaded;
+			var formatValue = buffer[this.bufferOffset];
 			if (formatValue >= (byte)MsgPackType.FixArrayStart && formatValue <= (byte)MsgPackType.FixArrayEnd)
 			{
 				var arrayCount = formatValue - (byte)MsgPackType.FixArrayStart;
@@ -285,12 +291,12 @@ namespace GameDevWare.Serialization.MessagePack
 						if (formatValue == (int)MsgPackType.Array16)
 						{
 							this.ReadToBuffer(2, throwOnEos: true);
-							arrayCount = bitConverter.ToUInt16(this.buffer, 0);
+							arrayCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
 						}
 						else if (formatValue == (int)MsgPackType.Array32)
 						{
 							this.ReadToBuffer(4, throwOnEos: true);
-							arrayCount = bitConverter.ToUInt32(this.buffer, 0);
+							arrayCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
 						}
 						this.closingTokens.Push(new ClosingToken { Token = JsonToken.EndOfArray, Counter = arrayCount + 1 });
 						this.Value.SetValue(null, JsonToken.BeginArray, pos);
@@ -301,12 +307,12 @@ namespace GameDevWare.Serialization.MessagePack
 						if (formatValue == (int)MsgPackType.Map16)
 						{
 							this.ReadToBuffer(2, throwOnEos: true);
-							mapCount = bitConverter.ToUInt16(this.buffer, 0);
+							mapCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
 						}
 						else if (formatValue == (int)MsgPackType.Map32)
 						{
 							this.ReadToBuffer(4, throwOnEos: true);
-							mapCount = bitConverter.ToUInt32(this.buffer, 0);
+							mapCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
 						}
 						this.closingTokens.Push(new ClosingToken { Token = JsonToken.EndOfObject, Counter = mapCount * 2 + 1 });
 						this.Value.SetValue(null, JsonToken.BeginObject, pos);
@@ -318,17 +324,17 @@ namespace GameDevWare.Serialization.MessagePack
 						if (formatValue == (int)MsgPackType.Str8)
 						{
 							this.ReadToBuffer(1, throwOnEos: true);
-							strBytesCount = this.buffer[0];
+							strBytesCount = this.buffer[this.bufferOffset];
 						}
 						else if (formatValue == (int)MsgPackType.Str16)
 						{
 							this.ReadToBuffer(2, throwOnEos: true);
-							strBytesCount = bitConverter.ToUInt16(this.buffer, 0);
+							strBytesCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
 						}
 						else if (formatValue == (int)MsgPackType.Str32)
 						{
 							this.ReadToBuffer(4, throwOnEos: true);
-							strBytesCount = bitConverter.ToUInt32(this.buffer, 0);
+							strBytesCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
 						}
 
 						var strTokenType = JsonToken.StringLiteral;
@@ -340,7 +346,7 @@ namespace GameDevWare.Serialization.MessagePack
 						}
 
 						var strBytes = this.ReadBytes(strBytesCount);
-						var strValue = this.Context.Encoding.GetString(strBytes);
+						var strValue = this.Context.Encoding.GetString(strBytes.Array, strBytes.Offset, strBytes.Count);
 						this.Value.SetValue(strValue, strTokenType, pos);
 						break;
 					case MsgPackType.Bin32:
@@ -350,21 +356,21 @@ namespace GameDevWare.Serialization.MessagePack
 						if (formatValue == (int)MsgPackType.Bin8)
 						{
 							this.ReadToBuffer(1, throwOnEos: true);
-							bytesCount = this.buffer[0];
+							bytesCount = this.buffer[this.bufferOffset];
 						}
 						else if (formatValue == (int)MsgPackType.Bin16)
 						{
 							this.ReadToBuffer(2, throwOnEos: true);
-							bytesCount = bitConverter.ToUInt16(this.buffer, 0);
+							bytesCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
 						}
 						else if (formatValue == (int)MsgPackType.Bin32)
 						{
 							this.ReadToBuffer(4, throwOnEos: true);
-							bytesCount = bitConverter.ToUInt32(this.buffer, 0);
+							bytesCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
 						}
 
 						var bytes = this.ReadBytes(bytesCount);
-						var base64Bytes = Convert.ToBase64String(bytes);
+						var base64Bytes = Convert.ToBase64String(bytes.Array, bytes.Offset, bytes.Count);
 						this.Value.SetValue(base64Bytes, JsonToken.StringLiteral, pos);
 						break;
 					case MsgPackType.FixExt1:
@@ -389,21 +395,21 @@ namespace GameDevWare.Serialization.MessagePack
 						if (formatValue == (int)MsgPackType.Ext8)
 						{
 							this.ReadToBuffer(1, throwOnEos: true);
-							dataCount = this.buffer[0];
+							dataCount = this.buffer[this.bufferOffset];
 						}
 						else if (formatValue == (int)MsgPackType.Ext16)
 						{
 							this.ReadToBuffer(2, throwOnEos: true);
-							dataCount = bitConverter.ToUInt16(this.buffer, 0);
+							dataCount = bitConverter.ToUInt16(this.buffer, this.bufferOffset);
 						}
 						else if (formatValue == (int)MsgPackType.Ext32)
 						{
 							this.ReadToBuffer(4, throwOnEos: true);
-							dataCount = bitConverter.ToUInt32(this.buffer, 0);
+							dataCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
 						}
 
 						this.ReadToBuffer(1, throwOnEos: true);
-						var extType = buffer[0];
+						var extType = buffer[this.bufferOffset];
 
 						var data = this.ReadBytes(dataCount);
 						this.ReadExtType(extType, data, pos);
@@ -416,43 +422,43 @@ namespace GameDevWare.Serialization.MessagePack
 						break;
 					case MsgPackType.Float32:
 						this.ReadToBuffer(4, throwOnEos: true);
-						this.Value.SetValue(bitConverter.ToSingle(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue(bitConverter.ToSingle(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.Float64:
 						this.ReadToBuffer(8, throwOnEos: true);
-						this.Value.SetValue(bitConverter.ToDouble(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue(bitConverter.ToDouble(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.Int16:
 						this.ReadToBuffer(2, throwOnEos: true);
-						this.Value.SetValue(bitConverter.ToInt16(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue(bitConverter.ToInt16(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.Int32:
 						this.ReadToBuffer(4, throwOnEos: true);
-						this.Value.SetValue(bitConverter.ToInt32(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue(bitConverter.ToInt32(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.Int64:
 						this.ReadToBuffer(8, throwOnEos: true);
-						this.Value.SetValue(bitConverter.ToInt64(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue(bitConverter.ToInt64(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.Int8:
 						this.ReadToBuffer(1, throwOnEos: true);
-						this.Value.SetValue((sbyte)buffer[0], JsonToken.Number, pos);
+						this.Value.SetValue((sbyte)buffer[this.bufferOffset], JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt16:
 						this.ReadToBuffer(2, throwOnEos: true);
-						this.Value.SetValue((ushort)bitConverter.ToInt16(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue((ushort)bitConverter.ToInt16(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt32:
 						this.ReadToBuffer(4, throwOnEos: true);
-						this.Value.SetValue((uint)bitConverter.ToInt32(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue((uint)bitConverter.ToInt32(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt64:
 						this.ReadToBuffer(8, throwOnEos: true);
-						this.Value.SetValue((ulong)bitConverter.ToInt64(buffer, 0), JsonToken.Number, pos);
+						this.Value.SetValue((ulong)bitConverter.ToInt64(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt8:
 						this.ReadToBuffer(1, throwOnEos: true);
-						this.Value.SetValue(buffer[0], JsonToken.Number, pos);
+						this.Value.SetValue(buffer[this.bufferOffset], JsonToken.Number, pos);
 						break;
 					default:
 						throw new UnknownMsgPackFormatException(formatValue);
@@ -466,7 +472,10 @@ namespace GameDevWare.Serialization.MessagePack
 		public void Reset()
 		{
 			Array.Clear(this.buffer, 0, this.buffer.Length);
-			this.bytesReaded = 0;
+			this.bufferOffset = 0;
+			this.bufferAvailable = 0;
+			this.bufferReaded = 0;
+			this.totalBytesReaded = 0;
 			this.Value.Reset();
 		}
 		public bool IsEndOfStream()
@@ -474,40 +483,81 @@ namespace GameDevWare.Serialization.MessagePack
 			return isEndOfStream;
 		}
 
-		private bool ReadToBuffer(int bytesCount, bool throwOnEos)
+		private bool ReadToBuffer(int bytesRequired, bool throwOnEos)
 		{
-			if (this.inputStream.Read(buffer, 0, bytesCount) != bytesCount)
-			{
-				if (throwOnEos)
-					throw new UnexpectedEndOfStream(this);
+			this.bufferAvailable -= this.bufferReaded;
+			this.bufferOffset += this.bufferReaded;
+			this.bufferReaded = 0;
 
-				return false;
+			if (this.bufferAvailable < bytesRequired)
+			{
+				if (this.bufferAvailable > 0)
+				{
+					Buffer.BlockCopy(this.buffer, this.bufferOffset, this.buffer, 0, this.bufferAvailable);
+					this.bufferOffset = 0;
+				}
+
+				this.bufferOffset = 0;
+				this.bufferAvailable += this.inputStream.Read(buffer, this.bufferAvailable, this.buffer.Length - this.bufferAvailable);
+
+				if (this.bufferAvailable < bytesRequired)
+				{
+					if (throwOnEos)
+						throw new UnexpectedEndOfStream(this);
+
+					return false;
+				}
 			}
-			this.bytesReaded += 1;
+
+			this.bufferReaded = bytesRequired;
+			this.totalBytesReaded += bytesRequired;
 			return true;
 		}
-		private byte[] ReadBytes(long byteCount)
+		private ArraySegment<byte> ReadBytes(long bytesRequired)
 		{
-			var bytes = new byte[byteCount];
-			if (this.inputStream.Read(bytes, 0, bytes.Length) != bytes.Length)
-				throw new UnexpectedEndOfStream(this);
+			this.bufferAvailable -= this.bufferReaded;
+			this.bufferOffset += this.bufferReaded;
+			this.bufferReaded = 0;
 
-			this.bytesReaded += (int)byteCount;
+			if (this.bufferAvailable >= bytesRequired)
+			{
+				var bytes = new ArraySegment<byte>(this.buffer, this.bufferOffset, (int) bytesRequired);
 
-			return bytes;
+				this.bufferAvailable -= (int)bytesRequired;
+				this.bufferOffset += (int)bytesRequired;
+				this.totalBytesReaded += (int)bytesRequired;
+
+				return bytes;
+			}
+			else
+			{
+				var bytes = new byte[bytesRequired];
+				if (this.bufferAvailable > 0)
+					Buffer.BlockCopy(this.buffer, this.bufferOffset, bytes, 0, this.bufferAvailable);
+
+				var offset = this.bufferAvailable;
+				if (this.inputStream.Read(bytes, offset, bytes.Length - offset) != (bytes.Length - offset))
+					throw new UnexpectedEndOfStream(this);
+
+				this.bufferAvailable = 0;
+				this.bufferOffset = 0;
+				this.totalBytesReaded += (int)bytesRequired;
+
+				return new ArraySegment<byte>(bytes, 0, bytes.Length);
+			}
 		}
-		private void ReadExtType(byte extType, byte[] data, int pos)
+		private void ReadExtType(byte extType, ArraySegment<byte> data, int pos)
 		{
 			switch ((MsgPackExtType)extType)
 			{
 				case MsgPackExtType.DateTime:
-					this.Value.SetValue(new DateTime(bitConverter.ToInt64(data, 0), DateTimeKind.Utc), JsonToken.DateTime, pos);
+					this.Value.SetValue(new DateTime(bitConverter.ToInt64(data.Array, data.Offset), DateTimeKind.Utc), JsonToken.DateTime, pos);
 					break;
 				case MsgPackExtType.Decimal:
-					this.Value.SetValue(bitConverter.ToDecimal(data, 0), JsonToken.Number, pos);
+					this.Value.SetValue(bitConverter.ToDecimal(data.Array, data.Offset), JsonToken.Number, pos);
 					break;
 				case MsgPackExtType.JsonString:
-					this.Value.SetValue(new JsonString(this.Context.Encoding.GetString(data)), JsonToken.StringLiteral, pos);
+					this.Value.SetValue(new JsonString(this.Context.Encoding.GetString(data.Array, data.Offset, data.Count)), JsonToken.StringLiteral, pos);
 					break;
 				default:
 					throw new UnknownMsgPackExtentionTypeException(extType);

@@ -26,6 +26,7 @@ namespace GameDevWare.Serialization.Metadata
 	internal class TypeDescription : MemberDescription
 	{
 		private readonly Type objectType;
+		private readonly Func<object> constructorFn;
 		private readonly ReadOnlyCollection<DataMemberDescription> members;
 		private readonly Dictionary<string, DataMemberDescription> membersByName;
 
@@ -38,10 +39,12 @@ namespace GameDevWare.Serialization.Metadata
 			if (objectType == null) throw new ArgumentNullException("objectType");
 
 			this.objectType = objectType;
-			var members = FindMembers(objectType);
 
+			var members = FindMembers(objectType);
 			this.members = members.AsReadOnly();
 			this.membersByName = members.ToDictionary(m => m.Name);
+
+			GettersAndSetters.TryGetConstructor(objectType, out this.constructorFn);
 		}
 
 		private static List<DataMemberDescription> FindMembers(Type objectType)
@@ -91,6 +94,14 @@ namespace GameDevWare.Serialization.Metadata
 		public bool TryGetMember(string name, out DataMemberDescription member)
 		{
 			return this.membersByName.TryGetValue(name, out member);
+		}
+
+		public object CreateInstance()
+		{
+			if (this.constructorFn != null)
+				return this.constructorFn();
+			else
+				return Activator.CreateInstance(this.objectType);
 		}
 
 		public override string ToString()

@@ -41,7 +41,7 @@ namespace GameDevWare.Serialization.Metadata
 			this.getMethod = propertyInfo.GetGetMethod(nonPublic: true);
 			this.setMethod = propertyInfo.GetSetMethod(nonPublic: true);
 
-			GettersAndSetters.TryGetAssessors(propertyInfo.PropertyType, this.getMethod, this.setMethod, out this.getFn, out this.setFn);
+			GettersAndSetters.TryGetAssessors(this.getMethod, this.setMethod, out this.getFn, out this.setFn);
 		}
 
 		public override object GetValue(object target)

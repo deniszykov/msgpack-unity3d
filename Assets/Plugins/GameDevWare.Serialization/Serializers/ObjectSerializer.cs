@@ -186,7 +186,7 @@ namespace GameDevWare.Serialization.Serializers
 				return container;
 
 			if (instance == null)
-				instance = Activator.CreateInstance(objectType);
+				instance = objectTypeDescription.CreateInstance();
 
 			foreach (var member in this.objectTypeDescription.Members)
 			{

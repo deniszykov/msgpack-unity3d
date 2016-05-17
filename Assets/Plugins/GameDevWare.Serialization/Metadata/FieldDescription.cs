@@ -22,6 +22,8 @@ namespace GameDevWare.Serialization.Metadata
 	internal sealed class FieldDescription : DataMemberDescription
 	{
 		private readonly FieldInfo fieldInfo;
+		private readonly Func<object, object> getFn;
+		private readonly Action<object, object> setFn;
 
 		public override bool CanGet { get { return true; } }
 		public override bool CanSet { get { return this.fieldInfo.IsInitOnly == false; } }
@@ -33,20 +35,29 @@ namespace GameDevWare.Serialization.Metadata
 			if (fieldInfo == null) throw new ArgumentNullException("fieldInfo");
 
 			this.fieldInfo = fieldInfo;
+
+			GettersAndSetters.TryGetAssessors(fieldInfo, out this.getFn, out this.setFn);
+
 		}
 
 		public override object GetValue(object target)
 		{
 			if (!this.CanGet) throw new InvalidOperationException("Field is write-only.");
 
-			return fieldInfo.GetValue(target);
+			if (this.getFn != null)
+				return this.getFn(target);
+			else
+				return fieldInfo.GetValue(target);
 		}
 
 		public override void SetValue(object target, object value)
 		{
 			if (!this.CanSet) throw new InvalidOperationException("Field is read-only.");
 
-			this.fieldInfo.SetValue(target, value);
+			if (this.setFn != null)
+				this.setFn(target, value);
+			else
+				this.fieldInfo.SetValue(target, value);
 		}
 	}
 }
