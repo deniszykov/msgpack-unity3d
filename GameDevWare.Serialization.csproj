@@ -66,6 +66,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Metadata\ReflectionUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\ArgumentNullOrEmptyException.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\DataContractException.cs" />
@@ -112,7 +113,6 @@
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\MessagePack\UnknownMsgPackFormatException.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Metadata\DataMemberDescription.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Metadata\FieldDescription.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Metadata\GettersAndSetters.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Metadata\MemberDescription.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Metadata\PropertyDescription.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Metadata\TypeDescription.cs" />
@@ -145,10 +145,6 @@
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\VersionSerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\TypeSerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\TypeSerializerAttribute.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Plugins\GameDevWare.Serialization\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
-    <None Include="Assets\Plugins\GameDevWare.Serialization\obj\Debug\GameDevWare.Serialization.csprojResolveAssemblyReference.cache" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
