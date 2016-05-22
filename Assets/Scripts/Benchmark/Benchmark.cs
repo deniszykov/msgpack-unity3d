@@ -1,3 +1,18 @@
+﻿/* 
+	Copyright (c) 2016 Denis Zykov, GameDevWare.com
+
+	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
+	
+	This source code is distributed via Unity Asset Store, 
+	to use it in your project you should accept Terms of Service and EULA 
+	https://unity3d.com/ru/legal/as_terms
+*/
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -127,21 +142,22 @@ public class Benchmark : MonoBehaviour
 	/*
 	Intel(R) Core(TM) i5-3570 CPU @ 3.40GHz
 
-	| size(bytes) 645 | object/s 7766  | bandwidth 5.00  Mb/s
-	| size(bytes) 85  | object/s 34916 | bandwidth 2.96  Mb/s
-	| size(bytes) 34  | object/s 72254 | bandwidth 2.45  Mb/s
-
-	| size(bytes) 645 | object/s 570   | bandwidth 0.36  Mb/s
-	| size(bytes) 85  | object/s 23923 | bandwidth 2.03  Mb/s
-	| size(bytes) 34  | object/s 29334 | bandwidth 1.00  Mb/s
-
-	| size(bytes) 570 | object/s 14974  | bandwidth 8.53  Mb/s
-	| size(bytes) 79  | object/s 134048 | bandwidth 10.58 Mb/s
-	| size(bytes) 26  | object/s 191938 | bandwidth 5.00  Mb/s
-
-	| size(bytes) 570 | object/s 985   | bandwidth 0.56  Mb/s
-	| size(bytes) 79  | object/s 35663 | bandwidth 2.81 Mb/s
-	| size(bytes) 26  | object/s 37792 | bandwidth 1.00  Mb/s
+	Serialization:
+			| size(bytes)   | object/sec.	| bandwidth 	
+	Json	| 744			| 7658			| 5.43 Mb/s
+	Json	| 154			| 30853			| 4.53 Mb/s
+	Json	| 102			| 64888			| 6.31 Mb/s
+	MsgPack | 666			| 15206			| 9.66 Mb/s
+	MsgPack | 146			| 123475		| 17.19 Mb/s
+	MsgPack | 92			| 155038		| 13.60 Mb/s
+	
+	De-serialization:
+	Json	| 744			| 268			| 0.19 Mb/s
+	Json	| 154			| 7218			| 1.06 Mb/s
+	Json	| 102			| 9981			| 0.97 Mb/s	
+	MsgPack | 666			| 474			| 0.30 Mb/s
+	MsgPack | 146			| 15153			| 2.11 Mb/s
+	MsgPack | 92			| 15278			| 1.34 Mb/s
 
 	*/
 }
