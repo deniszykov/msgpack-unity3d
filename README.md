@@ -92,7 +92,6 @@ MsgPack.Serialize(value, stream, SerializationOptions.SuppressTypeInformation);
 ```
 If you want to ignore type information when deserializing an object, specify *SuppressTypeInformation* when calling **Deserialize** method.
 ```csharp
-Stream inputStream;
 MsgPack.Deserialize(typeof(MyObject), stream, SerializationOptions.SuppressTypeInformation);
 ```
 
