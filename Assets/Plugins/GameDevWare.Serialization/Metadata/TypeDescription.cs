@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -42,7 +42,7 @@ namespace GameDevWare.Serialization.Metadata
 
 			var members = FindMembers(objectType);
 			this.members = members.AsReadOnly();
-			this.membersByName = members.ToDictionary(m => m.Name);
+			this.membersByName = members.ToDictionary(m => m.Name, StringComparer.Ordinal);
 
 			GettersAndSetters.TryGetConstructor(objectType, out this.constructorFn);
 		}
@@ -52,7 +52,7 @@ namespace GameDevWare.Serialization.Metadata
 			if (objectType == null) throw new ArgumentNullException("objectType");
 
 			var members = new List<DataMemberDescription>();
-			var memberNames = new HashSet<string>();
+			var memberNames = new HashSet<string>(StringComparer.Ordinal);
 
 			var isOptIn = objectType.GetCustomAttributes(false).Any(a => a.GetType().Name == DATA_CONTRACT_ATTRIBUTE_NAME);
 			var publicProperties =
@@ -83,9 +83,13 @@ namespace GameDevWare.Serialization.Metadata
 					throw new TypeContractViolation(objectType, "has no members with empty name");
 
 				if (memberNames.Contains(dataMember.Name))
-					throw new TypeContractViolation(objectType, string.Format("has no duplicate member's name ('{0}.{1}' and '{2}.{1}')", members.First(m => m.Name == dataMember.Name).Member.DeclaringType.Name, dataMember.Name, objectType.Name));
+				{
+					var conflictingMember = members.First(m => m.Name == dataMember.Name);
+					throw new TypeContractViolation(objectType, string.Format("has no duplicate member's name '{0}' ('{1}.{2}' and '{3}.{4}')", dataMember.Name, conflictingMember.Member.DeclaringType.Name, conflictingMember.Member.Name, dataMember.Member.DeclaringType.Name, dataMember.Member.Name));
+				}
 
 				members.Add(dataMember);
+				memberNames.Add(dataMember.Name);
 			}
 
 			return members;
