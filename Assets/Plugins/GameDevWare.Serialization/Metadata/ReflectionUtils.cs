@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -27,6 +27,7 @@ namespace GameDevWare.Serialization.Metadata
 	internal static class GettersAndSetters
 	{
 		private static readonly bool AotRuntime;
+
 		private static readonly Dictionary<MemberInfo, Func<object, object>> ReadFunctions;
 		private static readonly Dictionary<MemberInfo, Action<object, object>> WriteFunctions;
 		private static readonly Dictionary<MemberInfo, Func<object>> ConstructorFunctions;
@@ -70,7 +71,7 @@ namespace GameDevWare.Serialization.Metadata
 				}
 			}
 
-			if (setMethod != null && !setMethod.IsStatic && setMethod.GetParameters().Length == 1)
+			if (setMethod != null && !setMethod.IsStatic && setMethod.GetParameters().Length == 1 && setMethod.DeclaringType != null && setMethod.DeclaringType.IsValueType == false)
 			{
 				lock (WriteFunctions)
 				{
@@ -82,31 +83,15 @@ namespace GameDevWare.Serialization.Metadata
 						var setDynamicMethod = new DynamicMethod(declaringType.FullName + "::" + setMethod.Name, typeof(void), new Type[] { typeof(object), typeof(object) }, restrictedSkipVisibility: true);
 						var il = setDynamicMethod.GetILGenerator();
 
-						if (declaringType.IsValueType)
-						{
-							il.Emit(OpCodes.Ldarg_0); // instance
-							il.Emit(OpCodes.Mkrefany, declaringType); // typed ref with instance
-							il.Emit(OpCodes.Refanyval, declaringType); // &instance
-							il.Emit(OpCodes.Ldarg_1); // value
-							if (valueParameter.ParameterType.IsValueType)
-								il.Emit(OpCodes.Unbox_Any, valueParameter.ParameterType);
-							else
-								il.Emit(OpCodes.Castclass, valueParameter.ParameterType);
-							il.Emit(OpCodes.Callvirt, setMethod); // call instance.Set(value)
-							il.Emit(OpCodes.Ret);
-						}
+						il.Emit(OpCodes.Ldarg_0); // instance
+						il.Emit(OpCodes.Castclass, declaringType);
+						il.Emit(OpCodes.Ldarg_1); // value
+						if (valueParameter.ParameterType.IsValueType)
+							il.Emit(OpCodes.Unbox_Any, valueParameter.ParameterType);
 						else
-						{
-							il.Emit(OpCodes.Ldarg_0); // instance
-							il.Emit(OpCodes.Castclass, declaringType);
-							il.Emit(OpCodes.Ldarg_1); // value
-							if (valueParameter.ParameterType.IsValueType)
-								il.Emit(OpCodes.Unbox_Any, valueParameter.ParameterType);
-							else
-								il.Emit(OpCodes.Castclass, valueParameter.ParameterType);
-							il.Emit(OpCodes.Callvirt, setMethod); // call instance.Set(value)
-							il.Emit(OpCodes.Ret);
-						}
+							il.Emit(OpCodes.Castclass, valueParameter.ParameterType);
+						il.Emit(OpCodes.Callvirt, setMethod); // call instance.Set(value)
+						il.Emit(OpCodes.Ret);
 						setFn = (Action<object, object>)setDynamicMethod.CreateDelegate(typeof(Action<object, object>));
 						WriteFunctions.Add(setMethod, setFn);
 					}
@@ -143,7 +128,7 @@ namespace GameDevWare.Serialization.Metadata
 				}
 			}
 
-			if (fieldInfo.IsInitOnly == false)
+			if (fieldInfo.IsInitOnly == false && fieldInfo.DeclaringType != null && fieldInfo.DeclaringType.IsValueType == false)
 			{
 				lock (WriteFunctions)
 				{
@@ -155,31 +140,16 @@ namespace GameDevWare.Serialization.Metadata
 						var setDynamicMethod = new DynamicMethod(declaringType.FullName + "::" + fieldInfo.Name, typeof(void), new Type[] { typeof(object), typeof(object) }, restrictedSkipVisibility: true);
 						var il = setDynamicMethod.GetILGenerator();
 
-						if (declaringType.IsValueType)
-						{
-							il.Emit(OpCodes.Ldarg_0); // instance
-							il.Emit(OpCodes.Mkrefany, declaringType); // typed ref with instance
-							il.Emit(OpCodes.Refanyval, declaringType); // &instance
-							il.Emit(OpCodes.Ldarg_1); // value
-							if (fieldType.IsValueType)
-								il.Emit(OpCodes.Unbox_Any, fieldType);
-							else
-								il.Emit(OpCodes.Castclass, fieldType);
-							il.Emit(OpCodes.Stfld, fieldInfo); // call instance.Set(value)
-							il.Emit(OpCodes.Ret);
-						}
+						il.Emit(OpCodes.Ldarg_0); // instance
+						il.Emit(OpCodes.Castclass, declaringType);
+						il.Emit(OpCodes.Ldarg_1); // value
+						if (fieldType.IsValueType)
+							il.Emit(OpCodes.Unbox_Any, fieldType);
 						else
-						{
-							il.Emit(OpCodes.Ldarg_0); // instance
-							il.Emit(OpCodes.Castclass, declaringType);
-							il.Emit(OpCodes.Ldarg_1); // value
-							if (fieldType.IsValueType)
-								il.Emit(OpCodes.Unbox_Any, fieldType);
-							else
-								il.Emit(OpCodes.Castclass, fieldType);
-							il.Emit(OpCodes.Stfld, fieldInfo); // call instance.Set(value)
-							il.Emit(OpCodes.Ret);
-						}
+							il.Emit(OpCodes.Castclass, fieldType);
+						il.Emit(OpCodes.Stfld, fieldInfo); // call instance.Set(value)
+						il.Emit(OpCodes.Ret);
+
 						setFn = (Action<object, object>)setDynamicMethod.CreateDelegate(typeof(Action<object, object>));
 						WriteFunctions.Add(fieldInfo, setFn);
 					}
