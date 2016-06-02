@@ -32,3 +32,4 @@ Assets/StreamingAssets/
 Assets/Bundles/
 ProjectSettings/
 Assets/AssetStoreTools/
+build-nuget-package.bat
