@@ -164,7 +164,7 @@ namespace GameDevWare.Serialization.Metadata
 
 			ctrFn = null;
 
-			if (AotRuntime)
+			if (AotRuntime || type.IsAbstract || type.IsInterface)
 				return false;
 
 			var defaultCtr = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).FirstOrDefault(ctr => ctr.GetParameters().Length == 0);
