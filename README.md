@@ -47,8 +47,6 @@ Its behaviour can be changed with [DataContract](https://msdn.microsoft.com/en-u
 
 Attributes can be from *System.Runtime.Serialization.dll* or your attributes with same names. 
 
-**Only public fields/properties can be serialized.**
-
 ## Supported Types
 
 * Primitives: Boolean, Byte, Double, Int16, Int32, Int64, SBytes, Single, UInt16, UInt32, UInt64, String
