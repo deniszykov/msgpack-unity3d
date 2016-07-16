@@ -55,19 +55,17 @@ namespace GameDevWare.Serialization.Metadata
 			var memberNames = new HashSet<string>(StringComparer.Ordinal);
 
 			var isOptIn = objectType.GetCustomAttributes(false).Any(a => a.GetType().Name == DATA_CONTRACT_ATTRIBUTE_NAME);
-			var publicProperties =
-				objectType.GetProperties(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public);
-			var publicFields = objectType.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public);
+			var searchFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | (isOptIn ? BindingFlags.NonPublic : 0);
+			var properties = objectType.GetProperties(searchFlags);
+			var fields = objectType.GetFields(searchFlags);
 
-			foreach (var member in publicProperties.Cast<MemberInfo>().Concat(publicFields.Cast<MemberInfo>()))
+			foreach (var member in properties.Cast<MemberInfo>().Concat(fields.Cast<MemberInfo>()))
 			{
 				if (member is PropertyInfo && (member as PropertyInfo).GetIndexParameters().Length != 0)
 					continue;
 
-				var dataMemberAttribute =
-					member.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().Name == DATA_MEMBER_ATTRIBUTE_NAME);
-				var ignoreMemberAttribute =
-					member.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().Name == IGNORE_DATA_MEMBER_ATTRIBUTE_NAME);
+				var dataMemberAttribute = member.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().Name == DATA_MEMBER_ATTRIBUTE_NAME);
+				var ignoreMemberAttribute = member.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().Name == IGNORE_DATA_MEMBER_ATTRIBUTE_NAME);
 
 				if (isOptIn && dataMemberAttribute == null)
 					continue;
