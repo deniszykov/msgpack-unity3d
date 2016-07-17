@@ -50,7 +50,7 @@ namespace GameDevWare.Serialization.Metadata
 			if (AotRuntime)
 				return false;
 
-			if (getMethod != null && getMethod.IsPublic && !getMethod.IsStatic && getMethod.DeclaringType != null && getMethod.GetParameters().Length == 0)
+			if (getMethod != null && !getMethod.IsStatic && getMethod.GetParameters().Length == 0)
 			{
 				lock (ReadFunctions)
 				{
@@ -71,7 +71,7 @@ namespace GameDevWare.Serialization.Metadata
 				}
 			}
 
-			if (setMethod != null && setMethod.IsPublic && !setMethod.IsStatic && setMethod.GetParameters().Length == 1 && setMethod.DeclaringType != null && setMethod.DeclaringType.IsValueType == false)
+			if (setMethod != null && !setMethod.IsStatic && setMethod.GetParameters().Length == 1 && setMethod.DeclaringType != null && setMethod.DeclaringType.IsValueType == false)
 			{
 				lock (WriteFunctions)
 				{
@@ -108,29 +108,27 @@ namespace GameDevWare.Serialization.Metadata
 			if (AotRuntime || fieldInfo.IsStatic)
 				return false;
 
-			if (fieldInfo.IsPublic && fieldInfo.DeclaringType != null)
+
+			lock (ReadFunctions)
 			{
-				lock (ReadFunctions)
+				if (ReadFunctions.TryGetValue(fieldInfo, out getFn) == false)
 				{
-					if (ReadFunctions.TryGetValue(fieldInfo, out getFn) == false)
-					{
-						var instanceParam = Expression.Parameter(typeof(object), "instance");
-						var declaringType = fieldInfo.DeclaringType;
-						Debug.Assert(declaringType != null, "getMethodDeclaringType != null");
-						getFn = Expression.Lambda<Func<object, object>>(
-							Expression.Convert(
-								Expression.Field(
-									Expression.Convert(instanceParam, declaringType),
-									fieldInfo),
+					var instanceParam = Expression.Parameter(typeof(object), "instance");
+					var declaringType = fieldInfo.DeclaringType;
+					Debug.Assert(declaringType != null, "getMethodDeclaringType != null");
+					getFn = Expression.Lambda<Func<object, object>>(
+						Expression.Convert(
+							Expression.Field(
+								Expression.Convert(instanceParam, declaringType),
+								fieldInfo),
 								typeof(object)),
 							instanceParam
-							).Compile();
-						ReadFunctions.Add(fieldInfo, getFn);
-					}
+					).Compile();
+					ReadFunctions.Add(fieldInfo, getFn);
 				}
 			}
 
-			if (fieldInfo.IsInitOnly == false && fieldInfo.IsPublic && fieldInfo.DeclaringType != null && fieldInfo.DeclaringType.IsValueType == false)
+			if (fieldInfo.IsInitOnly == false && fieldInfo.DeclaringType != null && fieldInfo.DeclaringType.IsValueType == false)
 			{
 				lock (WriteFunctions)
 				{
@@ -169,7 +167,7 @@ namespace GameDevWare.Serialization.Metadata
 			if (AotRuntime || type.IsAbstract || type.IsInterface)
 				return false;
 
-			var defaultCtr = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault(ctr => ctr.GetParameters().Length == 0);
+			var defaultCtr = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).FirstOrDefault(ctr => ctr.GetParameters().Length == 0);
 
 			if (defaultCtr == null)
 				return false;
@@ -183,7 +181,7 @@ namespace GameDevWare.Serialization.Metadata
 					Expression.Convert(
 						Expression.New(defaultCtr),
 						typeof(object))
-				).Compile();
+					).Compile();
 
 				ConstructorFunctions.Add(type, ctrFn);
 			}
