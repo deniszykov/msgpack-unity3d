@@ -23,7 +23,7 @@ namespace GameDevWare.Serialization
 	{
 		private TextReader reader;
 
-		public JsonTextReader(TextReader reader, ISerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
+		public JsonTextReader(TextReader reader, SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
 			: base(context, bufferSize)
 		{
 			if (reader == null)

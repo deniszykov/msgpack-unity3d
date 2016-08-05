@@ -20,7 +20,7 @@ namespace GameDevWare.Serialization
 {
 	public interface IJsonWriter
 	{
-		ISerializationContext Context { get; }
+		SerializationContext Context { get; }
 
 		long CharactersWritten { get; }
 

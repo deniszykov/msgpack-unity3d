@@ -24,7 +24,7 @@ namespace GameDevWare.Serialization
 		private StringBuilder jsonString;
 		private int position;
 
-		public JsonStringBuilderReader(StringBuilder stringBuilder, ISerializationContext context,
+		public JsonStringBuilderReader(StringBuilder stringBuilder, SerializationContext context,
 			int bufferSize = DEFAULT_BUFFER_SIZE)
 			: base(context, bufferSize)
 		{

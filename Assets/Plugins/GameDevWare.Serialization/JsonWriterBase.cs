@@ -54,11 +54,11 @@ namespace GameDevWare.Serialization
 		private readonly Stack<Structure> structStack = new Stack<Structure>(10);
 		private readonly char[] outputBuffer = new char[512];
 
-		public ISerializationContext Context { get; private set; }
+		public SerializationContext Context { get; private set; }
 		public long CharactersWritten { get; protected set; }
 		public int InitialPadding { get; set; }
 
-		protected JsonWriterBase(ISerializationContext context)
+		protected JsonWriterBase(SerializationContext context)
 		{
 			if (context == null) throw new ArgumentNullException("context");
 

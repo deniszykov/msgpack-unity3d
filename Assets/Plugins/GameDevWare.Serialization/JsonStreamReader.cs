@@ -24,7 +24,7 @@ namespace GameDevWare.Serialization
 	{
 		private StreamReader reader;
 
-		public JsonStreamReader(Stream stream, ISerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
+		public JsonStreamReader(Stream stream, SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
 			: base(context, bufferSize)
 		{
 			if (stream == null)

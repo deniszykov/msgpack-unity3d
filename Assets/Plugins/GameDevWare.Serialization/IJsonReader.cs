@@ -22,7 +22,7 @@ namespace GameDevWare.Serialization
 {
 	public interface IJsonReader
 	{
-		ISerializationContext Context { get; }
+		SerializationContext Context { get; }
 
 		JsonToken Token { get; }
 		object RawValue { get; }

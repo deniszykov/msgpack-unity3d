@@ -27,7 +27,7 @@ namespace GameDevWare.Serialization
 
 		public Stream Stream { get { return writer.BaseStream; } }
 
-		public JsonStreamWriter(Stream stream, ISerializationContext context) : base(context)
+		public JsonStreamWriter(Stream stream, SerializationContext context) : base(context)
 		{
 			if (stream == null)
 				throw new ArgumentNullException("stream");

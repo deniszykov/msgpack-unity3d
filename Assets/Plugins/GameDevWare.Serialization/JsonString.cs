@@ -128,7 +128,7 @@ namespace GameDevWare.Serialization
 			else
 				return this.ToString().Equals(jsString.ToString());
 		}
-		public IJsonReader ToJsonReader(ISerializationContext context = null)
+		public IJsonReader ToJsonReader(SerializationContext context = null)
 		{
 			if (jsonString == null && jsonStringBuilder == null)
 				throw new InvalidOperationException();

@@ -28,7 +28,7 @@ namespace GameDevWare.Serialization
 			get { return stringBuilder; }
 		}
 
-		public JsonStringBuilderWriter(StringBuilder stringBuilder, ISerializationContext context)
+		public JsonStringBuilderWriter(StringBuilder stringBuilder, SerializationContext context)
 			: base(context)
 		{
 			if (stringBuilder == null)

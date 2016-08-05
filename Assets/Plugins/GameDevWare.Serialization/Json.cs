@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -134,7 +134,7 @@ namespace GameDevWare.Serialization
 		{
 			Serialize(objectToSerialize, jsonOutput, CreateDefaultContext(options, encoding));
 		}
-		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, ISerializationContext context)
+		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, SerializationContext context)
 		{
 			if (jsonOutput == null) throw new ArgumentNullException("jsonOutput");
 			if (!jsonOutput.CanWrite) throw new UnwriteableStream("jsonOutput");
@@ -160,7 +160,7 @@ namespace GameDevWare.Serialization
 		{
 			Serialize(objectToSerialize, textWriter, CreateDefaultContext(options));
 		}
-		public static void Serialize<T>(T objectToSerialize, TextWriter textWriter, ISerializationContext context)
+		public static void Serialize<T>(T objectToSerialize, TextWriter textWriter, SerializationContext context)
 		{
 			if (textWriter == null) throw new ArgumentNullException("textWriter");
 			if (context == null) throw new ArgumentNullException("context");
@@ -178,7 +178,7 @@ namespace GameDevWare.Serialization
 			writer.Flush();
 		}
 
-		public static void Serialize<T>(T objectToSerialize, IJsonWriter writer, ISerializationContext context)
+		public static void Serialize<T>(T objectToSerialize, IJsonWriter writer, SerializationContext context)
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (context == null) throw new ArgumentNullException("context");
@@ -202,7 +202,7 @@ namespace GameDevWare.Serialization
 		{
 			return SerializeToString(objectToSerialize, CreateDefaultContext(options));
 		}
-		public static string SerializeToString<T>(T objectToSerialize, ISerializationContext context)
+		public static string SerializeToString<T>(T objectToSerialize, SerializationContext context)
 		{
 			if (context == null) throw new ArgumentNullException("context");
 
@@ -232,7 +232,7 @@ namespace GameDevWare.Serialization
 		{
 			return Deserialize(objectType, jsonStream, CreateDefaultContext(options, encoding));
 		}
-		public static object Deserialize(Type objectType, Stream jsonStream, ISerializationContext context)
+		public static object Deserialize(Type objectType, Stream jsonStream, SerializationContext context)
 		{
 			if (objectType == null) throw new ArgumentNullException("objectType");
 			if (jsonStream == null) throw new ArgumentNullException("jsonStream");
@@ -252,7 +252,7 @@ namespace GameDevWare.Serialization
 		{
 			return Deserialize(objectType, textReader, CreateDefaultContext(options));
 		}
-		public static object Deserialize(Type objectType, TextReader textReader, ISerializationContext context)
+		public static object Deserialize(Type objectType, TextReader textReader, SerializationContext context)
 		{
 			if (objectType == null) throw new ArgumentNullException("objectType");
 			if (textReader == null) throw new ArgumentNullException("textReader");
@@ -270,7 +270,7 @@ namespace GameDevWare.Serialization
 		{
 			return Deserialize(objectType, jsonString, CreateDefaultContext(options));
 		}
-		public static object Deserialize(Type objectType, string jsonString, ISerializationContext context)
+		public static object Deserialize(Type objectType, string jsonString, SerializationContext context)
 		{
 			if (objectType == null) throw new ArgumentNullException("objectType");
 			if (jsonString == null) throw new ArgumentNullException("jsonString");
@@ -289,7 +289,7 @@ namespace GameDevWare.Serialization
 		{
 			return Deserialize(objectType, jsonString, CreateDefaultContext(options));
 		}
-		public static object Deserialize(Type objectType, JsonString jsonString, ISerializationContext context)
+		public static object Deserialize(Type objectType, JsonString jsonString, SerializationContext context)
 		{
 			if (objectType == null) throw new ArgumentNullException("objectType");
 			if (jsonString == null) throw new ArgumentNullException("jsonString");
@@ -323,7 +323,7 @@ namespace GameDevWare.Serialization
 		{
 			return (T)Deserialize(typeof(T), jsonStream, CreateDefaultContext(options, encoding));
 		}
-		public static T Deserialize<T>(Stream jsonStream, ISerializationContext context)
+		public static T Deserialize<T>(Stream jsonStream, SerializationContext context)
 		{
 			return (T)Deserialize(typeof(T), jsonStream, context);
 
@@ -337,7 +337,7 @@ namespace GameDevWare.Serialization
 		{
 			return (T)Deserialize(typeof(T), textReader, CreateDefaultContext(options));
 		}
-		public static T Deserialize<T>(TextReader textReader, ISerializationContext context)
+		public static T Deserialize<T>(TextReader textReader, SerializationContext context)
 		{
 			return (T)Deserialize(typeof(T), textReader, context);
 		}
@@ -350,7 +350,7 @@ namespace GameDevWare.Serialization
 		{
 			return (T)Deserialize(typeof(T), jsonString, CreateDefaultContext(options));
 		}
-		public static T Deserialize<T>(string jsonString, ISerializationContext context)
+		public static T Deserialize<T>(string jsonString, SerializationContext context)
 		{
 			return (T)Deserialize(typeof(T), jsonString, context);
 		}
@@ -363,7 +363,7 @@ namespace GameDevWare.Serialization
 		{
 			return Deserialize<T>(jsonString, CreateDefaultContext(options));
 		}
-		public static T Deserialize<T>(JsonString jsonString, ISerializationContext context)
+		public static T Deserialize<T>(JsonString jsonString, SerializationContext context)
 		{
 			return (T)Deserialize(typeof(T), jsonString, context);
 		}
@@ -376,9 +376,9 @@ namespace GameDevWare.Serialization
 			return (T)serializer.Deserialize(reader);
 		}
 
-		private static ISerializationContext CreateDefaultContext(SerializationOptions options, Encoding encoding = null)
+		private static SerializationContext CreateDefaultContext(SerializationOptions options, Encoding encoding = null)
 		{
-			return new DefaultSerializationContext
+			return new SerializationContext
 			{
 				Encoding = encoding ?? DefaultEncoding,
 				Options = options

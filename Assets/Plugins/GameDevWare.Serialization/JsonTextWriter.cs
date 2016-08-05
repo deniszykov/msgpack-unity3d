@@ -28,7 +28,7 @@ namespace GameDevWare.Serialization
 			get { return writer; }
 		}
 
-		public JsonTextWriter(TextWriter writer, ISerializationContext context)
+		public JsonTextWriter(TextWriter writer, SerializationContext context)
 			: base(context)
 		{
 			if (writer == null)

@@ -22,13 +22,13 @@ namespace GameDevWare.Serialization.MessagePack
 {
 	public class MsgPackWriter : IJsonWriter
 	{
-		private readonly ISerializationContext context;
+		private readonly SerializationContext context;
 		private readonly Stream outputStream;
 		private readonly byte[] buffer;
 		private readonly EndianBitConverter bitConverter;
 		private long bytesWritten;
 
-		public MsgPackWriter(Stream stream, ISerializationContext context)
+		public MsgPackWriter(Stream stream, SerializationContext context)
 		{
 			if (stream == null) throw new ArgumentNullException("stream");
 			if (context == null) throw new ArgumentNullException("context");
@@ -41,7 +41,7 @@ namespace GameDevWare.Serialization.MessagePack
 			this.bytesWritten = 0;
 		}
 
-		public ISerializationContext Context
+		public SerializationContext Context
 		{
 			get { return this.context; }
 		}

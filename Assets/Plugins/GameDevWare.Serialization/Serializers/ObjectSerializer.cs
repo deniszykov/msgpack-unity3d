@@ -34,13 +34,13 @@ namespace GameDevWare.Serialization.Serializers
 		private readonly string objectTypeNameWithoutVersion;
 		private readonly TypeDescription objectTypeDescription;
 		private readonly ObjectSerializer baseTypeSerializer;
-		private readonly ISerializationContext context;
+		private readonly SerializationContext context;
 
 		public override Type SerializedType { get { return this.objectType; } }
 
 		public bool SuppressTypeInformation { get; set; }
 
-		public ObjectSerializer(ISerializationContext context, Type type)
+		public ObjectSerializer(SerializationContext context, Type type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 			if (context == null) throw new ArgumentNullException("context");
@@ -69,7 +69,7 @@ namespace GameDevWare.Serialization.Serializers
 				throw new UnexpectedToken(reader, JsonToken.BeginObject);
 
 			var serializerOverride = default(ObjectSerializer);
-			var container = new Dictionary<string, object>(10);
+			var container = new IndexedDictionary<string, object>(10);
 			reader.Context.Hierarchy.Push(container);
 			var instance = this.DeserializeMembers(reader, container, ref serializerOverride);
 			reader.Context.Hierarchy.Pop();
@@ -89,7 +89,7 @@ namespace GameDevWare.Serialization.Serializers
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
 
-			var container = new Dictionary<DataMemberDescription, object>();
+			var container = new IndexedDictionary<DataMemberDescription, object>();
 
 			this.CollectMemberValues(value, container);
 
@@ -114,7 +114,7 @@ namespace GameDevWare.Serialization.Serializers
 			writer.WriteObjectEnd();
 		}
 
-		private void CollectMemberValues(object instance, Dictionary<DataMemberDescription, object> container)
+		private void CollectMemberValues(object instance, IndexedDictionary<DataMemberDescription, object> container)
 		{
 			if (this.baseTypeSerializer != null)
 				this.baseTypeSerializer.CollectMemberValues(instance, container);
@@ -130,7 +130,7 @@ namespace GameDevWare.Serialization.Serializers
 				container[member] = value;
 			}
 		}
-		private object DeserializeMembers(IJsonReader reader, Dictionary<string, object> container, ref ObjectSerializer serializerOverride)
+		private object DeserializeMembers(IJsonReader reader, IndexedDictionary<string, object> container, ref ObjectSerializer serializerOverride)
 		{
 			while (reader.NextToken() && reader.Token != JsonToken.EndOfObject)
 			{
@@ -183,7 +183,7 @@ namespace GameDevWare.Serialization.Serializers
 
 			return null;
 		}
-		private object PopulateInstance(Dictionary<string, object> container, object instance)
+		private object PopulateInstance(IndexedDictionary<string, object> container, object instance)
 		{
 			if (instance == null && objectType == typeof(object))
 				return container;
@@ -251,7 +251,7 @@ namespace GameDevWare.Serialization.Serializers
 			return this.baseTypeSerializer.TryGetMember(memberName, out member);
 		}
 
-		public static object CreateInstance(Dictionary<string, object> values)
+		public static object CreateInstance(IndexedDictionary<string, object> values)
 		{
 			if (values == null) throw new ArgumentNullException("values");
 
@@ -264,12 +264,12 @@ namespace GameDevWare.Serialization.Serializers
 			}
 			return CreateInstance(values, instanceType);
 		}
-		public static object CreateInstance(Dictionary<string, object> values, Type instanceType)
+		public static object CreateInstance(IndexedDictionary<string, object> values, Type instanceType)
 		{
 			if (instanceType == null) throw new ArgumentNullException("instanceType");
 			if (values == null) throw new ArgumentNullException("values");
 
-			var context = new DefaultSerializationContext();
+			var context = new SerializationContext();
 			var serializer = new ObjectSerializer(context, instanceType);
 			return serializer.PopulateInstance(values, null);
 		}

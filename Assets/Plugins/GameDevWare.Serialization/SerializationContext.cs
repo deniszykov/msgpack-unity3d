@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -24,7 +24,7 @@ using GameDevWare.Serialization.Serializers;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
-	public sealed class DefaultSerializationContext : ISerializationContext
+	public sealed class SerializationContext
 	{
 		private readonly Dictionary<Type, TypeSerializer> serializers;
 
@@ -53,7 +53,7 @@ namespace GameDevWare.Serialization
 		public Func<Type, TypeSerializer> ArraySerializerFactory { get; set; }
 		public Func<Type, TypeSerializer> SerializerFactory { get; set; }
 
-		public DefaultSerializationContext()
+		public SerializationContext()
 		{
 			this.Hierarchy = new Stack();
 
@@ -128,11 +128,11 @@ namespace GameDevWare.Serialization
 			if (typeCtr != null)
 				return (TypeSerializer)typeCtr.Invoke(new object[] { valueType });
 
-			var ctxTypeCtr = serializerType.GetConstructor(new[] { typeof(ISerializationContext), typeof(Type) });
+			var ctxTypeCtr = serializerType.GetConstructor(new[] { typeof(SerializationContext), typeof(Type) });
 			if (ctxTypeCtr != null)
 				return (TypeSerializer)ctxTypeCtr.Invoke(new object[] { this, valueType });
 
-			var ctxCtr = serializerType.GetConstructor(new[] { typeof(ISerializationContext) });
+			var ctxCtr = serializerType.GetConstructor(new[] { typeof(SerializationContext) });
 			if (ctxCtr != null)
 				return (TypeSerializer)ctxCtr.Invoke(new object[] { this });
 

@@ -513,7 +513,7 @@ namespace GameDevWare.Serialization
 		private JsonToken token;
 		private readonly Buffer buffer;
 
-		protected JsonReaderBase(ISerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
+		protected JsonReaderBase(SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
 		{
 			if (context == null)
 				throw new ArgumentNullException("context");
@@ -528,7 +528,7 @@ namespace GameDevWare.Serialization
 
 		#region IJsonReader Members
 
-		public ISerializationContext Context { get; private set; }
+		public SerializationContext Context { get; private set; }
 
 		public IValueInfo Value
 		{

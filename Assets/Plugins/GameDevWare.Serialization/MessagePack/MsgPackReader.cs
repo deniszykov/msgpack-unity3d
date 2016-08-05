@@ -176,7 +176,7 @@ namespace GameDevWare.Serialization.MessagePack
 		private bool isEndOfStream;
 		private int totalBytesReaded;
 
-		public ISerializationContext Context { get; private set; }
+		public SerializationContext Context { get; private set; }
 		JsonToken IJsonReader.Token
 		{
 			get
@@ -215,7 +215,7 @@ namespace GameDevWare.Serialization.MessagePack
 		}
 		internal MsgPackValueInfo Value { get; private set; }
 
-		public MsgPackReader(Stream stream, ISerializationContext context)
+		public MsgPackReader(Stream stream, SerializationContext context)
 		{
 			if (stream == null) throw new ArgumentNullException("stream");
 			if (context == null) throw new ArgumentNullException("context");

@@ -23,7 +23,7 @@ namespace GameDevWare.Serialization
 		private string jsonString;
 		private int position;
 
-		public JsonStringReader(string jsonString, ISerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
+		public JsonStringReader(string jsonString, SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
 			: base(context, bufferSize)
 		{
 			if (jsonString == null)
