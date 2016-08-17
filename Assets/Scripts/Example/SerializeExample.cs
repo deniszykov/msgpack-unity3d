@@ -23,21 +23,51 @@ namespace Assets.Scripts.Example
 {
 	public static class SerializeExample
 	{
-		public static void SerializeToMemoryStream()
+		public static void SerializeToMsgPackMemoryStream()
 		{
-			var stream = new MemoryStream();
-
-			MsgPack.Serialize(new { x = 1, y = 2 }, stream);
-
-			MsgPack.Deserialize<Vector2>(stream);
-
-			Json.Serialize(new { pos = new Vector3(1, 1, 1), rot = new Quaternion(1, 1, 1, 1) }, stream);
-
-			stream.Position = 0;
-
-			var myObject = Json.Deserialize<Dictionary<string, object>>(stream);
-			var pos = (Vector3)myObject["pos"];
-			var rot = (Quaternion)myObject["rot"];
+			try
+			{
+				var stream = new MemoryStream();
+				
+				// write vector to stream
+				MsgPack.Serialize(new { x = 1, y = 2 }, stream);
+				// reset stream's position
+				stream.Position = 0;
+				// read vector from stream
+				var vec = MsgPack.Deserialize<Vector2>(stream);
+				// 
+				UnityEngine.Debug.Log("vec: " + vec);				
+			}
+			catch(System.Exception e)
+			{
+				UnityEngine.Debug.LogError(e);
+			}
+		}
+		
+		public static void SerializeToJsonMemoryStream()
+		{
+			try
+			{
+				var stream = new MemoryStream();
+						
+				// write object to stream
+				Json.Serialize(new { pos = new Vector3(1, 1, 1), rot = new Quaternion(1, 1, 1, 1) }, stream);
+				// reset stream's position
+				stream.Position = 0;
+				UnityEngine.Debug.Log( System.Text.Encoding.UTF8.GetString(stream.ToArray()) );
+				
+				// read object from stream
+				var myObject = Json.Deserialize<Dictionary<string, object>>(stream);
+				var pos = (IDictionary<string, object>)myObject["pos"];
+				var rot = (IDictionary<string, object>)myObject["rot"];
+				//
+				UnityEngine.Debug.Log("pos x:y: " + pos["x"] + ":" + pos["y"]);
+		
+			}
+			catch(System.Exception e)
+			{
+				UnityEngine.Debug.LogError(e);
+			}
 		}
 	}
 }

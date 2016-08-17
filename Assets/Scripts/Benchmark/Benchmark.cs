@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -44,6 +44,10 @@ public class Benchmark : MonoBehaviour
 			new Action(this.MeasureJsonSerializer).BeginInvoke(null, null);
 		if (GUILayout.Button("Measure MessagePack Serializer (GameDevWare)"))
 			new Action(this.MeasureMsgPackSerializer).BeginInvoke(null, null);
+		if (GUILayout.Button("Test MessagePack"))
+			new Action(Assets.Scripts.Example.SerializeExample.SerializeToMsgPackMemoryStream).BeginInvoke(null, null);
+			if (GUILayout.Button("Test Json"))
+			new Action(Assets.Scripts.Example.SerializeExample.SerializeToJsonMemoryStream).BeginInvoke(null, null);
 
 		GUILayout.EndVertical();
 		GUILayout.EndArea();
@@ -143,18 +147,18 @@ public class Benchmark : MonoBehaviour
 	Intel(R) Core(TM) i5-3570 CPU @ 3.40GHz
 
 	Serialization:
-			| size(bytes)   | object/sec.	| bandwidth 	
+			| size(bytes)   | object/sec.	| bandwidth
 	Json	| 744			| 7658			| 5.43 Mb/s
 	Json	| 154			| 30853			| 4.53 Mb/s
 	Json	| 102			| 64888			| 6.31 Mb/s
 	MsgPack | 666			| 15206			| 9.66 Mb/s
 	MsgPack | 146			| 123475		| 17.19 Mb/s
 	MsgPack | 92			| 155038		| 13.60 Mb/s
-	
+
 	De-serialization:
 	Json	| 744			| 268			| 0.19 Mb/s
 	Json	| 154			| 7218			| 1.06 Mb/s
-	Json	| 102			| 9981			| 0.97 Mb/s	
+	Json	| 102			| 9981			| 0.97 Mb/s
 	MsgPack | 666			| 474			| 0.30 Mb/s
 	MsgPack | 146			| 15153			| 2.11 Mb/s
 	MsgPack | 92			| 15278			| 1.34 Mb/s

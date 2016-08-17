@@ -15,12 +15,12 @@ namespace GameDevWare.Serialization
 		private readonly Dictionary<KeyT, ValueT> dictionary;
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		private readonly List<KeyT> keys;
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private readonly ReadOnlyCollection<KeyT> keysReadOnly;
+		[DebuggerBrowsable(DebuggerBrowsableState.Never), NonSerialized]
+		private ReadOnlyCollection<KeyT> keysReadOnly;
 
 		public int Count { get { return this.dictionary.Count; } }
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		public ReadOnlyCollection<KeyT> Keys { get { return this.keysReadOnly; } }
+		public ReadOnlyCollection<KeyT> Keys { get { if (keysReadOnly == null) this.keysReadOnly = new ReadOnlyCollection<KeyT>(this.keys); return this.keysReadOnly; } }
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		public Dictionary<KeyT, ValueT>.ValueCollection Values { get { return this.dictionary.Values; } }
 		public ValueT this[KeyT key]
