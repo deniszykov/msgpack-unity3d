@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -262,6 +262,21 @@ namespace GameDevWare.Serialization.MessagePack
 				this.closingTokens.Push(new ClosingToken { Token = JsonToken.EndOfArray, Counter = arrayCount + 1 });
 				this.Value.SetValue(null, JsonToken.BeginArray, pos);
 			}
+			else if (formatValue >= (byte)MsgPackType.FixStrStart && formatValue <= (byte)MsgPackType.FixStrEnd)
+			{
+				var strCount = formatValue - (byte)MsgPackType.FixStrStart;
+				var strBytes = this.ReadBytes(strCount);
+				var strValue = this.Context.Encoding.GetString(strBytes.Array, strBytes.Offset, strBytes.Count);
+
+				var strTokenType = JsonToken.StringLiteral;
+				if (this.closingTokens.Count > 0)
+				{
+					var closingToken = this.closingTokens.Peek();
+					if (closingToken.Token == JsonToken.EndOfObject && closingToken.Counter > 0 && closingToken.Counter % 2 == 0)
+						strTokenType = JsonToken.Member;
+				}
+				this.Value.SetValue(strValue, strTokenType, pos);
+			}
 			else if (formatValue >= (byte)MsgPackType.FixMapStart && formatValue <= (byte)MsgPackType.FixMapEnd)
 			{
 				var mapCount = formatValue - (byte)MsgPackType.FixMapStart;
@@ -460,6 +475,17 @@ namespace GameDevWare.Serialization.MessagePack
 						this.ReadToBuffer(1, throwOnEos: true);
 						this.Value.SetValue(buffer[this.bufferOffset], JsonToken.Number, pos);
 						break;
+					case MsgPackType.PositiveFixIntStart:
+					case MsgPackType.PositiveFixIntEnd:
+					case MsgPackType.FixMapStart:
+					case MsgPackType.FixMapEnd:
+					case MsgPackType.FixArrayStart:
+					case MsgPackType.FixArrayEnd:
+					case MsgPackType.FixStrStart:
+					case MsgPackType.FixStrEnd:
+					case MsgPackType.Unused:
+					case MsgPackType.NegativeFixIntStart:
+					case MsgPackType.NegativeFixIntEnd:
 					default:
 						throw new UnknownMsgPackFormatException(formatValue);
 				}
