@@ -222,13 +222,15 @@ namespace GameDevWare.Serialization
 		}
 		public void WriteArrayEnd()
 		{
-			this.WriteFormatting(JsonToken.EndOfObject);
+			this.WriteFormatting(JsonToken.EndOfArray);
 
 			structStack.Pop();
 			this.WriteJson(ArrayEnd, 0, ArrayEnd.Length);
 		}
 		public void WriteNull()
 		{
+			this.WriteFormatting(JsonToken.Null);
+		
 			this.WriteJson(Null, 0, Null.Length);
 		}
 
