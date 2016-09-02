@@ -155,7 +155,7 @@ namespace GameDevWare.Serialization.Serializers
 					}
 					else
 					{
-						reader.NextToken(); // advance to next member
+						reader.NextToken(); // nextToken to next member
 						serializerOverride = null;
 						return serializer.Deserialize(reader);
 					}

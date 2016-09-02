@@ -21,7 +21,7 @@ namespace GameDevWare.Serialization
 {
 	public static class JsonReaderExtentions
 	{
-		public static void ReadArrayBegin(this IJsonReader reader, bool advance = true)
+		public static void ReadArrayBegin(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -32,10 +32,10 @@ namespace GameDevWare.Serialization
 			if (reader.IsEndOfStream())
 				throw new UnexpectedToken(reader, JsonToken.EndOfArray);
 
-			if (advance)
+			if (nextToken)
 				reader.NextToken();
 		}
-		public static void ReadArrayEnd(this IJsonReader reader, bool advance = true)
+		public static void ReadArrayEnd(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -44,11 +44,11 @@ namespace GameDevWare.Serialization
 			if (reader.Token != JsonToken.EndOfArray)
 				throw new UnexpectedToken(reader, JsonToken.EndOfArray);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 		}
 
-		public static void ReadObjectBegin(this IJsonReader reader, bool advance = true)
+		public static void ReadObjectBegin(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -59,10 +59,10 @@ namespace GameDevWare.Serialization
 			if (reader.IsEndOfStream())
 				throw new UnexpectedToken(reader, JsonToken.EndOfObject);
 
-			if (advance)
+			if (nextToken)
 				reader.NextToken();
 		}
-		public static void ReadObjectEnd(this IJsonReader reader, bool advance = true)
+		public static void ReadObjectEnd(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -70,11 +70,11 @@ namespace GameDevWare.Serialization
 				throw new UnexpectedToken(reader, JsonToken.EndOfObject);
 
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 		}
 
-		public static string ReadMember(this IJsonReader reader, bool advance = true)
+		public static string ReadMember(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -85,13 +85,13 @@ namespace GameDevWare.Serialization
 
 			var memberName = (string)reader.RawValue;
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return memberName;
 		}
 
-		public static byte ReadByte(this IJsonReader reader, bool advance = true)
+		public static byte ReadByte(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -103,12 +103,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static byte? ReadByteOrNull(this IJsonReader reader, bool advance = true)
+		public static byte? ReadByteOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -128,13 +128,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static sbyte ReadSByte(this IJsonReader reader, bool advance = true)
+		public static sbyte ReadSByte(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -146,12 +146,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static sbyte? ReadSByteOrNull(this IJsonReader reader, bool advance = true)
+		public static sbyte? ReadSByteOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -171,13 +171,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static short ReadInt16(this IJsonReader reader, bool advance = true)
+		public static short ReadInt16(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -189,12 +189,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static short? ReadInt16OrNull(this IJsonReader reader, bool advance = true)
+		public static short? ReadInt16OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -214,13 +214,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static int ReadInt32(this IJsonReader reader, bool advance = true)
+		public static int ReadInt32(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -232,12 +232,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static int? ReadInt32OrNull(this IJsonReader reader, bool advance = true)
+		public static int? ReadInt32OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -257,13 +257,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static long ReadInt64(this IJsonReader reader, bool advance = true)
+		public static long ReadInt64(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -275,12 +275,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static long? ReadInt64OrNull(this IJsonReader reader, bool advance = true)
+		public static long? ReadInt64OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -299,13 +299,13 @@ namespace GameDevWare.Serialization
 				default:
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static ushort ReadUInt16(this IJsonReader reader, bool advance = true)
+		public static ushort ReadUInt16(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -317,12 +317,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static ushort? ReadUInt16OrNull(this IJsonReader reader, bool advance = true)
+		public static ushort? ReadUInt16OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -342,13 +342,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static uint ReadUInt32(this IJsonReader reader, bool advance = true)
+		public static uint ReadUInt32(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -360,12 +360,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static uint? ReadUInt32OrNull(this IJsonReader reader, bool advance = true)
+		public static uint? ReadUInt32OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -385,13 +385,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static ulong ReadUInt64(this IJsonReader reader, bool advance = true)
+		public static ulong ReadUInt64(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -403,12 +403,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static ulong? ReadUInt64OrNull(this IJsonReader reader, bool advance = true)
+		public static ulong? ReadUInt64OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -428,13 +428,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static float ReadSingle(this IJsonReader reader, bool advance = true)
+		public static float ReadSingle(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -446,12 +446,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static float? ReadSingleOrNull(this IJsonReader reader, bool advance = true)
+		public static float? ReadSingleOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -471,13 +471,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static double ReadDouble(this IJsonReader reader, bool advance = true)
+		public static double ReadDouble(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -489,12 +489,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static double? ReadDoubleOrNull(this IJsonReader reader, bool advance = true)
+		public static double? ReadDoubleOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -514,13 +514,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static decimal ReadDecimal(this IJsonReader reader, bool advance = true)
+		public static decimal ReadDecimal(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -532,12 +532,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static decimal? ReadDecimalOrNull(this IJsonReader reader, bool advance = true)
+		public static decimal? ReadDecimalOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -557,13 +557,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static bool ReadBoolean(this IJsonReader reader, bool advance = true)
+		public static bool ReadBoolean(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -575,12 +575,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Boolean);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static bool? ReadBooleanOrNull(this IJsonReader reader, bool advance = true)
+		public static bool? ReadBooleanOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -600,13 +600,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Boolean);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static DateTime ReadDateTime(this IJsonReader reader, bool advance = true)
+		public static DateTime ReadDateTime(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -618,12 +618,12 @@ namespace GameDevWare.Serialization
 			else
 				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
-		public static DateTime? ReadDateTimeOrNull(this IJsonReader reader, bool advance = true)
+		public static DateTime? ReadDateTimeOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -644,13 +644,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;
 		}
 
-		public static string ReadString(this IJsonReader reader, bool advance = true)
+		public static string ReadString(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -670,13 +670,13 @@ namespace GameDevWare.Serialization
 					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime, JsonToken.Boolean);
 			}
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return stringValue;
 		}
 
-		public static void ReadNull(this IJsonReader reader, bool advance = true)
+		public static void ReadNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
 				throw new ArgumentNullException("reader");
@@ -684,40 +684,40 @@ namespace GameDevWare.Serialization
 			if (reader.Token != JsonToken.Null)
 				throw new UnexpectedToken(reader, JsonToken.Null);
 
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 		}
 
-		public static object ReadValue(this IJsonReader reader, Type valueType, bool advance = true)
+		public static object ReadValue(this IJsonReader reader, Type valueType, bool nextToken = true)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			// try guess type
-			if (valueType == typeof(object) && reader.Token != JsonToken.BeginObject)
-				valueType = reader.Value.ProbableType;
-
-			if (valueType != null && valueType.IsInstantiationOf(typeof(Nullable<>)))
+			if (valueType == typeof(object))
 			{
-				if (reader.Token == JsonToken.Null)
-					return null;
-
-				valueType = valueType.GetGenericArguments()[0];
+				switch (reader.Token)
+				{
+					case JsonToken.BeginArray: valueType = typeof(object[]); break;
+					case JsonToken.Null:
+					case JsonToken.BeginObject: valueType = typeof(object); break;
+					default: valueType = reader.Value.ProbableType; break;
+				}
 			}
 
-			if (valueType == null)
-				valueType = typeof(object);
-
-			if (reader.Token == JsonToken.Null)
+			var value = default(object);
+			var valusIsNullable = valueType.IsValueType == false || valueType.IsInstantiationOf(typeof(Nullable<>));
+			if (reader.Token == JsonToken.Null && valusIsNullable)
 			{
-				if (valueType.IsValueType)
-					reader.ThrowUnexpectedToken(JsonToken.BeginArray, JsonToken.BeginObject, JsonToken.StringLiteral, JsonToken.Number, JsonToken.Boolean, JsonToken.DateTime);
-				return null;
+				value = null;
 			}
+			else
+			{
+				var serializer = reader.Context.GetSerializerForType(valueType);
+				value = serializer.Deserialize(reader);
+			}
+			
 
-			var serializer = reader.Context.GetSerializerForType(valueType);
-			var value = serializer.Deserialize(reader);
-
-			if (!reader.IsEndOfStream() && advance)
+			if (nextToken)
 				reader.NextToken();
 
 			return value;

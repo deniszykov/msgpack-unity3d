@@ -71,7 +71,7 @@ namespace GameDevWare.Serialization.Serializers
 					// copy BeginArray token
 					if (buffer != null) reader.Value.CopyJsonTo(buffer);
 
-					reader.NextToken(); // advance
+					reader.NextToken(); // nextToken
 
 					// iterate values
 					while (reader.Token != JsonToken.EndOfArray)
@@ -91,7 +91,7 @@ namespace GameDevWare.Serialization.Serializers
 					// copy BeginObject token
 					if (buffer != null) reader.Value.CopyJsonTo(buffer);
 
-					reader.NextToken(); // advance
+					reader.NextToken(); // nextToken
 
 					// iterate values
 					while (reader.Token != JsonToken.EndOfObject)

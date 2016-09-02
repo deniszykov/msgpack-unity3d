@@ -59,7 +59,7 @@ namespace GameDevWare.Serialization.Serializers
 						break;
 				}
 			}
-			reader.ReadObjectEnd(advance: false);
+			reader.ReadObjectEnd(nextToken: false);
 			return value;
 		}
 		public override void Serialize(IJsonWriter writer, object value)
