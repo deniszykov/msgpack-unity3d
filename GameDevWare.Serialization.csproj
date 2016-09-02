@@ -66,22 +66,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Plugins\GameDevWare.Serialization\IValueInfo.cs" />
+    <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonSerializationException.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Metadata\ReflectionUtils.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\IndexedDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\ArgumentNullOrEmptyException.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\DataContractException.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\EmptyMemberName.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\ErrorCode.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\JsonSerializationException.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\MemberIsNotFound.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\TypeContractViolation.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\UnexpectedEndOfStream.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\UnexpectedToken.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\UnknownEscapeSequence.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\UnreadableStream.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\UnterminatedStringLiteral.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Exceptions\UnwriteableStream.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\GenerateTypeSerializerAttribute.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\IJsonReader.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\IJsonWriter.cs" />
@@ -91,7 +80,6 @@
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonReaderExtentions.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonStreamReader.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonStreamWriter.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonString.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonStringBuilderReader.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonStringBuilderWriter.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonStringReader.cs" />
@@ -130,7 +118,6 @@
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\EnumNumberSerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\EnumSerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\GuidSerializer.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\JsonStringSerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\Matrix4x4Serializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\ObjectSerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\PrimitiveTypeSerializer.cs" />

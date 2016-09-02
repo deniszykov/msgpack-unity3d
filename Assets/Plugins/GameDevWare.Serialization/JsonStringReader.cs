@@ -20,7 +20,7 @@ namespace GameDevWare.Serialization
 {
 	public sealed class JsonStringReader : JsonReaderBase
 	{
-		private string jsonString;
+		private readonly string jsonString;
 		private int position;
 
 		public JsonStringReader(string jsonString, SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)

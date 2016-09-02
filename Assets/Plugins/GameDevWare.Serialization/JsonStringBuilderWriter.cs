@@ -21,7 +21,7 @@ namespace GameDevWare.Serialization
 {
 	public sealed class JsonStringBuilderWriter : JsonWriterBase
 	{
-		private StringBuilder stringBuilder;
+		private readonly StringBuilder stringBuilder;
 
 		public StringBuilder Builder
 		{

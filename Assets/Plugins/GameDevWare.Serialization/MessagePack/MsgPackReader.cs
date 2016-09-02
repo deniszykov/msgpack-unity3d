@@ -17,8 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.MessagePack
@@ -48,7 +46,7 @@ namespace GameDevWare.Serialization.MessagePack
 					this.HasValue = true;
 				}
 			}
-			public Type ProbableType
+			public Type Type
 			{
 				get
 				{
@@ -108,33 +106,6 @@ namespace GameDevWare.Serialization.MessagePack
 					else
 						return Convert.ToString(raw, reader.Context.Format);
 				}
-			}
-
-			public void CopyJsonTo(StringBuilder stringBuilder)
-			{
-				if (this.HasValue && this.value is JsonString)
-					stringBuilder.Append((this.value as JsonString).ToString());
-				else
-					throw new InvalidOperationException("This operation available only for JsonString data type.");
-			}
-			public void CopyJsonTo(TextWriter writer)
-			{
-				if (this.HasValue && this.value is JsonString)
-					writer.Write((this.value as JsonString).ToString());
-				else
-					throw new InvalidOperationException("This operation available only for JsonString data type.");
-			}
-			public void CopyJsonTo(Stream stream)
-			{
-				using (var textWriter = new StreamWriter(stream, reader.Context.Encoding))
-					this.CopyJsonTo(textWriter);
-			}
-			public void CopyJsonTo(IJsonWriter writer)
-			{
-				if (this.HasValue && this.value is JsonString)
-					writer.WriteJson((this.value as JsonString).ToString());
-				else
-					throw new InvalidOperationException("This operation available only for JsonString data type.");
 			}
 
 			public void Reset()
@@ -209,17 +180,13 @@ namespace GameDevWare.Serialization.MessagePack
 				return this.Value;
 			}
 		}
-		long IJsonReader.CharactersReaded
-		{
-			get { return this.totalBytesReaded; }
-		}
 		internal MsgPackValueInfo Value { get; private set; }
 
 		public MsgPackReader(Stream stream, SerializationContext context)
 		{
 			if (stream == null) throw new ArgumentNullException("stream");
 			if (context == null) throw new ArgumentNullException("context");
-			if (!stream.CanRead) throw new UnreadableStream("stream");
+			if (!stream.CanRead) throw JsonSerializationException.StreamIsNotReadable();
 
 			this.Context = context;
 			this.inputStream = stream;
@@ -528,8 +495,7 @@ namespace GameDevWare.Serialization.MessagePack
 
 				if (this.bufferAvailable < bytesRequired)
 				{
-					if (throwOnEos)
-						throw new UnexpectedEndOfStream(this);
+					if (throwOnEos) JsonSerializationException.UnexpectedEndOfStream(this);
 
 					return false;
 				}
@@ -547,7 +513,7 @@ namespace GameDevWare.Serialization.MessagePack
 
 			if (this.bufferAvailable >= bytesRequired)
 			{
-				var bytes = new ArraySegment<byte>(this.buffer, this.bufferOffset, (int) bytesRequired);
+				var bytes = new ArraySegment<byte>(this.buffer, this.bufferOffset, (int)bytesRequired);
 
 				this.bufferAvailable -= (int)bytesRequired;
 				this.bufferOffset += (int)bytesRequired;
@@ -563,7 +529,7 @@ namespace GameDevWare.Serialization.MessagePack
 
 				var offset = this.bufferAvailable;
 				if (this.inputStream.Read(bytes, offset, bytes.Length - offset) != (bytes.Length - offset))
-					throw new UnexpectedEndOfStream(this);
+					throw JsonSerializationException.UnexpectedEndOfStream(this);
 
 				this.bufferAvailable = 0;
 				this.bufferOffset = 0;
@@ -581,9 +547,6 @@ namespace GameDevWare.Serialization.MessagePack
 					break;
 				case MsgPackExtType.Decimal:
 					this.Value.SetValue(bitConverter.ToDecimal(data.Array, data.Offset), JsonToken.Number, pos);
-					break;
-				case MsgPackExtType.JsonString:
-					this.Value.SetValue(new JsonString(this.Context.Encoding.GetString(data.Array, data.Offset, data.Count)), JsonToken.StringLiteral, pos);
 					break;
 				default:
 					throw new UnknownMsgPackExtentionTypeException(extType);

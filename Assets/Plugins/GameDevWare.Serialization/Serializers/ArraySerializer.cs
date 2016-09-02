@@ -17,42 +17,37 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
 {
 	public sealed class ArraySerializer : TypeSerializer
 	{
-		private Type arrayType;
-		private Type elementType;
+		private readonly Type arrayType;
+		private readonly Type elementType;
 
 		public override Type SerializedType { get { return this.arrayType; } }
 
 		public ArraySerializer(Type enumerableType)
 		{
-			if (enumerableType == null)
-				throw new ArgumentNullException("enumerableType");
-
+			if (enumerableType == null) throw new ArgumentNullException("enumerableType");
 
 			arrayType = enumerableType;
 			elementType = GetElementType(arrayType);
 
-			if (elementType == null) throw new TypeContractViolation(this.GetType(), "be enumerable");
+			if (elementType == null) JsonSerializationException.TypeIsNotValid(this.GetType(), "be enumerable");
 		}
 
 		public override object Deserialize(IJsonReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException("reader");
-
+			if (reader == null) throw new ArgumentNullException("reader");
 
 			if (reader.Token == JsonToken.Null)
 				return null;
 
 			var container = new ArrayList();
 			if (reader.Token != JsonToken.BeginArray)
-				throw new UnexpectedToken(reader, JsonToken.BeginArray);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginArray);
 
 			reader.Context.Hierarchy.Push(container);
 			while (reader.NextToken() && reader.Token != JsonToken.EndOfArray)
@@ -63,7 +58,7 @@ namespace GameDevWare.Serialization.Serializers
 			reader.Context.Hierarchy.Pop();
 
 			if (reader.IsEndOfStream())
-				throw new UnexpectedToken(reader, JsonToken.EndOfArray);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfArray);
 
 			var array = container.ToArray(elementType);
 			if (arrayType.IsArray)
@@ -91,8 +86,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		private Type GetElementType(Type arrayType)
 		{
-			if (arrayType == null)
-				throw new ArgumentNullException("arrayType");
+			if (arrayType == null) throw new ArgumentNullException("arrayType");
 
 
 			var elementType = (Type)null;
@@ -105,7 +99,7 @@ namespace GameDevWare.Serialization.Serializers
 			if (arrayType.IsInstantiationOf(typeof(IEnumerable<>)))
 			{
 				if (arrayType.HasMultipleInstantiations(typeof(IEnumerable<>)))
-					throw new TypeContractViolation(this.GetType(), "have only one generic IEnumerable interface");
+					throw JsonSerializationException.TypeIsNotValid(this.GetType(), "have only one generic IEnumerable interface");
 
 				elementType = arrayType.GetInstantiationArguments(typeof(IEnumerable<>))[0];
 			}
@@ -113,7 +107,7 @@ namespace GameDevWare.Serialization.Serializers
 			if (elementType == null && typeof(IEnumerable).IsAssignableFrom(arrayType))
 				elementType = typeof(object);
 			else if (elementType == null)
-				throw new TypeContractViolation(this.GetType(), "be enumerable");
+				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be enumerable");
 
 			return elementType;
 		}

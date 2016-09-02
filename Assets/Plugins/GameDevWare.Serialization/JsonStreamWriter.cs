@@ -15,8 +15,6 @@
 */
 using System;
 using System.IO;
-using System.Text;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
@@ -29,10 +27,8 @@ namespace GameDevWare.Serialization
 
 		public JsonStreamWriter(Stream stream, SerializationContext context) : base(context)
 		{
-			if (stream == null)
-				throw new ArgumentNullException("stream");
-			if (!stream.CanWrite)
-				throw new UnwriteableStream("stream");
+			if (stream == null) throw new ArgumentNullException("stream");
+			if (!stream.CanWrite) throw JsonSerializationException.StreamIsNotWriteable();
 
 
 			writer = new StreamWriter(stream, context.Encoding);

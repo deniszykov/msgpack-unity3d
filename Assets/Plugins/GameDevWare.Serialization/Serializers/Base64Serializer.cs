@@ -14,7 +14,6 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
@@ -41,7 +40,7 @@ namespace GameDevWare.Serialization.Serializers
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
 
-			if (value != null && value is byte[] == false) throw new TypeContractViolation(this.GetType(), "be array of bytes");
+			if (value != null && value is byte[] == false) throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be array of bytes");
 
 			var base64String = Convert.ToBase64String(value as byte[]);
 			writer.WriteString(base64String);
@@ -49,7 +48,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override string ToString()
 		{
-			return string.Format("byte[] as Base64");
+			return "byte[] as Base64";
 		}
 	}
 }

@@ -21,7 +21,6 @@ namespace GameDevWare.Serialization.MessagePack
 	{
 		None = 0,
 		DateTime = 1,
-		Decimal = 2,
-		JsonString = 3
+		Decimal = 2
 	}
 }

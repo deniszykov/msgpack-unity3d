@@ -18,9 +18,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Text;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
@@ -80,7 +77,7 @@ namespace GameDevWare.Serialization
 			public Buffer(int size, JsonReaderBase reader)
 			{
 				if (size <= 0) throw new ArgumentOutOfRangeException("size");
-				if (reader == null) throw new ArgumentNullOrEmptyException("reader");
+				if (reader == null) new ArgumentNullException("reader");
 
 
 				if (size < 10)
@@ -323,7 +320,7 @@ namespace GameDevWare.Serialization
 					this.HasValue = true;
 				}
 			}
-			public Type ProbableType
+			public Type Type
 			{
 				get
 				{
@@ -399,81 +396,6 @@ namespace GameDevWare.Serialization
 				this.value = null;
 				this.HasValue = false;
 				this.valueKind = Kind.String;
-			}
-
-			public void CopyJsonTo(StringBuilder stringBuilder)
-			{
-				if (stringBuilder == null)
-					throw new ArgumentNullException("stringBuilder");
-
-
-				var buffer = reader.buffer.GetChars();
-				var start = jsonStart + reader.buffer.Offset;
-				var length = jsonLen;
-
-				if (valueKind == Kind.QuotedString)
-				{
-					start -= 1;
-					length += 2;
-				}
-
-				stringBuilder.Append(buffer, start, length);
-			}
-			public void CopyJsonTo(TextWriter writer)
-			{
-				if (writer == null)
-					throw new ArgumentNullException("writer");
-
-
-				var buffer = reader.buffer.GetChars();
-				var start = jsonStart + reader.buffer.Offset;
-				var length = jsonLen;
-
-				if (valueKind == Kind.QuotedString)
-				{
-					start -= 1;
-					length += 2;
-				}
-
-				writer.Write(buffer, start, length);
-			}
-			public void CopyJsonTo(Stream stream)
-			{
-				if (stream == null)
-					throw new ArgumentNullException("stream");
-
-
-				var buffer = reader.buffer.GetChars();
-				var start = jsonStart + reader.buffer.Offset;
-				var length = jsonLen;
-				var writer = new BinaryWriter(stream, reader.Context.Encoding);
-
-				if (valueKind == Kind.QuotedString)
-				{
-					start -= 1;
-					length += 2;
-				}
-
-				writer.Write(buffer, start, length);
-				writer.Flush();
-			}
-			public void CopyJsonTo(IJsonWriter writer)
-			{
-				if (writer == null)
-					throw new ArgumentNullException("writer");
-
-
-				var buffer = reader.buffer.GetChars();
-				var start = jsonStart + reader.buffer.Offset;
-				var length = jsonLen;
-
-				if (valueKind == Kind.QuotedString)
-				{
-					start -= 1;
-					length += 2;
-				}
-
-				writer.WriteJson(buffer, start, length);
 			}
 
 			public void SetBufferBounds(int start, int len)
@@ -751,11 +673,11 @@ namespace GameDevWare.Serialization
 			if (!escaped && quoted && ch == quoteCh)
 				return true;
 			else if (quoted && (ch == INSIGNIFICANT_NEWLINE || ch == INSIGNIFICANT_RETURN))
-				throw new UnterminatedStringLiteral(reader);
+				throw JsonSerializationException.UnterminatedStringLiteral(reader);
 			else if (eos)
 			{
 				if (quoted)
-					throw new UnexpectedEndOfStream(reader);
+					throw JsonSerializationException.UnexpectedEndOfStream(reader);
 				else
 					return true;
 			}

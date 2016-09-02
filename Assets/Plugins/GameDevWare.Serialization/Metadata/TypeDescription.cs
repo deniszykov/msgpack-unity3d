@@ -18,7 +18,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Metadata
@@ -78,12 +77,12 @@ namespace GameDevWare.Serialization.Metadata
 				else throw new InvalidOperationException("Unknown member type. Should be PropertyInfo or FieldInfo.");
 
 				if (string.IsNullOrEmpty(dataMember.Name))
-					throw new TypeContractViolation(objectType, "has no members with empty name");
+					throw JsonSerializationException.TypeIsNotValid(objectType, "has no members with empty name");
 
 				if (memberNames.Contains(dataMember.Name))
 				{
 					var conflictingMember = members.First(m => m.Name == dataMember.Name);
-					throw new TypeContractViolation(objectType, string.Format("has no duplicate member's name '{0}' ('{1}.{2}' and '{3}.{4}')", dataMember.Name, conflictingMember.Member.DeclaringType.Name, conflictingMember.Member.Name, dataMember.Member.DeclaringType.Name, dataMember.Member.Name));
+					throw JsonSerializationException.TypeIsNotValid(objectType, string.Format("has no duplicate member's name '{0}' ('{1}.{2}' and '{3}.{4}')", dataMember.Name, conflictingMember.Member.DeclaringType.Name, conflictingMember.Member.Name, dataMember.Member.DeclaringType.Name, dataMember.Member.Name));
 				}
 
 				members.Add(dataMember);

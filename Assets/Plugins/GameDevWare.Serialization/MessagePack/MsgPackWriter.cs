@@ -15,7 +15,6 @@
 */
 using System;
 using System.IO;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.MessagePack
@@ -32,7 +31,7 @@ namespace GameDevWare.Serialization.MessagePack
 		{
 			if (stream == null) throw new ArgumentNullException("stream");
 			if (context == null) throw new ArgumentNullException("context");
-			if (!stream.CanWrite) throw new UnreadableStream("stream");
+			if (!stream.CanWrite) throw JsonSerializationException.StreamIsNotReadable();
 
 			this.context = context;
 			this.outputStream = stream;
@@ -319,33 +318,12 @@ namespace GameDevWare.Serialization.MessagePack
 
 		public void WriteJson(string jsonString)
 		{
-			this.WriteJson(jsonString.ToCharArray(), 0, jsonString.Length);
+			throw new NotSupportedException();
 		}
 
 		public void WriteJson(char[] jsonString, int index, int charCount)
 		{
-			var bytes = context.Encoding.GetBytes(jsonString, index, charCount);
-			if (bytes.Length < ushort.MaxValue)
-			{
-				this.Write(MsgPackType.Ext16);
-				this.bitConverter.CopyBytes((ushort) bytes.Length, buffer, 0);
-				this.outputStream.Write(buffer, 0, 2);
-				this.buffer[0] = (byte) MsgPackExtType.JsonString;
-				this.outputStream.Write(buffer, 0, 1);
-				this.bytesWritten += 3;
-			}
-			else
-			{
-				this.Write(MsgPackType.Ext32);
-				this.bitConverter.CopyBytes((uint) bytes.Length, buffer, 0);
-				this.outputStream.Write(buffer, 0, 4);
-				this.buffer[0] = (byte) MsgPackExtType.JsonString;
-				this.outputStream.Write(buffer, 0, 1);
-				this.bytesWritten += 5;
-			}
-
-			this.outputStream.Write(bytes, 0, bytes.Length);
-			this.bytesWritten += bytes.Length;
+			throw new NotSupportedException();
 		}
 
 		public void Reset()

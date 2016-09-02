@@ -14,7 +14,6 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
@@ -28,9 +27,9 @@ namespace GameDevWare.Serialization
 
 
 			if (reader.Token != JsonToken.BeginArray)
-				throw new UnexpectedToken(reader, JsonToken.BeginArray);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginArray);
 			if (reader.IsEndOfStream())
-				throw new UnexpectedToken(reader, JsonToken.EndOfArray);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfArray);
 
 			if (nextToken)
 				reader.NextToken();
@@ -42,7 +41,7 @@ namespace GameDevWare.Serialization
 
 
 			if (reader.Token != JsonToken.EndOfArray)
-				throw new UnexpectedToken(reader, JsonToken.EndOfArray);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfArray);
 
 			if (nextToken)
 				reader.NextToken();
@@ -55,9 +54,9 @@ namespace GameDevWare.Serialization
 
 
 			if (reader.Token != JsonToken.BeginObject)
-				throw new UnexpectedToken(reader, JsonToken.BeginObject);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginObject);
 			if (reader.IsEndOfStream())
-				throw new UnexpectedToken(reader, JsonToken.EndOfObject);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfObject);
 
 			if (nextToken)
 				reader.NextToken();
@@ -67,7 +66,7 @@ namespace GameDevWare.Serialization
 			if (reader == null)
 				throw new ArgumentNullException("reader");
 			if (reader.Token != JsonToken.EndOfObject)
-				throw new UnexpectedToken(reader, JsonToken.EndOfObject);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfObject);
 
 
 			if (nextToken)
@@ -81,7 +80,7 @@ namespace GameDevWare.Serialization
 
 
 			if (reader.Token != JsonToken.Member)
-				throw new UnexpectedToken(reader, JsonToken.Member);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Member);
 
 			var memberName = (string)reader.RawValue;
 
@@ -101,7 +100,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsByte;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -125,7 +124,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsByte;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -144,7 +143,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsSByte;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -168,7 +167,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsSByte;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -187,7 +186,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt16;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -211,7 +210,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsInt16;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -230,7 +229,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt32;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -254,7 +253,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsInt32;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -273,7 +272,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt64;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -297,7 +296,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsInt64;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 			if (nextToken)
 				reader.NextToken();
@@ -315,7 +314,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt16;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -339,7 +338,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsUInt16;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -358,7 +357,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt32;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -382,7 +381,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsUInt32;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -401,7 +400,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt64;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -425,7 +424,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsUInt64;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -444,7 +443,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsSingle;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -468,7 +467,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsSingle;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -487,7 +486,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsDouble;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -511,7 +510,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsDouble;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -530,7 +529,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsDecimal;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 
 			if (nextToken)
 				reader.NextToken();
@@ -554,7 +553,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsDecimal;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
 			}
 
 			if (nextToken)
@@ -573,7 +572,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Boolean)
 				value = reader.Value.AsBoolean;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Boolean);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Boolean);
 
 			if (nextToken)
 				reader.NextToken();
@@ -597,7 +596,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsBoolean;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Boolean);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Boolean);
 			}
 
 			if (nextToken)
@@ -616,7 +615,7 @@ namespace GameDevWare.Serialization
 			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number || reader.Token == JsonToken.DateTime)
 				value = reader.Value.AsDateTime;
 			else
-				throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime);
 
 			if (nextToken)
 				reader.NextToken();
@@ -641,7 +640,7 @@ namespace GameDevWare.Serialization
 					value = reader.Value.AsDateTime;
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime);
 			}
 
 			if (nextToken)
@@ -667,7 +666,7 @@ namespace GameDevWare.Serialization
 					stringValue = Convert.ToString(reader.RawValue, reader.Context.Format);
 					break;
 				default:
-					throw new UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime, JsonToken.Boolean);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime, JsonToken.Boolean);
 			}
 
 			if (nextToken)
@@ -682,7 +681,7 @@ namespace GameDevWare.Serialization
 				throw new ArgumentNullException("reader");
 
 			if (reader.Token != JsonToken.Null)
-				throw new UnexpectedToken(reader, JsonToken.Null);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Null);
 
 			if (nextToken)
 				reader.NextToken();
@@ -694,48 +693,27 @@ namespace GameDevWare.Serialization
 
 			// try guess type
 			if (valueType == typeof(object))
-			{
-				switch (reader.Token)
-				{
-					case JsonToken.BeginArray: valueType = typeof(object[]); break;
-					case JsonToken.Null:
-					case JsonToken.BeginObject: valueType = typeof(object); break;
-					default: valueType = reader.Value.ProbableType; break;
-				}
-			}
+				valueType = reader.Value.Type;
 
 			var value = default(object);
-			var valusIsNullable = valueType.IsValueType == false || valueType.IsInstantiationOf(typeof(Nullable<>));
-			if (reader.Token == JsonToken.Null && valusIsNullable)
+			var isNullable = valueType.IsValueType == false || valueType.IsInstantiationOf(typeof(Nullable<>));
+			if (reader.Token == JsonToken.Null && isNullable)
 			{
 				value = null;
 			}
 			else
 			{
+				if (isNullable && valueType.IsValueType)
+					valueType = valueType.GetGenericArguments()[0]; // get subtype of Nullable<T>
+
 				var serializer = reader.Context.GetSerializerForType(valueType);
 				value = serializer.Deserialize(reader);
 			}
 			
-
 			if (nextToken)
 				reader.NextToken();
 
 			return value;
-		}
-
-		internal static void ThrowUnexpectedToken(this IJsonReader reader, params JsonToken[] expectedTokens)
-		{
-			throw new UnexpectedToken(reader, expectedTokens);
-		}
-		internal static void ThrowIfEndOfStream(this IJsonReader reader, JsonToken expectedToken)
-		{
-			if (reader.IsEndOfStream())
-				throw new UnexpectedToken(reader, expectedToken);
-		}
-		internal static void ThrowIfMemberNameIsEmpty(this IJsonReader reader, string memberName)
-		{
-			if (string.IsNullOrEmpty(memberName))
-				throw new EmptyMemberName(reader);
 		}
 	}
 }

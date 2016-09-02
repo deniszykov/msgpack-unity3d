@@ -82,7 +82,7 @@ namespace GameDevWare.Serialization.MessagePack
 
 		#region Factory properties
 
-		private static LittleEndianBitConverter little = new LittleEndianBitConverter();
+		private static readonly LittleEndianBitConverter little = new LittleEndianBitConverter();
 
 		/// <summary>
 		///     Returns a little-endian bit converter instance. The same instance is
@@ -93,7 +93,7 @@ namespace GameDevWare.Serialization.MessagePack
 			get { return little; }
 		}
 
-		private static BigEndianBitConverter big = new BigEndianBitConverter();
+		private static readonly BigEndianBitConverter big = new BigEndianBitConverter();
 
 		/// <summary>
 		///     Returns a big-endian bit converter instance. The same instance is
@@ -716,12 +716,12 @@ namespace GameDevWare.Serialization.MessagePack
 			/// <summary>
 			///     Int32 version of the value.
 			/// </summary>
-			[FieldOffset(0)] private int i;
+			[FieldOffset(0)] private readonly int i;
 
 			/// <summary>
 			///     Single version of the value.
 			/// </summary>
-			[FieldOffset(0)] private float f;
+			[FieldOffset(0)] private readonly float f;
 
 			/// <summary>
 			///     Creates an instance representing the given integer.

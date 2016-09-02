@@ -21,7 +21,7 @@ namespace GameDevWare.Serialization
 {
 	public sealed class JsonTextReader : JsonReaderBase
 	{
-		private TextReader reader;
+		private readonly TextReader reader;
 
 		public JsonTextReader(TextReader reader, SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
 			: base(context, bufferSize)

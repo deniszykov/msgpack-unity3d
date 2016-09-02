@@ -17,7 +17,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
@@ -41,7 +40,7 @@ namespace GameDevWare.Serialization.Serializers
 			this.valueType = typeof(object);
 
 			if (dictionaryType.HasMultipleInstantiations(typeof(IDictionary<,>)))
-				throw new TypeContractViolation(this.GetType(), "have only one generic IDictionary interface");
+				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "have only one generic IDictionary interface");
 
 			if (dictionaryType.IsInstantiationOf(typeof(IDictionary<,>)))
 			{
@@ -49,12 +48,12 @@ namespace GameDevWare.Serialization.Serializers
 				keyType = genArgs[0];
 				valueType = genArgs[1];
 			}
-			else if (typeof(IDictionary).IsAssignableFrom(dictionaryType))
-				return; // do nothink
-			else
-				throw new TypeContractViolation(this.GetType(), "be dictionary");
+			else if (typeof(IDictionary).IsAssignableFrom(dictionaryType) == false)
+			{
+				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be dictionary");
+			}
 
-			this.isStringKeyType = IsStringKeyType(keyType);
+			this.isStringKeyType = keyType == typeof(string);
 		}
 
 		public override object Deserialize(IJsonReader reader)
@@ -70,7 +69,7 @@ namespace GameDevWare.Serialization.Serializers
 					while (reader.NextToken() && reader.Token != JsonToken.EndOfArray)
 					{
 						if (reader.Token != JsonToken.BeginArray || !reader.NextToken())
-							throw new UnexpectedToken(reader, JsonToken.BeginArray);
+							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginArray);
 
 						object key = null;
 						object value = null;
@@ -85,7 +84,7 @@ namespace GameDevWare.Serialization.Serializers
 						}
 
 						if (!reader.NextToken())
-							throw new UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Number,
+							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Number,
 								JsonToken.StringLiteral);
 
 						try
@@ -101,7 +100,7 @@ namespace GameDevWare.Serialization.Serializers
 						container.Add(new DictionaryEntry(key, value));
 
 						if (!reader.NextToken() || reader.Token != JsonToken.EndOfArray)
-							throw new UnexpectedToken(reader, JsonToken.EndOfArray);
+							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfArray);
 					}
 				}
 				else if (reader.Token == JsonToken.BeginObject)
@@ -109,7 +108,7 @@ namespace GameDevWare.Serialization.Serializers
 					while (reader.NextToken() && reader.Token != JsonToken.EndOfObject)
 					{
 						if (reader.Token != JsonToken.Member)
-							throw new UnexpectedToken(reader, JsonToken.Member);
+							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Member);
 
 						string key = null;
 						object value = null;
@@ -124,7 +123,7 @@ namespace GameDevWare.Serialization.Serializers
 						}
 
 						if (!reader.NextToken())
-							throw new UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Number,
+							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Number,
 								JsonToken.StringLiteral);
 						try
 						{
@@ -141,7 +140,7 @@ namespace GameDevWare.Serialization.Serializers
 				}
 				else
 				{
-					throw new UnexpectedToken(reader, JsonToken.BeginObject, JsonToken.BeginArray);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginObject, JsonToken.BeginArray);
 				}
 
 				var dictionary = (IDictionary)Activator.CreateInstance(this.dictionaryType);
@@ -175,14 +174,14 @@ namespace GameDevWare.Serialization.Serializers
 
 			// serialize generic dictionary
 			if (!(value is IDictionary))
-				throw new TypeContractViolation(this.GetType(), "be dictionary");
+				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be dictionary");
 
 			writer.Context.Hierarchy.Push(value);
 			// object
 			if (isStringKeyType)
 			{
-				writer.WriteObjectBegin((value as IDictionary).Count);
-				foreach (DictionaryEntry pair in (value as IDictionary))
+				writer.WriteObjectBegin(((IDictionary)value).Count);
+				foreach (DictionaryEntry pair in (IDictionary)value)
 				{
 					var keyStr = default(string);
 					if (pair.Key is float)
@@ -201,8 +200,8 @@ namespace GameDevWare.Serialization.Serializers
 			}
 			else
 			{
-				writer.WriteArrayBegin((value as IDictionary).Count);
-				foreach (DictionaryEntry pair in (value as IDictionary))
+				writer.WriteArrayBegin(((IDictionary)value).Count);
+				foreach (DictionaryEntry pair in (IDictionary)value)
 				{
 					writer.WriteArrayBegin(2);
 					writer.WriteValue(pair.Key, keyType);
@@ -213,13 +212,6 @@ namespace GameDevWare.Serialization.Serializers
 			}
 
 			writer.Context.Hierarchy.Pop();
-		}
-
-		public static bool IsStringKeyType(Type keyType)
-		{
-			if (keyType == null) throw new ArgumentNullException("keyType");
-
-			return keyType == typeof(string);
 		}
 
 		public override string ToString()

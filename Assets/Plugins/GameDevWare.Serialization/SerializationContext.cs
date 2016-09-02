@@ -81,7 +81,7 @@ namespace GameDevWare.Serialization
 			else if (valueType.IsEnum)
 				serializer = this.CreateEnumSerializer(valueType);
 			else if (typeof(IDictionary).IsAssignableFrom(valueType) &&
-					(!valueType.IsInstanceOfType(typeof(IDictionary<,>)) || DictionarySerializer.IsStringKeyType(valueType.GetInstantiationArguments(typeof(IDictionary<,>))[0])))
+					(!valueType.IsInstanceOfType(typeof(IDictionary<,>)) || valueType.GetInstantiationArguments(typeof(IDictionary<,>))[0] == typeof(string)))
 				serializer = this.CreateDictionarySerializer(valueType);
 			else if (valueType.IsArray || typeof(IEnumerable).IsAssignableFrom(valueType))
 				serializer = this.CreateArraySerializer(valueType);

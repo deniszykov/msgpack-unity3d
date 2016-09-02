@@ -18,7 +18,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using GameDevWare.Serialization.Exceptions;
 using GameDevWare.Serialization.Serializers;
 
 // ReSharper disable once CheckNamespace
@@ -88,7 +87,6 @@ namespace GameDevWare.Serialization
 				new DateTimeOffsetSerializer(),
 				new DateTimeSerializer(),
 				new GuidSerializer(),
-				new JsonStringSerializer(),
 				new StreamSerializer(),
 				new UriSerializer(),
 				new VersionSerializer(),
@@ -137,8 +135,9 @@ namespace GameDevWare.Serialization
 		public static void Serialize<T>(T objectToSerialize, Stream jsonOutput, SerializationContext context)
 		{
 			if (jsonOutput == null) throw new ArgumentNullException("jsonOutput");
-			if (!jsonOutput.CanWrite) throw new UnwriteableStream("jsonOutput");
 			if (context == null) throw new ArgumentNullException("context");
+			if (!jsonOutput.CanWrite) throw JsonSerializationException.StreamIsNotWriteable();
+
 
 			if (objectToSerialize == null)
 			{
@@ -236,9 +235,8 @@ namespace GameDevWare.Serialization
 		{
 			if (objectType == null) throw new ArgumentNullException("objectType");
 			if (jsonStream == null) throw new ArgumentNullException("jsonStream");
-			if (!jsonStream.CanRead) throw new UnreadableStream("jsonStream");
 			if (context == null) throw new ArgumentNullException("context");
-
+			if (!jsonStream.CanRead) throw JsonSerializationException.StreamIsNotReadable();
 
 			var reader = new JsonStreamReader(jsonStream, context);
 			return reader.ReadValue(objectType, false);
@@ -278,24 +276,6 @@ namespace GameDevWare.Serialization
 
 
 			var reader = new JsonStringReader(jsonString, context);
-			return reader.ReadValue(objectType, false);
-		}
-
-		public static object Deserialize(Type objectType, JsonString jsonString)
-		{
-			return Deserialize(objectType, jsonString, CreateDefaultContext(SerializationOptions.None));
-		}
-		public static object Deserialize(Type objectType, JsonString jsonString, SerializationOptions options)
-		{
-			return Deserialize(objectType, jsonString, CreateDefaultContext(options));
-		}
-		public static object Deserialize(Type objectType, JsonString jsonString, SerializationContext context)
-		{
-			if (objectType == null) throw new ArgumentNullException("objectType");
-			if (jsonString == null) throw new ArgumentNullException("jsonString");
-			if (context == null) throw new ArgumentNullException("context");
-
-			var reader = jsonString.ToJsonReader(context);
 			return reader.ReadValue(objectType, false);
 		}
 
@@ -351,19 +331,6 @@ namespace GameDevWare.Serialization
 			return (T)Deserialize(typeof(T), jsonString, CreateDefaultContext(options));
 		}
 		public static T Deserialize<T>(string jsonString, SerializationContext context)
-		{
-			return (T)Deserialize(typeof(T), jsonString, context);
-		}
-
-		public static T Deserialize<T>(JsonString jsonString)
-		{
-			return Deserialize<T>(jsonString, CreateDefaultContext(SerializationOptions.None));
-		}
-		public static T Deserialize<T>(JsonString jsonString, SerializationOptions options)
-		{
-			return Deserialize<T>(jsonString, CreateDefaultContext(options));
-		}
-		public static T Deserialize<T>(JsonString jsonString, SerializationContext context)
 		{
 			return (T)Deserialize(typeof(T), jsonString, context);
 		}

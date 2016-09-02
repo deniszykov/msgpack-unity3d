@@ -22,8 +22,6 @@ namespace GameDevWare.Serialization
 	{
 		SerializationContext Context { get; }
 
-		long CharactersWritten { get; }
-
 		void Flush();
 
 		void Write(string value);

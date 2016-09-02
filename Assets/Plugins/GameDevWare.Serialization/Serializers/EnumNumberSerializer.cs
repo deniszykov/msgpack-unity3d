@@ -14,7 +14,6 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
@@ -29,7 +28,7 @@ namespace GameDevWare.Serialization.Serializers
 		public EnumNumberSerializer(Type enumType)
 		{
 			if (enumType == null) throw new ArgumentNullException("enumType");
-			if (!enumType.IsEnum) throw new TypeContractViolation(this.GetType(), "be a Enum");
+			if (!enumType.IsEnum) throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be a Enum");
 
 			this.enumType = enumType;
 			this.enumBaseType = Enum.GetUnderlyingType(enumType);
@@ -44,7 +43,7 @@ namespace GameDevWare.Serialization.Serializers
 			else if (reader.Token == JsonToken.Number)
 				return Enum.ToObject(this.enumType, reader.ReadValue(this.enumBaseType, false));
 			else
-				throw new UnexpectedToken(reader, JsonToken.Number | JsonToken.StringLiteral);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Number, JsonToken.StringLiteral);
 		}
 
 		public override void Serialize(IJsonWriter writer, object value)

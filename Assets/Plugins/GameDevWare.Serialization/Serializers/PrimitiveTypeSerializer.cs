@@ -14,7 +14,6 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
@@ -31,14 +30,14 @@ namespace GameDevWare.Serialization.Serializers
 			if (primitiveType == null) throw new ArgumentNullException("primitiveType");
 
 			if (primitiveType.IsGenericType && primitiveType.GetGenericTypeDefinition() == typeof(Nullable<>))
-				throw new TypeContractViolation(typeof(PrimitiveSerializer), "can't be nullable type");
+				throw JsonSerializationException.TypeIsNotValid(typeof(PrimitiveSerializer), "can't be nullable type");
 
 			this.primitiveType = primitiveType;
 			this.primitiveTypeCode = Type.GetTypeCode(primitiveType);
 
 			if (this.primitiveTypeCode == TypeCode.Object || this.primitiveTypeCode == TypeCode.Empty ||
 				this.primitiveTypeCode == TypeCode.DBNull)
-				throw new TypeContractViolation(this.GetType(), "be a primitive type");
+				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be a primitive type");
 		}
 
 		public override object Deserialize(IJsonReader reader)
@@ -50,7 +49,7 @@ namespace GameDevWare.Serialization.Serializers
 				if (this.primitiveTypeCode == TypeCode.String)
 					return null;
 
-				throw new UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Null, JsonToken.Number, JsonToken.StringLiteral);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Null, JsonToken.Number, JsonToken.StringLiteral);
 			}
 
 			var value = default(object);

@@ -15,7 +15,6 @@
 */
 using System;
 using System.IO;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
@@ -38,45 +37,43 @@ namespace GameDevWare.Serialization.Serializers
 			if (value == null) throw new ArgumentNullException("value");
 
 			var stream = value as Stream;
+			if (value != null && stream == null) throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be a Stream");
+			if (!stream.CanRead) throw new JsonSerializationException("Stream couldn't be readed.", JsonSerializationException.ErrorCode.StreamIsNotReadable);
 
-			if (stream == null)
-				throw new TypeContractViolation(this.GetType(), "be a Stream");
-
-			if (!stream.CanRead)
-				throw new UnreadableStream("value");
-
-			var bufferSize = 3 * 1024 * 1024;
-			var buffer = new byte[bufferSize]; // 3kb buffer
-
-			// if it's a small seakable stream
-			if (stream.CanSeek && stream.Length < bufferSize)
+			var bufferSize = 1 * 1024 * 1024;
+			var buffer = new byte[bufferSize];
+			var read = 0;
+			if (writer is JsonWriterBase)
 			{
-				// read it to buffer
-				stream.Read(buffer, 0, buffer.Length);
-				// convert to base64
-				var base64Str = Convert.ToBase64String(buffer, 0, (int)stream.Length);
-				// and write it
-				writer.WriteString(base64Str);
-				return;
+				writer.WriteJson("\"");
+
+				while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+				{
+					var base64Str = Convert.ToBase64String(buffer, 0, read);
+					writer.WriteJson(base64Str);
+				}
+
+				writer.WriteJson("\"");
 			}
-			// else white with chunks
-
-			var readed = 0;
-			writer.WriteJson("\"");
-
-			// read chunks
-			while ((readed = stream.Read(buffer, 0, buffer.Length)) > 0)
+			else
 			{
-				var base64Str = Convert.ToBase64String(buffer, 0, readed);
-				writer.WriteJson(base64Str);
-			}
 
-			writer.WriteJson("\"");
+				var offset = 0;
+				while ((read = stream.Read(buffer, offset, buffer.Length - offset)) != 0)
+				{
+					offset += read;
+					if (offset == buffer.Length)
+						Array.Resize(ref buffer, (int)(buffer.Length * 1.5));
+				}
+
+				var base64Str = Convert.ToBase64String(buffer, 0, offset);
+				writer.Write(base64Str);
+			}
 		}
 
 		public override string ToString()
 		{
-			return string.Format("stream");
+			return "stream";
 		}
 	}
 }

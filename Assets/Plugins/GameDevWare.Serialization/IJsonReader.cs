@@ -13,9 +13,6 @@
 	to use it in your project you should accept Terms of Service and EULA 
 	https://unity3d.com/ru/legal/as_terms
 */
-using System;
-using System.IO;
-using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
@@ -27,7 +24,6 @@ namespace GameDevWare.Serialization
 		JsonToken Token { get; }
 		object RawValue { get; }
 		IValueInfo Value { get; }
-		long CharactersReaded { get; }
 
 		bool NextToken();
 
@@ -37,34 +33,5 @@ namespace GameDevWare.Serialization
 		///     Resets Line/Column numbers, CharactersReaded and Token information of reader
 		/// </summary>
 		void Reset();
-	}
-
-	public interface IValueInfo
-	{
-		bool HasValue { get; }
-		object Raw { get; }
-		Type ProbableType { get; }
-		bool AsBoolean { get; }
-		byte AsByte { get; }
-		short AsInt16 { get; }
-		int AsInt32 { get; }
-		long AsInt64 { get; }
-		sbyte AsSByte { get; }
-		ushort AsUInt16 { get; }
-		uint AsUInt32 { get; }
-		ulong AsUInt64 { get; }
-		float AsSingle { get; }
-		double AsDouble { get; }
-		decimal AsDecimal { get; }
-		string AsString { get; }
-		DateTime AsDateTime { get; }
-
-		int LineNumber { get; }
-		int ColumnNumber { get; }
-
-		void CopyJsonTo(StringBuilder stringBuilder);
-		void CopyJsonTo(TextWriter writer);
-		void CopyJsonTo(Stream stream);
-		void CopyJsonTo(IJsonWriter writer);
 	}
 }

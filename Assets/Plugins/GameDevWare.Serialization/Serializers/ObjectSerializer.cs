@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using GameDevWare.Serialization.Exceptions;
 using GameDevWare.Serialization.Metadata;
 
 // ReSharper disable once CheckNamespace
@@ -57,7 +56,7 @@ namespace GameDevWare.Serialization.Serializers
 			lock (TypeDescriptions)
 			{
 				if (!TypeDescriptions.TryGetValue(type, out this.objectTypeDescription))
-					this.objectTypeDescription = new TypeDescription(type);
+					TypeDescriptions.Add(type, this.objectTypeDescription = new TypeDescription(type));
 			}
 		}
 
@@ -66,7 +65,7 @@ namespace GameDevWare.Serialization.Serializers
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			if (reader.Token != JsonToken.BeginObject)
-				throw new UnexpectedToken(reader, JsonToken.BeginObject);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginObject);
 
 			var serializerOverride = default(ObjectSerializer);
 			var container = new IndexedDictionary<string, object>(10);
@@ -75,7 +74,7 @@ namespace GameDevWare.Serialization.Serializers
 			reader.Context.Hierarchy.Pop();
 
 			if (reader.Token != JsonToken.EndOfObject)
-				throw new UnexpectedToken(reader, JsonToken.EndOfObject);
+				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfObject);
 
 			if (instance != null)
 				return instance;
@@ -135,7 +134,7 @@ namespace GameDevWare.Serialization.Serializers
 			while (reader.NextToken() && reader.Token != JsonToken.EndOfObject)
 			{
 				if (reader.Token != JsonToken.Member)
-					throw new UnexpectedToken(reader, JsonToken.Member);
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Member);
 
 				string memberName = null;
 				object value = null;
@@ -277,7 +276,7 @@ namespace GameDevWare.Serialization.Serializers
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
-			return VersionRegEx.Replace(type.AssemblyQualifiedName, string.Empty);
+			return VersionRegEx.Replace(type.AssemblyQualifiedName ?? type.FullName, string.Empty);
 		}
 
 		public override string ToString()

@@ -14,7 +14,6 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
-using GameDevWare.Serialization.Serializers;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization

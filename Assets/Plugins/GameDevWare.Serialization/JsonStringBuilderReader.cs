@@ -21,7 +21,7 @@ namespace GameDevWare.Serialization
 {
 	public sealed class JsonStringBuilderReader : JsonReaderBase
 	{
-		private StringBuilder jsonString;
+		private readonly StringBuilder jsonString;
 		private int position;
 
 		public JsonStringBuilderReader(StringBuilder stringBuilder, SerializationContext context,

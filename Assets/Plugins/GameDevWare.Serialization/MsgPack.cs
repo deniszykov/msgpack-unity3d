@@ -15,7 +15,6 @@
 */
 using System;
 using System.IO;
-using GameDevWare.Serialization.Exceptions;
 using GameDevWare.Serialization.MessagePack;
 using GameDevWare.Serialization.Serializers;
 
@@ -61,7 +60,7 @@ namespace GameDevWare.Serialization
 			if (objectType == null) throw new ArgumentNullException("objectType");
 			if (context == null) throw new ArgumentNullException("context");
 			if (msgPackInput == null) throw new ArgumentNullException("msgPackInput");
-			if (!msgPackInput.CanRead) throw new UnreadableStream("msgPackInput");
+			if (!msgPackInput.CanRead) throw JsonSerializationException.StreamIsNotReadable();
 
 			var reader = new MsgPackReader(msgPackInput, context);
 			return reader.ReadValue(objectType, false);
@@ -79,7 +78,7 @@ namespace GameDevWare.Serialization
 		{
 			if (context == null) throw new ArgumentNullException("context");
 			if (msgPackInput == null) throw new ArgumentNullException("msgPackInput");
-			if (!msgPackInput.CanRead) throw new UnreadableStream("msgPackInput");
+			if (!msgPackInput.CanRead) throw JsonSerializationException.StreamIsNotReadable();
 
 			return (T)Deserialize(typeof(T), msgPackInput, context);
 		}

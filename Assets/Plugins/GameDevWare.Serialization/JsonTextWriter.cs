@@ -21,7 +21,7 @@ namespace GameDevWare.Serialization
 {
 	public sealed class JsonTextWriter : JsonWriterBase
 	{
-		private TextWriter writer;
+		private readonly TextWriter writer;
 
 		private TextWriter Writer
 		{

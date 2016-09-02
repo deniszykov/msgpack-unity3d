@@ -15,22 +15,19 @@
 */
 using System;
 using System.IO;
-using GameDevWare.Serialization.Exceptions;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
 	public sealed class JsonStreamReader : JsonReaderBase
 	{
-		private StreamReader reader;
+		private readonly StreamReader reader;
 
 		public JsonStreamReader(Stream stream, SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
 			: base(context, bufferSize)
 		{
-			if (stream == null)
-				throw new ArgumentNullException("stream");
-			if (!stream.CanRead)
-				throw new UnreadableStream("stream");
+			if (stream == null) throw new ArgumentNullException("stream");
+			if (!stream.CanRead) throw JsonSerializationException.StreamIsNotReadable();
 
 
 			reader = new StreamReader(stream, context.Encoding);
