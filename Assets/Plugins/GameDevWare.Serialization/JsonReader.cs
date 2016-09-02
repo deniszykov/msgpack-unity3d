@@ -22,7 +22,7 @@ using System.Globalization;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
-	public abstract class JsonReaderBase : IJsonReader
+	public abstract class JsonReader : IJsonReader
 	{
 		private static readonly long UNIX_EPOCH_TICKS = new DateTime(0x7b2, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
 		protected const int DEFAULT_BUFFER_SIZE = 1024;
@@ -32,7 +32,7 @@ namespace GameDevWare.Serialization
 			private const float SHIFT_THRESHOLD = 0.5f; // position over 50% of buffer
 			private const float GROW_THRESHOLD = 0.1f; // when less that 10% of space is free
 
-			private readonly JsonReaderBase reader;
+			private readonly JsonReader reader;
 			private char[] buffer;
 			private int? lazyFixation;
 			private int end;
@@ -74,7 +74,7 @@ namespace GameDevWare.Serialization
 				}
 			}
 
-			public Buffer(int size, JsonReaderBase reader)
+			public Buffer(int size, JsonReader reader)
 			{
 				if (size <= 0) throw new ArgumentOutOfRangeException("size");
 				if (reader == null) new ArgumentNullException("reader");
@@ -294,7 +294,7 @@ namespace GameDevWare.Serialization
 				String
 			};
 
-			private readonly JsonReaderBase reader;
+			private readonly JsonReader reader;
 			private int jsonStart;
 			private int jsonLen;
 			private object value;
@@ -383,7 +383,7 @@ namespace GameDevWare.Serialization
 				}
 			}
 
-			public LazyValueInfo(JsonReaderBase reader)
+			public LazyValueInfo(JsonReader reader)
 			{
 				if (reader == null)
 					throw new ArgumentNullException("reader");
@@ -435,7 +435,7 @@ namespace GameDevWare.Serialization
 		private JsonToken token;
 		private readonly Buffer buffer;
 
-		protected JsonReaderBase(SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
+		protected JsonReader(SerializationContext context, int bufferSize = DEFAULT_BUFFER_SIZE)
 		{
 			if (context == null)
 				throw new ArgumentNullException("context");

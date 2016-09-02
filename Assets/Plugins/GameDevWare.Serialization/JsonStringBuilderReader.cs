@@ -19,7 +19,7 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
-	public sealed class JsonStringBuilderReader : JsonReaderBase
+	public sealed class JsonStringBuilderReader : JsonReader
 	{
 		private readonly StringBuilder jsonString;
 		private int position;

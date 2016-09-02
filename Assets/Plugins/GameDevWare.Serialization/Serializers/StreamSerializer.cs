@@ -43,7 +43,7 @@ namespace GameDevWare.Serialization.Serializers
 			var bufferSize = 1 * 1024 * 1024;
 			var buffer = new byte[bufferSize];
 			var read = 0;
-			if (writer is JsonWriterBase)
+			if (writer is JsonWriter)
 			{
 				writer.WriteJson("\"");
 

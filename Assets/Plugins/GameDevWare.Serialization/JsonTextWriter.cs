@@ -19,7 +19,7 @@ using System.IO;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
-	public sealed class JsonTextWriter : JsonWriterBase
+	public sealed class JsonTextWriter : JsonWriter
 	{
 		private readonly TextWriter writer;
 

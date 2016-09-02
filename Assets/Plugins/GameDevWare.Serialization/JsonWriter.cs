@@ -20,7 +20,7 @@ using System.Linq;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
-	public abstract class JsonWriterBase : IJsonWriter
+	public abstract class JsonWriter : IJsonWriter
 	{
 		[Flags]
 		private enum Structure : byte
@@ -58,7 +58,7 @@ namespace GameDevWare.Serialization
 		public long CharactersWritten { get; protected set; }
 		public int InitialPadding { get; set; }
 
-		protected JsonWriterBase(SerializationContext context)
+		protected JsonWriter(SerializationContext context)
 		{
 			if (context == null) throw new ArgumentNullException("context");
 

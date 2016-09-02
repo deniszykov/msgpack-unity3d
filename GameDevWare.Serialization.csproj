@@ -76,7 +76,7 @@
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\IJsonWriter.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Json.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonMember.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonReaderBase.cs" />
+    <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonReader.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonReaderExtentions.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonStreamReader.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonStreamWriter.cs" />
@@ -87,7 +87,7 @@
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonTextWriter.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonToken.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonUtils.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonWriterBase.cs" />
+    <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonWriter.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\JsonWriterExtentions.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\MessagePack\BigEndianBitConverter.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\MessagePack\EndianBitConverter.cs" />
