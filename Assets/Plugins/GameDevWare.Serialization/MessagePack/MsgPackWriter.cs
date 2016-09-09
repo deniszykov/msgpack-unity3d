@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -57,10 +57,13 @@ namespace GameDevWare.Serialization.MessagePack
 
 		public void Write(string value)
 		{
-			if (value == null) throw new ArgumentNullException("value");
+			if (value == null)
+			{
+				this.WriteNull();
+				return;
+			}
 
 			var bytes = context.Encoding.GetBytes(value);
-
 			if (value.Length <= byte.MaxValue)
 			{
 				this.Write(MsgPackType.Str8);
@@ -240,6 +243,35 @@ namespace GameDevWare.Serialization.MessagePack
 			this.bitConverter.CopyBytes(datetime.Ticks, this.buffer, 0);
 			this.outputStream.Write(buffer, 0, 8);
 			this.bytesWritten += 9;
+		}
+
+		public void Write(byte[] value)
+		{
+			if (value == null)
+			{
+				this.WriteNull();
+				return;
+			}
+
+			if (value.Length < byte.MaxValue)
+			{
+				this.buffer[0] = (byte)MsgPackType.Bin8;
+				this.buffer[1] = (byte)value.Length;
+				this.outputStream.Write(buffer, 0, 2);
+			}
+			else if (value.Length < ushort.MaxValue)
+			{
+				this.buffer[0] = (byte)MsgPackType.Bin16;
+				this.bitConverter.CopyBytes(checked((ushort)value.LongLength), this.buffer, 1);
+				this.outputStream.Write(buffer, 0, 3);
+			}
+			else
+			{
+				this.buffer[0] = (byte)MsgPackType.Bin32;
+				this.bitConverter.CopyBytes(checked((uint)value.LongLength), this.buffer, 1);
+				this.outputStream.Write(buffer, 0, 5);
+			}
+			this.outputStream.Write(value, 0, value.Length);
 		}
 
 		public void WriteObjectBegin(int numberOfMembers)

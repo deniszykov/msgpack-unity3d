@@ -83,7 +83,7 @@ namespace GameDevWare.Serialization
 
 			DefaultSerializers = new List<TypeSerializer>
 			{
-				new Base64Serializer(),
+				new BinarySerializer(),
 				new DateTimeOffsetSerializer(),
 				new DateTimeSerializer(),
 				new GuidSerializer(),

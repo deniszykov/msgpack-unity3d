@@ -30,7 +30,8 @@ namespace GameDevWare.Serialization
 			StreamIsNotWriteable,
 			UnterminatedStringLiteral,
 			UnknownNotation,
-			MemberNameIsNotSpecified
+			MemberNameIsNotSpecified,
+			TypeRequiresCustomSerializer
 		}
 
 		public int Code { get; set; }
@@ -265,6 +266,14 @@ namespace GameDevWare.Serialization
 				string.Format("An unknown notation '{0}'.", notation),
 				ErrorCode.UnknownNotation,
 				reader
+			);
+		}
+		public static Exception TypeRequiresCustomSerializer(Type type, Type typeSerializer)
+		{
+			return new JsonSerializationException
+			(
+				string.Format("Type '{0}' can't be serialized by '{1}' and requires custom {2} registered in Json.DefaultSerializers.", type.FullName, typeSerializer.Name, typeof(TypeSerializer).Name),
+				ErrorCode.TypeRequiresCustomSerializer
 			);
 		}
 	}

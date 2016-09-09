@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Metadata
@@ -30,6 +31,7 @@ namespace GameDevWare.Serialization.Metadata
 		private readonly Dictionary<string, DataMemberDescription> membersByName;
 
 		public Type ObjectType { get { return this.objectType; } }
+		public bool IsAnonymousType { get; private set; }
 		public ReadOnlyCollection<DataMemberDescription> Members { get { return this.members; } }
 
 		public TypeDescription(Type objectType)
@@ -39,9 +41,11 @@ namespace GameDevWare.Serialization.Metadata
 
 			this.objectType = objectType;
 
-			var members = FindMembers(objectType);
-			this.members = members.AsReadOnly();
-			this.membersByName = members.ToDictionary(m => m.Name, StringComparer.Ordinal);
+			var allMembers = FindMembers(objectType);
+
+			this.IsAnonymousType= objectType.IsSealed && objectType.IsNotPublic && objectType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), true).Length > 0;;
+			this.members = allMembers.AsReadOnly();
+			this.membersByName = allMembers.ToDictionary(m => m.Name, StringComparer.Ordinal);
 
 			GettersAndSetters.TryGetConstructor(objectType, out this.constructorFn);
 		}

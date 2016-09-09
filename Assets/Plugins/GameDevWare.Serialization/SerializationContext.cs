@@ -74,7 +74,6 @@ namespace GameDevWare.Serialization
 			if (this.serializers.TryGetValue(valueType, out serializer))
 				return serializer;
 
-
 			var typeSerializerAttribute = valueType.GetCustomAttributes(typeof(TypeSerializerAttribute), inherit: false).FirstOrDefault() as TypeSerializerAttribute;
 			if (typeSerializerAttribute != null)
 				serializer = this.CreateCustomSerializer(valueType, typeSerializerAttribute);

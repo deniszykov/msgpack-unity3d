@@ -53,6 +53,9 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>0169</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.XML" />
@@ -109,7 +112,7 @@
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\SerializationContext.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\SerializationOptions.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\ArraySerializer.cs" />
-    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\Base64Serializer.cs" />
+    <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\BinarySerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\BoundsSerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\DateTimeOffsetSerializer.cs" />
     <Compile Include="Assets\Plugins\GameDevWare.Serialization\Serializers\DateTimeSerializer.cs" />

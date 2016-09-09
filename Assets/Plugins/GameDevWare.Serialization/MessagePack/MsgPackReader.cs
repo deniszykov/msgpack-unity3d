@@ -103,6 +103,8 @@ namespace GameDevWare.Serialization.MessagePack
 					var raw = this.Raw;
 					if (raw is string)
 						return (string)raw;
+					else if (raw is byte[])
+						return Convert.ToBase64String((byte[]) raw);
 					else
 						return Convert.ToString(raw, reader.Context.Format);
 				}
@@ -351,9 +353,8 @@ namespace GameDevWare.Serialization.MessagePack
 							bytesCount = bitConverter.ToUInt32(this.buffer, this.bufferOffset);
 						}
 
-						var bytes = this.ReadBytes(bytesCount);
-						var base64Bytes = Convert.ToBase64String(bytes.Array, bytes.Offset, bytes.Count);
-						this.Value.SetValue(base64Bytes, JsonToken.StringLiteral, pos);
+						var bytes = this.ReadBytes(bytesCount, forceNewBuffer: true);
+						this.Value.SetValue(bytes.Array, JsonToken.StringLiteral, pos);
 						break;
 					case MsgPackType.FixExt1:
 					case MsgPackType.FixExt16:
@@ -505,13 +506,13 @@ namespace GameDevWare.Serialization.MessagePack
 			this.totalBytesReaded += bytesRequired;
 			return true;
 		}
-		private ArraySegment<byte> ReadBytes(long bytesRequired)
+		private ArraySegment<byte> ReadBytes(long bytesRequired, bool forceNewBuffer = false)
 		{
 			this.bufferAvailable -= this.bufferReaded;
 			this.bufferOffset += this.bufferReaded;
 			this.bufferReaded = 0;
 
-			if (this.bufferAvailable >= bytesRequired)
+			if (this.bufferAvailable >= bytesRequired && !forceNewBuffer)
 			{
 				var bytes = new ArraySegment<byte>(this.buffer, this.bufferOffset, (int)bytesRequired);
 

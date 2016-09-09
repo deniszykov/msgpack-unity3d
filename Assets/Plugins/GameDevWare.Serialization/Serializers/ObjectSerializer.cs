@@ -51,7 +51,12 @@ namespace GameDevWare.Serialization.Serializers
 										   SerializationOptions.SuppressTypeInformation;
 
 			if (this.objectType.BaseType != null && this.objectType.BaseType != typeof(object))
-				this.baseTypeSerializer = (ObjectSerializer)context.GetSerializerForType(this.objectType.BaseType);
+			{
+				var baseSerializer = context.GetSerializerForType(this.objectType.BaseType);
+				if (baseSerializer is ObjectSerializer == false)
+					throw JsonSerializationException.TypeRequiresCustomSerializer(this.objectType, this.GetType());
+				this.baseTypeSerializer = (ObjectSerializer)baseSerializer;
+			}
 
 			lock (TypeDescriptions)
 			{
@@ -92,16 +97,17 @@ namespace GameDevWare.Serialization.Serializers
 
 			this.CollectMemberValues(value, container);
 
-			if (this.SuppressTypeInformation == false)
+			if (this.SuppressTypeInformation || this.objectTypeDescription.IsAnonymousType)
+			{
+				writer.WriteObjectBegin(container.Count);
+
+			}
+			else
 			{
 				writer.WriteObjectBegin(container.Count + 1);
 
 				writer.WriteMember(TYPE_MEMBER_NAME);
 				writer.WriteString(objectTypeNameWithoutVersion);
-			}
-			else
-			{
-				writer.WriteObjectBegin(container.Count);
 			}
 
 			foreach (var kv in container)
