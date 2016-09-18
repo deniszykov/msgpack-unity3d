@@ -21,6 +21,7 @@ _ReSharper*
 *.dll
 
 media/
+packages/
 GameDevWare.Serialization/obj/
 GameDevWare.Serialization/bin/
 GameDevWare.Serialization/packages/
