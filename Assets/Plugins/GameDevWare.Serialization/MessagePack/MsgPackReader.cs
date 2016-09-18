@@ -219,6 +219,7 @@ namespace GameDevWare.Serialization.MessagePack
 			if (!this.ReadToBuffer(1, throwOnEos: false))
 			{
 				this.isEndOfStream = true;
+				this.Value.SetValue(null, JsonToken.EndOfStream, this.totalBytesReaded);
 				return false;
 			}
 
@@ -429,15 +430,15 @@ namespace GameDevWare.Serialization.MessagePack
 						break;
 					case MsgPackType.UInt16:
 						this.ReadToBuffer(2, throwOnEos: true);
-						this.Value.SetValue((ushort)bitConverter.ToInt16(buffer, this.bufferOffset), JsonToken.Number, pos);
+						this.Value.SetValue(bitConverter.ToUInt16(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt32:
 						this.ReadToBuffer(4, throwOnEos: true);
-						this.Value.SetValue((uint)bitConverter.ToInt32(buffer, this.bufferOffset), JsonToken.Number, pos);
+						this.Value.SetValue(bitConverter.ToUInt32(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt64:
 						this.ReadToBuffer(8, throwOnEos: true);
-						this.Value.SetValue((ulong)bitConverter.ToInt64(buffer, this.bufferOffset), JsonToken.Number, pos);
+						this.Value.SetValue(bitConverter.ToUInt64(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt8:
 						this.ReadToBuffer(1, throwOnEos: true);
