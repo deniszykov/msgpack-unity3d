@@ -1,0 +1,9 @@
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\bin\Debug\GameDevWare.Serialization.Tests.dll
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\bin\Debug\GameDevWare.Serialization.Tests.pdb
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\bin\Debug\GameDevWare.Serialization.dll
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\bin\Debug\nunit.framework.dll
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\bin\Debug\GameDevWare.Serialization.pdb
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\bin\Debug\nunit.framework.xml
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\obj\Debug\GameDevWare.Serialization.Tests.csprojResolveAssemblyReference.cache
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\obj\Debug\GameDevWare.Serialization.Tests.dll
+E:\dev\UnityAssets\msgpack-serializer\GameDevWare.Serialization.Tests\obj\Debug\GameDevWare.Serialization.Tests.pdb

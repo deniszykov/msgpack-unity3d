@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using System.Runtime.Serialization;
-using Xunit;
+using NUnit.Framework;
 
 namespace GameDevWare.Serialization.Tests
 {
+	[TestFixture, Category("DataContractMetadataTest")]
 	public class DataContractMetadataTest
 	{
 		[DataContract]
@@ -128,7 +129,7 @@ namespace GameDevWare.Serialization.Tests
 			}
 		}
 
-		[Fact]
+		[Test]
 		public void PrivateMembersSerializationTest()
 		{
 			var expected = ClassWithPrivateMembers.Create();
@@ -142,7 +143,7 @@ namespace GameDevWare.Serialization.Tests
 			Assert.True(actual.Test(expected), "Actual object is not valid: " + actual + ", this one expected: " + expected);
 		}
 
-		[Fact]
+		[Test]
 		public void PublicMembersSerializationTest()
 		{
 			var expected = new ClassWithSerializablePublicMembers();
@@ -156,7 +157,7 @@ namespace GameDevWare.Serialization.Tests
 			Assert.True(actual.Test(expected), "Actual object is not valid: " + actual + ", this one expected: " + expected);
 		}
 
-		[Fact]
+		[Test]
 		public void MixedContractSerializationTest()
 		{
 			var expected = new ClassWithDerivedMixedContract();
@@ -170,7 +171,7 @@ namespace GameDevWare.Serialization.Tests
 			Assert.True(actual.Test(expected), "Actual object is not valid: " + actual + ", this one expected: " + expected);
 		}
 
-		[Fact]
+		[Test]
 		public void OverriddenPropertySerializationTest()
 		{
 			var expected = new ClassWithDerivedContractAndOverriddenProperty();

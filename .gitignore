@@ -21,15 +21,15 @@ _ReSharper*
 *.dll
 
 media/
-bin/
-obj/
-packages/
-deploy/
-Assembly*
-Library/
-Temp/
-Assets/StreamingAssets/
-Assets/Bundles/
-ProjectSettings/
-Assets/AssetStoreTools/
-build-nuget-package.bat
+GameDevWare.Serialization/obj/
+GameDevWare.Serialization/bin/
+GameDevWare.Serialization/packages/
+GameDevWare.Serialization/build-nuget-package.bat
+GameDevWare.Serialization.Unity/Assembly*
+GameDevWare.Serialization.Unity/obj/
+GameDevWare.Serialization.Unity/Library/
+GameDevWare.Serialization.Unity/Temp/
+GameDevWare.Serialization.Unity/Assets/StreamingAssets/
+GameDevWare.Serialization.Unity/Assets/Bundles/
+GameDevWare.Serialization.Unity/ProjectSettings/
+GameDevWare.Serialization.Unity/Assets/AssetStoreTools/
