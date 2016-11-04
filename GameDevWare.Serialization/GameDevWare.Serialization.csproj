@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{485C9711-2A63-6FB5-985B-2615CE239054}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>GameDevWare.Serialization</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\bin\Package\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Temp\bin\Package\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\GenerateTypeSerializerAttribute.cs">
+      <Link>GenerateTypeSerializerAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\IJsonReader.cs">
+      <Link>IJsonReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\IJsonWriter.cs">
+      <Link>IJsonWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\IndexedDictionary.cs">
+      <Link>IndexedDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\IValueInfo.cs">
+      <Link>IValueInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Json.cs">
+      <Link>Json.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonMember.cs">
+      <Link>JsonMember.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonReader.cs">
+      <Link>JsonReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonReaderExtentions.cs">
+      <Link>JsonReaderExtentions.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonSerializationException.cs">
+      <Link>JsonSerializationException.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonStreamReader.cs">
+      <Link>JsonStreamReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonStreamWriter.cs">
+      <Link>JsonStreamWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonStringBuilderReader.cs">
+      <Link>JsonStringBuilderReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonStringBuilderWriter.cs">
+      <Link>JsonStringBuilderWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonStringReader.cs">
+      <Link>JsonStringReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonTextReader.cs">
+      <Link>JsonTextReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonTextWriter.cs">
+      <Link>JsonTextWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonToken.cs">
+      <Link>JsonToken.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonUtils.cs">
+      <Link>JsonUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonWriter.cs">
+      <Link>JsonWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\JsonWriterExtentions.cs">
+      <Link>JsonWriterExtentions.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\BigEndianBitConverter.cs">
+      <Link>MessagePack\BigEndianBitConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\EndianBitConverter.cs">
+      <Link>MessagePack\EndianBitConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\Endianness.cs">
+      <Link>MessagePack\Endianness.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\LittleEndianBitConverter.cs">
+      <Link>MessagePack\LittleEndianBitConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackExtType.cs">
+      <Link>MessagePack\MsgPackExtType.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackReader.cs">
+      <Link>MessagePack\MsgPackReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackType.cs">
+      <Link>MessagePack\MsgPackType.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackWriter.cs">
+      <Link>MessagePack\MsgPackWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\UnknownMsgPackExtentionTypeException.cs">
+      <Link>MessagePack\UnknownMsgPackExtentionTypeException.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\UnknownMsgPackFormatException.cs">
+      <Link>MessagePack\UnknownMsgPackFormatException.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Metadata\DataMemberDescription.cs">
+      <Link>Metadata\DataMemberDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Metadata\FieldDescription.cs">
+      <Link>Metadata\FieldDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Metadata\MemberDescription.cs">
+      <Link>Metadata\MemberDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Metadata\PropertyDescription.cs">
+      <Link>Metadata\PropertyDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Metadata\ReflectionUtils.cs">
+      <Link>Metadata\ReflectionUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Metadata\TypeDescription.cs">
+      <Link>Metadata\TypeDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MsgPack.cs">
+      <Link>MsgPack.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\ReflectionExtentions.cs">
+      <Link>ReflectionExtentions.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\SerializationContext.cs">
+      <Link>SerializationContext.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\SerializationOptions.cs">
+      <Link>SerializationOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\ArraySerializer.cs">
+      <Link>Serializers\ArraySerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\BinarySerializer.cs">
+      <Link>Serializers\BinarySerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\BoundsSerializer.cs">
+      <Link>Serializers\BoundsSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\DateTimeOffsetSerializer.cs">
+      <Link>Serializers\DateTimeOffsetSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\DateTimeSerializer.cs">
+      <Link>Serializers\DateTimeSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\DictionaryEntrySerializer.cs">
+      <Link>Serializers\DictionaryEntrySerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\DictionarySerializer.cs">
+      <Link>Serializers\DictionarySerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\EnumNumberSerializer.cs">
+      <Link>Serializers\EnumNumberSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\EnumSerializer.cs">
+      <Link>Serializers\EnumSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\GuidSerializer.cs">
+      <Link>Serializers\GuidSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\Matrix4x4Serializer.cs">
+      <Link>Serializers\Matrix4x4Serializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\ObjectSerializer.cs">
+      <Link>Serializers\ObjectSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\PrimitiveTypeSerializer.cs">
+      <Link>Serializers\PrimitiveTypeSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\QuaternionSerializer.cs">
+      <Link>Serializers\QuaternionSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\RectSerializer.cs">
+      <Link>Serializers\RectSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\StreamSerializer.cs">
+      <Link>Serializers\StreamSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\TimeSpanSerializer.cs">
+      <Link>Serializers\TimeSpanSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\UriSerializer.cs">
+      <Link>Serializers\UriSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\Vector2Serializer.cs">
+      <Link>Serializers\Vector2Serializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\Vector3Serializer.cs">
+      <Link>Serializers\Vector3Serializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\Vector4Serializer.cs">
+      <Link>Serializers\Vector4Serializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\VersionSerializer.cs">
+      <Link>Serializers\VersionSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\TypeSerializer.cs">
+      <Link>TypeSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\TypeSerializerAttribute.cs">
+      <Link>TypeSerializerAttribute.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
