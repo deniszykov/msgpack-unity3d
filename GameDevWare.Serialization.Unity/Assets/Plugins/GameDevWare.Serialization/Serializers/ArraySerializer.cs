@@ -17,6 +17,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
@@ -24,6 +25,7 @@ namespace GameDevWare.Serialization.Serializers
 	public sealed class ArraySerializer : TypeSerializer
 	{
 		private readonly Type arrayType;
+		private readonly Type instantiatedArrayType;
 		private readonly Type elementType;
 
 		public override Type SerializedType { get { return this.arrayType; } }
@@ -32,10 +34,16 @@ namespace GameDevWare.Serialization.Serializers
 		{
 			if (enumerableType == null) throw new ArgumentNullException("enumerableType");
 
-			arrayType = enumerableType;
-			elementType = GetElementType(arrayType);
+			this.arrayType =
+			this.instantiatedArrayType = enumerableType;
+			this.elementType = this.GetElementType(arrayType);
 
-			if (elementType == null) JsonSerializationException.TypeIsNotValid(this.GetType(), "be enumerable");
+			if (this.elementType == null) JsonSerializationException.TypeIsNotValid(this.GetType(), "be enumerable");
+
+			if (this.arrayType == typeof(IList) || this.arrayType == typeof(ICollection) || this.arrayType == typeof(IEnumerable))
+				this.instantiatedArrayType = typeof(ArrayList);
+			else if (arrayType.IsInterface && arrayType.IsGenericType && (arrayType.GetGenericTypeDefinition() == typeof(IList<>) || arrayType.GetGenericTypeDefinition() == typeof(ICollection<>) || arrayType.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+				this.instantiatedArrayType = typeof(List<>).MakeGenericType(this.elementType);
 		}
 
 		public override object Deserialize(IJsonReader reader)
@@ -52,7 +60,7 @@ namespace GameDevWare.Serialization.Serializers
 			reader.Context.Hierarchy.Push(container);
 			while (reader.NextToken() && reader.Token != JsonToken.EndOfArray)
 			{
-				var value = reader.ReadValue(elementType, false);
+				var value = reader.ReadValue(this.elementType, false);
 				container.Add(value);
 			}
 			reader.Context.Hierarchy.Pop();
@@ -60,11 +68,12 @@ namespace GameDevWare.Serialization.Serializers
 			if (reader.IsEndOfStream())
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfArray);
 
-			var array = container.ToArray(elementType);
-			if (arrayType.IsArray)
-				return array;
+			if (this.instantiatedArrayType == typeof(ArrayList))
+				return container;
+			else if (this.instantiatedArrayType.IsArray)
+				return container.ToArray(this.elementType);
 			else
-				return Activator.CreateInstance(arrayType, array);
+				return Activator.CreateInstance(this.instantiatedArrayType, container.ToArray(this.elementType));
 		}
 
 		public override void Serialize(IJsonWriter writer, object value)
@@ -80,7 +89,7 @@ namespace GameDevWare.Serialization.Serializers
 
 			writer.WriteArrayBegin(size);
 			foreach (var item in (IEnumerable)value)
-				writer.WriteValue(item, elementType);
+				writer.WriteValue(item, this.elementType);
 			writer.WriteArrayEnd();
 		}
 
@@ -114,7 +123,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override string ToString()
 		{
-			return string.Format("array of {1}, {0}", arrayType, elementType);
+			return string.Format("array of {1}, {0}", this.arrayType, this.elementType);
 		}
 	}
 }

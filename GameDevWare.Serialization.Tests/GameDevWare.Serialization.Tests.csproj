@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="DataContractMetadataTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WriteReadTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

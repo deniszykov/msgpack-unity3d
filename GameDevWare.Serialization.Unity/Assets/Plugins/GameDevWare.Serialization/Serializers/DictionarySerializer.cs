@@ -24,6 +24,7 @@ namespace GameDevWare.Serialization.Serializers
 	public sealed class DictionarySerializer : TypeSerializer
 	{
 		private readonly Type dictionaryType;
+		private readonly Type instantiatedDictionaryType;
 		private readonly Type keyType;
 		private readonly Type valueType;
 		private readonly bool isStringKeyType;
@@ -35,7 +36,8 @@ namespace GameDevWare.Serialization.Serializers
 			if (dictionaryType == null)
 				throw new ArgumentNullException("dictionaryType");
 
-			this.dictionaryType = dictionaryType;
+			this.dictionaryType =
+			this.instantiatedDictionaryType = dictionaryType;
 			this.keyType = typeof(object);
 			this.valueType = typeof(object);
 
@@ -47,8 +49,16 @@ namespace GameDevWare.Serialization.Serializers
 				var genArgs = dictionaryType.GetInstantiationArguments(typeof(IDictionary<,>));
 				keyType = genArgs[0];
 				valueType = genArgs[1];
+
+				if (dictionaryType.IsInterface && dictionaryType.IsGenericType && dictionaryType.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+					this.instantiatedDictionaryType = typeof(Dictionary<,>).MakeGenericType(genArgs);
 			}
-			else if (typeof(IDictionary).IsAssignableFrom(dictionaryType) == false)
+			else if (typeof(IDictionary).IsAssignableFrom(dictionaryType))
+			{
+				if (dictionaryType == typeof(IDictionary))
+					this.instantiatedDictionaryType = typeof(Hashtable);
+			}
+			else
 			{
 				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be dictionary");
 			}
@@ -143,16 +153,19 @@ namespace GameDevWare.Serialization.Serializers
 					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginObject, JsonToken.BeginArray);
 				}
 
-				var dictionary = (IDictionary)Activator.CreateInstance(this.dictionaryType);
+				var dictionary = (IDictionary)Activator.CreateInstance(this.instantiatedDictionaryType);
 				foreach (var kv in container)
 				{
 					var key = kv.Key;
 					var value = kv.Value;
 
-					if (this.keyType.IsEnum)
-						key = Enum.Parse(this.keyType, Convert.ToString(key));
-					else if (this.keyType != typeof(string) && this.keyType != typeof(object))
-						key = Convert.ChangeType(key, this.keyType);
+					if (key.GetType() != this.keyType && this.keyType != typeof(object))
+					{
+						if (this.keyType.IsEnum)
+							key = Enum.Parse(this.keyType, Convert.ToString(key));
+						else
+							key = Convert.ChangeType(key, this.keyType);
+					}
 
 					if (dictionary.Contains(key))
 						dictionary.Remove(key);
@@ -172,24 +185,16 @@ namespace GameDevWare.Serialization.Serializers
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
 
-			// serialize generic dictionary
-			if (!(value is IDictionary))
-				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be dictionary");
-
+			var dictionary = (IDictionary)value;
+			// ReSharper disable PossibleMultipleEnumeration
 			writer.Context.Hierarchy.Push(value);
 			// object
 			if (isStringKeyType)
 			{
-				writer.WriteObjectBegin(((IDictionary)value).Count);
-				foreach (DictionaryEntry pair in (IDictionary)value)
+				writer.WriteObjectBegin(dictionary.Count);
+				foreach (DictionaryEntry pair in dictionary)
 				{
-					var keyStr = default(string);
-					if (pair.Key is float)
-						keyStr = ((float)pair.Key).ToString("R", writer.Context.Format);
-					else if (pair.Key is double)
-						keyStr = ((double)pair.Key).ToString("R", writer.Context.Format);
-					else
-						keyStr = Convert.ToString(pair.Key, writer.Context.Format);
+					var keyStr = Convert.ToString(pair.Key, writer.Context.Format);
 
 					// key
 					writer.WriteMember(keyStr);
@@ -200,8 +205,8 @@ namespace GameDevWare.Serialization.Serializers
 			}
 			else
 			{
-				writer.WriteArrayBegin(((IDictionary)value).Count);
-				foreach (DictionaryEntry pair in (IDictionary)value)
+				writer.WriteArrayBegin(dictionary.Count);
+				foreach (DictionaryEntry pair in dictionary)
 				{
 					writer.WriteArrayBegin(2);
 					writer.WriteValue(pair.Key, keyType);
@@ -210,6 +215,7 @@ namespace GameDevWare.Serialization.Serializers
 				}
 				writer.WriteArrayEnd();
 			}
+			// ReSharper restore PossibleMultipleEnumeration
 
 			writer.Context.Hierarchy.Pop();
 		}
