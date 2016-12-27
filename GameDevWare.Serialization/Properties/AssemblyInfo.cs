@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("GameDevWare.Serialization")]
+[assembly: AssemblyTitle("JSON and MessagePack for Unity3D")]
 [assembly: AssemblyDescription("JSON and MessagePack serializer for Unity3D")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GameDevWare")]
