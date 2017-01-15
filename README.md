@@ -97,6 +97,4 @@ MsgPack.Deserialize(typeof(MyObject), stream, SerializationOptions.SuppressTypeI
 Please send any questions at support@gamedevware.com
 
 ## License
-If you embed this package, you MUST provide a [link](https://www.assetstore.unity3d.com/#!/content/59918) and warning about embedded package in the description of your package.
-
-[Asset Store Terms of Service and EULA](LICENSE.md)
+[MIT](License.md)
