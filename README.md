@@ -40,6 +40,23 @@ MsgPack.Deserialize(typeof(MyObject), inputStream); -> instance of MyObject
 MsgPack.Deserialize<MyObject>(inputStream); -> instance of MyObject
 ```
 
+## Breaking Change in v2.0
+Message Pack serialization prior to v2.0 uses [little-endian](https://en.wikipedia.org/wiki/Endianness) byte order for multi-byte itegers that does not correspond to [specification](https://github.com/msgpack/msgpack/blob/master/spec.md). 
+Files saved with little-endian formatting should be re-written with following code:
+```csharp
+var context = new SerializationContext();
+using (var fileStream = File.Open("<path to file>", FileMode.Open, FileAccess.ReadWrite))
+{
+				
+	var reader = new MsgPackReader(fileStream, context, Endianness.LittleEndian); // create little-endian reader
+	var value = reader.ReadValue(typeof(object));                                 // read any value from file
+	fileStream.Position = 0;                                                      // reset file position
+	var writer = new MsgPackWriter(fileStream, context);                          // create big-endian writer
+	writer.WriteValue(value, typeof(object));                                     // write value back to file
+	fileStream.SetLength(fileStream.Position);                                    // truncate file to new length
+}
+```
+
 ## Mapping Types
 
 MessagePack/Json serializer is guided by [Data Contract](https://msdn.microsoft.com/en-us/library/ms733127%28v=vs.110%29.aspx) rules. 
