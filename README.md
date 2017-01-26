@@ -44,7 +44,7 @@ MsgPack.Deserialize<MyObject>(inputStream); -> instance of MyObject
 Message Pack serialization prior to v2.0 uses [little-endian](https://en.wikipedia.org/wiki/Endianness) byte order for multi-byte integers. That doesn't correspond to [specification](https://github.com/msgpack/msgpack/blob/master/spec.md). 
 Data saved with little-endian formatting should be re-written with following code:
 ```csharp
-var context = new SerializationContext();
+var context = new SerializationContext { Options = SerializationOptions.SuppressTypeInformation };
 using (var fileStream = File.Open("<path to file>", FileMode.Open, FileAccess.ReadWrite))
 {
 				
