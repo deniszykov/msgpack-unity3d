@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -178,20 +178,28 @@ namespace GameDevWare.Serialization
 			else
 				this.WriteJson(outputBuffer, 0, len);
 		}
-		public void Write(DateTime datetime)
+		public void Write(DateTime dateTime)
 		{
 			this.WriteFormatting(JsonToken.DateTime);
 
-			if (datetime.Kind == DateTimeKind.Unspecified)
-				datetime = new DateTime(datetime.Ticks, DateTimeKind.Utc);
+			if (dateTime.Kind == DateTimeKind.Unspecified)
+				dateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
 
 			var dateTimeFormat = Enumerable.FirstOrDefault(this.Context.DateTimeFormats);
 
-			if (dateTimeFormat.Contains('z') && datetime.Kind != DateTimeKind.Local)
-				datetime = datetime.ToLocalTime();
+			if (dateTimeFormat.Contains('z') && dateTime.Kind != DateTimeKind.Local)
+				dateTime = dateTime.ToLocalTime();
 
-			var dateString = datetime.ToString(dateTimeFormat, this.Context.Format);
+			var dateString = dateTime.ToString(dateTimeFormat, this.Context.Format);
 
+			this.Write(dateString);
+		}
+		public void Write(DateTimeOffset dateTimeOffset)
+		{
+			this.WriteFormatting(JsonToken.DateTime);
+
+			var dateTimeFormat = this.Context.DateTimeFormats.First();
+			var dateString = dateTimeOffset.ToString(dateTimeFormat, this.Context.Format);
 			this.Write(dateString);
 		}
 		public void Write(bool value)

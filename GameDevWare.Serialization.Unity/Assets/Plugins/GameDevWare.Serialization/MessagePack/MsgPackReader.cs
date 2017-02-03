@@ -104,7 +104,7 @@ namespace GameDevWare.Serialization.MessagePack
 					if (raw is string)
 						return (string)raw;
 					else if (raw is byte[])
-						return Convert.ToBase64String((byte[]) raw);
+						return Convert.ToBase64String((byte[])raw);
 					else
 						return Convert.ToString(raw, reader.Context.Format);
 				}
@@ -544,9 +544,18 @@ namespace GameDevWare.Serialization.MessagePack
 		{
 			switch ((MsgPackExtType)extType)
 			{
-				case MsgPackExtType.DateTime:
+				case MsgPackExtType.DateTimeOld:
 					this.Value.SetValue(new DateTime(bitConverter.ToInt64(data.Array, data.Offset), DateTimeKind.Utc), JsonToken.DateTime, pos);
 					break;
+				case MsgPackExtType.DateTime:
+					this.Value.SetValue(new DateTime(bitConverter.ToInt64(data.Array, data.Offset + 1), (DateTimeKind)data.Array[data.Offset]), JsonToken.DateTime, pos);
+					break;
+				case MsgPackExtType.DateTimeOffset:
+					var time = new DateTime(bitConverter.ToInt64(data.Array, data.Offset), DateTimeKind.Utc);
+					var offset = new TimeSpan(bitConverter.ToInt64(data.Array, data.Offset + 8));
+					this.Value.SetValue(new DateTimeOffset(time, offset), JsonToken.DateTime, pos);
+					break;
+				case MsgPackExtType.DecimalOld:
 				case MsgPackExtType.Decimal:
 					this.Value.SetValue(bitConverter.ToDecimal(data.Array, data.Offset), JsonToken.Number, pos);
 					break;

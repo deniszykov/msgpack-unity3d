@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -29,23 +29,23 @@ namespace GameDevWare.Serialization.Serializers
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
 
-			if (reader.Token == JsonToken.DateTime)
-				return new DateTimeOffset(reader.Value.AsDateTime, TimeSpan.Zero);
+			if (reader.Token == JsonToken.DateTime && reader.Value.Raw is DateTimeOffset)
+				return reader.Value.Raw;
+			else if (reader.Token == JsonToken.DateTime)
+				return reader.Value.AsDateTime;
 
 			var dateTimeOffsetStr = reader.ReadString(false);
 			try
 			{
 				var value = default(DateTimeOffset);
 				if (!DateTimeOffset.TryParse(dateTimeOffsetStr, reader.Context.Format, DateTimeStyles.RoundtripKind, out value))
-					value = DateTimeOffset.ParseExact(dateTimeOffsetStr, reader.Context.DateTimeFormats, reader.Context.Format,
-						DateTimeStyles.AdjustToUniversal);
+					value = DateTimeOffset.ParseExact(dateTimeOffsetStr, reader.Context.DateTimeFormats, reader.Context.Format, DateTimeStyles.AdjustToUniversal);
 
 				return value;
 			}
 			catch (FormatException fe)
 			{
-				throw new SerializationException(
-					string.Format("Failed to parse date '{0}' in with pattern '{1}'.", dateTimeOffsetStr, reader.Context.DateTimeFormats[0]), fe);
+				throw new SerializationException(string.Format("Failed to parse date '{0}' in with pattern '{1}'.", dateTimeOffsetStr, reader.Context.DateTimeFormats[0]), fe);
 			}
 		}
 
@@ -55,10 +55,7 @@ namespace GameDevWare.Serialization.Serializers
 			if (value == null) throw new ArgumentNullException("value");
 
 			var dateTimeOffset = (DateTimeOffset)value;
-
-			var dateTimeFormat = Enumerable.FirstOrDefault(writer.Context.DateTimeFormats);
-			var valueStr = dateTimeOffset.ToString(dateTimeFormat, writer.Context.Format);
-			writer.Write(valueStr);
+			writer.Write(dateTimeOffset);
 		}
 	}
 }

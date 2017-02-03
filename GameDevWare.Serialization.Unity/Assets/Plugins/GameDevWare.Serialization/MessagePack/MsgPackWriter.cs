@@ -232,17 +232,25 @@ namespace GameDevWare.Serialization.MessagePack
 				this.Write(MsgPackType.False);
 		}
 
-		public void Write(DateTime datetime)
+		public void Write(DateTime dateTime)
 		{
-			if (datetime.Kind == DateTimeKind.Local)
-				datetime = datetime.ToUniversalTime();
-
-			this.Write(MsgPackType.FixExt8);
-			this.buffer[0] = (byte) MsgPackExtType.DateTime;
+			this.Write(MsgPackType.FixExt16);
+			this.buffer[0] = (byte)MsgPackExtType.DateTime;
 			this.outputStream.Write(buffer, 0, 1);
-			this.bitConverter.CopyBytes(datetime.Ticks, this.buffer, 0);
-			this.outputStream.Write(buffer, 0, 8);
-			this.bytesWritten += 9;
+			Array.Clear(this.buffer, 0, 16);
+			this.buffer[0] = (byte)dateTime.Kind;
+			this.bitConverter.CopyBytes(dateTime.Ticks, this.buffer, 1);
+			this.outputStream.Write(buffer, 0, 16);
+		}
+
+		public void Write(DateTimeOffset datetime)
+		{
+			this.Write(MsgPackType.FixExt16);
+			this.buffer[0] = (byte)MsgPackExtType.DateTimeOffset;
+			this.outputStream.Write(buffer, 0, 1);
+			this.bitConverter.CopyBytes(datetime.UtcDateTime.Ticks, this.buffer, 0);
+			this.bitConverter.CopyBytes(datetime.Offset.Ticks, this.buffer, 8);
+			this.outputStream.Write(buffer, 0, 16);
 		}
 
 		public void Write(byte[] value)
