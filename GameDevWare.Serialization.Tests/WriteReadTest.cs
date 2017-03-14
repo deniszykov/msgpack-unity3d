@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using NUnit.Framework;
 
@@ -169,6 +171,43 @@ namespace GameDevWare.Serialization.Tests
 		}
 
 		[Test]
+		public void WriteReadEmptyDictionaryJson()
+		{
+			var expectedValue = new Dictionary<string, int>();
+			var actualValue = WriteReadJson(expectedValue);
+
+			Assert.IsNotNull(actualValue, "actualValue != null");
+			Assert.AreEqual(expectedValue.Count, actualValue.Count);
+			CollectionAssert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadNonStringKeyDictionaryJson()
+		{
+			var expectedValue = new Dictionary<Version, int>
+			{
+				{ new Version(1, 0, 1), 1 },
+				{ new Version(1, 0, 2), 1 },
+			};
+			var actualValue = WriteReadJson(expectedValue);
+
+			Assert.IsNotNull(actualValue, "actualValue != null");
+			Assert.AreEqual(expectedValue.Count, actualValue.Count);
+			CollectionAssert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadEmptyNonStringKeyDictionaryJson()
+		{
+			var expectedValue = new Dictionary<Version, int>();
+			var actualValue = WriteReadJson(expectedValue);
+
+			Assert.IsNotNull(actualValue, "actualValue != null");
+			Assert.AreEqual(expectedValue.Count, actualValue.Count);
+			CollectionAssert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
 		public void WriteReadListJson()
 		{
 			var expectedValue = new List<int> { 1, 2, 3 };
@@ -208,6 +247,32 @@ namespace GameDevWare.Serialization.Tests
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
 		}
 
+		[Test]
+		public void ReadDictionaryAsJsonArrayOfPairs()
+		{
+			var json = Json.SerializeToString(new[] { new DictionaryEntry("a", 1), new DictionaryEntry("b", 2), new DictionaryEntry("c", 3) });
+			var expected = new Dictionary<string, int> { { "a", 1 }, { "b", 2 }, { "c", 3 } };
+			var actual = Json.Deserialize<Dictionary<string, int>>(json);
+
+			Trace.WriteLine(json);
+
+			Assert.IsNotNull(actual, "actual != null");
+			CollectionAssert.AreEqual(actual, expected);
+		}
+
+		[Test]
+		public void ReadDictionaryAsJsonArrayOfArrays()
+		{
+			var json = Json.SerializeToString(new[] { new object[] { "a", 1 }, new object[] { "b", 2 }, new object[] { "c", 3 } });
+			var expected = new Dictionary<string, int> { { "a", 1 }, { "b", 2 }, { "c", 3 } };
+			var actual = Json.Deserialize<Dictionary<string, int>>(json);
+
+			Trace.WriteLine(json);
+
+			Assert.IsNotNull(actual, "actual != null");
+			CollectionAssert.AreEqual(actual, expected);
+		}
+
 		private T WriteReadMessagePack<T>(T value)
 		{
 			var stream = new MemoryStream();
@@ -221,6 +286,10 @@ namespace GameDevWare.Serialization.Tests
 			var stream = new MemoryStream();
 			Json.Serialize(value, stream);
 			stream.Position = 0;
+
+			var json = Json.DefaultEncoding.GetString(stream.ToArray());
+			Trace.WriteLine(json);
+
 			var readedValue = (T)Json.Deserialize(typeof(T), stream);
 			return readedValue;
 		}

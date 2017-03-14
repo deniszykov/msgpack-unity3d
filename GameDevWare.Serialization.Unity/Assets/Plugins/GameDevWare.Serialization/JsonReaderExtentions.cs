@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -97,7 +97,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(byte);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsByte;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -119,6 +119,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsByte;
@@ -140,7 +141,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(sbyte);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsSByte;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -162,6 +163,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsSByte;
@@ -183,7 +185,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(short);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt16;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -205,6 +207,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsInt16;
@@ -226,7 +229,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(int);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt32;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -248,6 +251,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsInt32;
@@ -269,7 +273,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(long);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsInt64;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -291,6 +295,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsInt64;
@@ -311,7 +316,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(ushort);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt16;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -333,6 +338,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsUInt16;
@@ -354,7 +360,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(uint);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt32;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -376,6 +382,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsUInt32;
@@ -397,7 +404,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(ulong);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsUInt64;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -419,6 +426,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsUInt64;
@@ -440,7 +448,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(float);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsSingle;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -462,6 +470,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsSingle;
@@ -483,7 +492,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(double);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsDouble;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -505,6 +514,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsDouble;
@@ -526,7 +536,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(decimal);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number)
 				value = reader.Value.AsDecimal;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number);
@@ -548,6 +558,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 					value = reader.Value.AsDecimal;
@@ -569,7 +580,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(bool);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Boolean)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Boolean)
 				value = reader.Value.AsBoolean;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Boolean);
@@ -591,6 +602,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Boolean:
 					value = reader.Value.AsBoolean;
@@ -612,7 +624,7 @@ namespace GameDevWare.Serialization
 
 
 			var value = default(DateTime);
-			if (reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number || reader.Token == JsonToken.DateTime)
+			if (reader.Token == JsonToken.Member || reader.Token == JsonToken.StringLiteral || reader.Token == JsonToken.Number || reader.Token == JsonToken.DateTime)
 				value = reader.Value.AsDateTime;
 			else
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.StringLiteral, JsonToken.Number, JsonToken.DateTime);
@@ -634,6 +646,7 @@ namespace GameDevWare.Serialization
 				case JsonToken.Null:
 					value = null;
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 				case JsonToken.DateTime:
@@ -659,6 +672,7 @@ namespace GameDevWare.Serialization
 			{
 				case JsonToken.Null:
 					break;
+				case JsonToken.Member:
 				case JsonToken.StringLiteral:
 				case JsonToken.Number:
 				case JsonToken.DateTime:
@@ -709,7 +723,7 @@ namespace GameDevWare.Serialization
 				var serializer = reader.Context.GetSerializerForType(valueType);
 				value = serializer.Deserialize(reader);
 			}
-			
+
 			if (nextToken)
 				reader.NextToken();
 

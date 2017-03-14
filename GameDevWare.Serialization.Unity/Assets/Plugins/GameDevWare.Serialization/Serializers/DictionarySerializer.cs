@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -76,77 +76,65 @@ namespace GameDevWare.Serialization.Serializers
 			{
 				if (reader.Token == JsonToken.BeginArray)
 				{
-					while (reader.NextToken() && reader.Token != JsonToken.EndOfArray)
+					reader.ReadArrayBegin();
+					while (reader.Token != JsonToken.EndOfArray)
 					{
-						if (reader.Token != JsonToken.BeginArray || !reader.NextToken())
-							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginArray);
+						var entry = default(DictionaryEntry);
 
-						object key = null;
-						object value = null;
-
-						try
+						if (reader.Token == JsonToken.BeginArray)
 						{
-							key = reader.ReadValue(keyType, false);
+							reader.ReadArrayBegin();
+							try { entry.Key = reader.ReadValue(keyType); }
+							catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e); }
+							try { entry.Value = reader.ReadValue(valueType); }
+							catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, entry.Key, e.Message), e); }
+							reader.ReadArrayEnd();
 						}
-						catch (Exception e)
+						else
 						{
-							throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e);
+							reader.ReadObjectBegin();
+							while (reader.Token != JsonToken.EndOfObject)
+							{
+								var memberName = reader.ReadMember();
+								switch (memberName)
+								{
+									case DictionaryEntrySerializer.KEY_MEMBER_NAME:
+										try { entry.Key = reader.ReadValue(keyType); }
+										catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e); }
+										break;
+									case DictionaryEntrySerializer.VALUE_MEMBER_NAME:
+										try { entry.Value = reader.ReadValue(valueType); }
+										catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, entry.Key ?? "<unknown>", e.Message), e); }
+										break;
+									case ObjectSerializer.TYPE_MEMBER_NAME:
+										reader.ReadValue(typeof(object));
+										break;
+									default:
+										throw new SerializationException(string.Format("Unknown member found '{0}' in dictionary entry while '{1}' or '{2}' are expected.", memberName, DictionaryEntrySerializer.KEY_MEMBER_NAME, DictionaryEntrySerializer.VALUE_MEMBER_NAME));
+								}
+							}
+							reader.ReadObjectEnd();
 						}
-
-						if (!reader.NextToken())
-							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Number,
-								JsonToken.StringLiteral);
-
-						try
-						{
-							value = reader.ReadValue(valueType, false);
-						}
-						catch (Exception e)
-						{
-							throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, key, e.Message), e);
-						}
-
-
-						container.Add(new DictionaryEntry(key, value));
-
-						if (!reader.NextToken() || reader.Token != JsonToken.EndOfArray)
-							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfArray);
+						container.Add(entry);
 					}
+					reader.ReadArrayEnd(nextToken: false);
 				}
 				else if (reader.Token == JsonToken.BeginObject)
 				{
-					while (reader.NextToken() && reader.Token != JsonToken.EndOfObject)
+					reader.ReadObjectBegin();
+					while (reader.Token != JsonToken.EndOfObject)
 					{
-						if (reader.Token != JsonToken.Member)
-							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Member);
+						var entry = default(DictionaryEntry);
 
-						string key = null;
-						object value = null;
+						try { entry.Key = reader.ReadValue(keyType); }
+						catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e); }
 
-						try
-						{
-							key = reader.Value.AsString;
-						}
-						catch (Exception e)
-						{
-							throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e);
-						}
+						try { entry.Value = reader.ReadValue(valueType); }
+						catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, entry.Key, e.Message), e); }
 
-						if (!reader.NextToken())
-							throw JsonSerializationException.UnexpectedToken(reader, JsonToken.Boolean, JsonToken.DateTime, JsonToken.Number,
-								JsonToken.StringLiteral);
-						try
-						{
-							value = reader.ReadValue(valueType, false);
-						}
-						catch (Exception e)
-						{
-							throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, key, e.Message), e);
-						}
-
-
-						container.Add(new DictionaryEntry(key, value));
+						container.Add(entry);
 					}
+					reader.ReadObjectEnd(nextToken: false);
 				}
 				else
 				{
@@ -195,7 +183,6 @@ namespace GameDevWare.Serialization.Serializers
 				foreach (DictionaryEntry pair in dictionary)
 				{
 					var keyStr = Convert.ToString(pair.Key, writer.Context.Format);
-
 					// key
 					writer.WriteMember(keyStr);
 					// value

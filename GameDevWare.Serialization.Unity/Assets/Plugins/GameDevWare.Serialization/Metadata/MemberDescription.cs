@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -32,37 +32,31 @@ namespace GameDevWare.Serialization.Metadata
 		private readonly MemberInfo member;
 		private readonly ReadOnlyCollection<Attribute> attributes;
 		private readonly ILookup<Type, Attribute> attributesByType;
-		private readonly ILookup<string, Attribute> attributesByTypeName;
 
 		public MemberInfo Member { get { return this.member; } }
-		public IList<Attribute> Attributes { get { return this.attributes; } }
+		public ReadOnlyCollection<Attribute> Attributes { get { return this.attributes; } }
 		public string Name { get { return this.name; } }
 
-		protected MemberDescription(MemberInfo member)
+		protected MemberDescription(TypeDescription typeDescription, MemberInfo member)
 		{
 			if (member == null) throw new ArgumentNullException("member");
 
 			this.member = member;
 			this.name = member.Name;
 
-			var dataMemberAttribute = member.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().Name == DATA_MEMBER_ATTRIBUTE_NAME);
-			if (dataMemberAttribute != null)
-				this.name = ReflectionExtentions.GetDataMemberName(dataMemberAttribute) ?? this.name;
-
-			var attrs = new List<Attribute>();
+			var attributesList = new List<Attribute>();
 			foreach (Attribute attr in member.GetCustomAttributes(true))
-				attrs.Add(attr);
+				attributesList.Add(attr);
 
-			this.attributes = new ReadOnlyCollection<Attribute>(attrs);
-			this.attributesByType = attrs.ToLookup(a => a.GetType());
-			this.attributesByTypeName = attrs.ToLookup(a => a.GetType().Name);
-		}
+			if (typeDescription != null && typeDescription.IsDataContract)
+			{
+				var dataMemberAttribute = attributesList.FirstOrDefault(a => a.GetType().Name == DATA_MEMBER_ATTRIBUTE_NAME);
+				if (dataMemberAttribute != null)
+					this.name = ReflectionExtentions.GetDataMemberName(dataMemberAttribute) ?? this.name;
+			}
 
-		public bool HasAttributes(string typeName)
-		{
-			if (typeName == null) throw new ArgumentNullException("typeName");
-
-			return this.attributesByTypeName.Contains(typeName);
+			this.attributes = new ReadOnlyCollection<Attribute>(attributesList);
+			this.attributesByType = attributesList.ToLookup(a => a.GetType());
 		}
 
 		public bool HasAttributes(Type type)
@@ -72,26 +66,11 @@ namespace GameDevWare.Serialization.Metadata
 			return this.attributesByType.Contains(type);
 		}
 
-		public IEnumerable<Attribute> GetAttributesOrEmptyList(string typeName)
-		{
-			if (typeName == null) throw new ArgumentNullException("typeName");
-
-			var attrs = this.attributesByTypeName[typeName];
-			if (attrs == null)
-				return Enumerable.Empty<Attribute>();
-
-			return attrs;
-		}
-
 		public IEnumerable<Attribute> GetAttributesOrEmptyList(Type type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
-			var attrs = this.attributesByType[type];
-			if (attrs == null)
-				return Enumerable.Empty<Attribute>();
-
-			return attrs;
+			return this.attributesByType[type];
 		}
 	}
 }

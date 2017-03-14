@@ -1,16 +1,16 @@
-﻿/* 
+﻿/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
@@ -32,25 +32,29 @@ namespace GameDevWare.Serialization.Metadata
 
 		public Type ObjectType { get { return this.objectType; } }
 		public bool IsAnonymousType { get; private set; }
+		public bool IsDataContract { get; private set; }
+		public bool IsSerializable { get; private set; }
 		public ReadOnlyCollection<DataMemberDescription> Members { get { return this.members; } }
 
 		public TypeDescription(Type objectType)
-			: base(objectType)
+			: base(null, objectType)
 		{
 			if (objectType == null) throw new ArgumentNullException("objectType");
 
 			this.objectType = objectType;
+			this.IsDataContract = this.Attributes.Any(attribute => attribute.GetType().Name == DATA_CONTRACT_ATTRIBUTE_NAME);
+			this.IsSerializable = IsSerializable;
+			this.IsAnonymousType = objectType.IsSealed && objectType.IsNotPublic && objectType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), true).Length > 0; ;
 
-			var allMembers = FindMembers(objectType);
+			var allMembers = this.FindMembers(objectType);
 
-			this.IsAnonymousType= objectType.IsSealed && objectType.IsNotPublic && objectType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), true).Length > 0;;
 			this.members = allMembers.AsReadOnly();
 			this.membersByName = allMembers.ToDictionary(m => m.Name, StringComparer.Ordinal);
 
 			GettersAndSetters.TryGetConstructor(objectType, out this.constructorFn);
 		}
 
-		private static List<DataMemberDescription> FindMembers(Type objectType)
+		private List<DataMemberDescription> FindMembers(Type objectType)
 		{
 			if (objectType == null) throw new ArgumentNullException("objectType");
 
@@ -76,8 +80,8 @@ namespace GameDevWare.Serialization.Metadata
 					continue;
 
 				var dataMember = default(DataMemberDescription);
-				if (member is PropertyInfo) dataMember = new PropertyDescription(member as PropertyInfo);
-				else if (member is FieldInfo) dataMember = new FieldDescription(member as FieldInfo);
+				if (member is PropertyInfo) dataMember = new PropertyDescription(this, member as PropertyInfo);
+				else if (member is FieldInfo) dataMember = new FieldDescription(this, member as FieldInfo);
 				else throw new InvalidOperationException("Unknown member type. Should be PropertyInfo or FieldInfo.");
 
 				if (string.IsNullOrEmpty(dataMember.Name))
