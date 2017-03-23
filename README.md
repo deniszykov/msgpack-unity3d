@@ -59,10 +59,10 @@ using (var fileStream = File.Open("<path to file>", FileMode.Open, FileAccess.Re
 ```
 ### Data Contract Attributes
 Current rules:
-* The IgnoreDataMemberAttribute attribute is only honored when used with unmarked types. This includes types that are not marked with DataContractAttribute.
-* You can apply the DataMemberAttribute attribute to **PUBLIC** fields, and properties.
-* The DataMemberAttribute and IgnoreDataMemberAttribute attributes are ignored if it is applied to static members.
-* The DataMemberAttribute attribute is ignored if DataContractAttribute is not applied.
+* The [IgnoreDataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ignoredatamemberattribute%28v=vs.110%29.aspx) attribute is only honored when used with unmarked types. This includes types that are not marked with [DataContract](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datacontractattribute%28v=vs.110%29.aspx).
+* You can apply the [DataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datamemberattribute%28v=vs.110%29.aspx) attribute to **PUBLIC** fields, and properties.
+* The [DataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datamemberattribute%28v=vs.110%29.aspx) and [IgnoreDataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ignoredatamemberattribute%28v=vs.110%29.aspx) attributes are ignored if it is applied to static members.
+* The [DataMember](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datamemberattribute%28v=vs.110%29.aspx) attribute is ignored if [DataContract](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.datacontractattribute%28v=vs.110%29.aspx) is not applied.
 * During serialization, property-get code is called for property data members to get the value of the properties to be serialized.
 * During deserialization, an new  object is first created, with calling an empty constructor on the type. Then all data members are deserialized.
 * During deserialization, property-set code is called for property data members to set the properties to the value being deserialized.
