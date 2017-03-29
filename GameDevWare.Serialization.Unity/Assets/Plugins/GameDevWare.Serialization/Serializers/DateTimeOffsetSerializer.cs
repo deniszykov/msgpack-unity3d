@@ -32,14 +32,14 @@ namespace GameDevWare.Serialization.Serializers
 			if (reader.Token == JsonToken.DateTime && reader.Value.Raw is DateTimeOffset)
 				return reader.Value.Raw;
 			else if (reader.Token == JsonToken.DateTime)
-				return reader.Value.AsDateTime;
+				return new DateTimeOffset(reader.Value.AsDateTime);
 
 			var dateTimeOffsetStr = reader.ReadString(false);
 			try
 			{
 				var value = default(DateTimeOffset);
 				if (!DateTimeOffset.TryParse(dateTimeOffsetStr, reader.Context.Format, DateTimeStyles.RoundtripKind, out value))
-					value = DateTimeOffset.ParseExact(dateTimeOffsetStr, reader.Context.DateTimeFormats, reader.Context.Format, DateTimeStyles.AdjustToUniversal);
+					value = DateTimeOffset.ParseExact(dateTimeOffsetStr, reader.Context.DateTimeFormats, reader.Context.Format, DateTimeStyles.RoundtripKind);
 
 				return value;
 			}

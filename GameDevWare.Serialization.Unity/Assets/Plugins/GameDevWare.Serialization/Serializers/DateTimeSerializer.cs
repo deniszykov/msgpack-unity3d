@@ -15,6 +15,7 @@
 */
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.Serialization;
 
 // ReSharper disable once CheckNamespace
@@ -36,7 +37,7 @@ namespace GameDevWare.Serialization.Serializers
 			{
 				var value = default(DateTime);
 				if (!DateTime.TryParse(dateTimeStr, reader.Context.Format, DateTimeStyles.RoundtripKind, out value))
-					value = DateTime.ParseExact(dateTimeStr, reader.Context.DateTimeFormats, reader.Context.Format, DateTimeStyles.AdjustToUniversal);
+					value = DateTime.ParseExact(dateTimeStr, reader.Context.DateTimeFormats, reader.Context.Format, DateTimeStyles.RoundtripKind);
 
 				return value;
 			}
