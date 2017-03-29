@@ -185,9 +185,8 @@ namespace GameDevWare.Serialization
 			if (dateTime.Kind == DateTimeKind.Unspecified)
 				dateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
 
-			var dateTimeFormat = Enumerable.FirstOrDefault(this.Context.DateTimeFormats);
-
-			if (dateTimeFormat.Contains('z') && dateTime.Kind != DateTimeKind.Local)
+			var dateTimeFormat = this.Context.DateTimeFormats.FirstOrDefault() ?? "o";
+			if (dateTimeFormat.IndexOf('z') >= 0 && dateTime.Kind != DateTimeKind.Local)
 				dateTime = dateTime.ToLocalTime();
 
 			var dateString = dateTime.ToString(dateTimeFormat, this.Context.Format);

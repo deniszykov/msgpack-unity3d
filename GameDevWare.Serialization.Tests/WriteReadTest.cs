@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using GameDevWare.Serialization.MessagePack;
 using NUnit.Framework;
 
 namespace GameDevWare.Serialization.Tests
@@ -98,6 +100,48 @@ namespace GameDevWare.Serialization.Tests
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
+		}
+
+		[Test]
+		public void WriteReadTestObjectMsgPack()
+		{
+			var expectedValue = new TestObject
+			{
+				IntField = int.MaxValue,
+				LongField = long.MaxValue,
+				ShortField = short.MaxValue,
+				SingleField = float.MaxValue,
+				DoubleField = double.MaxValue,
+				DecimalField = decimal.MaxValue,
+				IntProperty = 2,
+				IntArrayProperty = new[] { 1, 2, 3, int.MaxValue, int.MinValue, byte.MaxValue, byte.MinValue, short.MaxValue, short.MinValue, sbyte.MinValue, sbyte.MaxValue, ushort.MinValue, ushort.MaxValue },
+				MixedArrayProperty = new object[] { 1, false, "a text", new TestObject(), "a another text", 2, new object[] { 1, 2, 3 }, null, 4, null },
+				ObjectProperty = new TestObject
+				{
+					IntField = 2,
+					BoolProperty = false,
+					LongField = long.MinValue,
+					ShortField = short.MinValue,
+					SingleField = float.MinValue,
+					DoubleField = double.MinValue,
+					DecimalField = decimal.MinValue,
+					ObjectProperty = new TestObject(),
+					IntArrayProperty = new int[0],
+					AnyProperty = new object()
+				},
+				StringArrayProperty = new[] { "a\ttext\nasaaasdasdasd \n\r\n \a \r asdasd", null, null, null },
+				StringProperty = new string(Array.ConvertAll(Enumerable.Range(1, 256).ToArray(), input => (char)input)),
+				BoolProperty = true,
+				DateProperty = DateTime.Today,
+				DateOffsetProperty = DateTimeOffset.UtcNow,
+				NullableProperty = long.MinValue,
+				ObjectArrayProperty = new[] { new TestObject(), new TestObject() },
+				AnyProperty = "",
+			};
+			var actualValue = WriteReadMessagePack(expectedValue);
+
+			Assert.IsNotNull(actualValue, "actualValue != null");
+			Assert.AreEqual(expectedValue, actualValue);
 		}
 
 		[Test]
@@ -248,6 +292,48 @@ namespace GameDevWare.Serialization.Tests
 		}
 
 		[Test]
+		public void WriteReadTestObjectJson()
+		{
+			var expectedValue = new TestObject
+			{
+				IntField = int.MaxValue,
+				LongField = long.MaxValue,
+				ShortField = short.MaxValue,
+				SingleField = float.MaxValue,
+				DoubleField = double.MaxValue,
+				DecimalField = decimal.MaxValue,
+				IntProperty = 2,
+				IntArrayProperty = new[] { 1, 2, 3, int.MaxValue, int.MinValue, byte.MaxValue, byte.MinValue, short.MaxValue, short.MinValue, sbyte.MinValue, sbyte.MaxValue, ushort.MinValue, ushort.MaxValue },
+				MixedArrayProperty = new object[] { 1, false, "a text", new TestObject(), "a another text", 2, new object[] { 1, 2, 3 }, null, 4, null },
+				ObjectProperty = new TestObject
+				{
+					IntField = 2,
+					BoolProperty = false,
+					LongField = long.MinValue,
+					ShortField = short.MinValue,
+					SingleField = float.MinValue,
+					DoubleField = double.MinValue,
+					DecimalField = decimal.MinValue,
+					ObjectProperty = new TestObject(),
+					IntArrayProperty = new int[0],
+					AnyProperty = new object()
+				},
+				StringArrayProperty = new[] { "a\ttext\nasaaasdasdasd \n\r\n \a \r asdasd", null, null, null },
+				StringProperty = new string(Array.ConvertAll(Enumerable.Range(1, 256).ToArray(), input => (char)input)),
+				BoolProperty = true,
+				DateProperty = DateTime.Today,
+				DateOffsetProperty = DateTimeOffset.UtcNow,
+				NullableProperty = long.MinValue,
+				ObjectArrayProperty = new[] { new TestObject(), new TestObject() },
+				AnyProperty = "",
+			};
+			var actualValue = WriteReadJson(expectedValue);
+
+			Assert.IsNotNull(actualValue, "actualValue != null");
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
 		public void ReadDictionaryAsJsonArrayOfPairs()
 		{
 			var json = Json.SerializeToString(new[] { new DictionaryEntry("a", 1), new DictionaryEntry("b", 2), new DictionaryEntry("c", 3) });
@@ -273,11 +359,16 @@ namespace GameDevWare.Serialization.Tests
 			CollectionAssert.AreEqual(actual, expected);
 		}
 
+
 		private T WriteReadMessagePack<T>(T value)
 		{
 			var stream = new MemoryStream();
 			MsgPack.Serialize(value, stream);
+
 			stream.Position = 0;
+			Debug.WriteLine(new MsgPackReader(stream, new SerializationContext()).DebugPrintTokens());
+
+			stream.Position = 0;			
 			var readedValue = (T)MsgPack.Deserialize(typeof(T), stream);
 			return readedValue;
 		}
@@ -289,7 +380,9 @@ namespace GameDevWare.Serialization.Tests
 
 			var json = Json.DefaultEncoding.GetString(stream.ToArray());
 			Trace.WriteLine(json);
+			Debug.WriteLine(new JsonStreamReader(stream, new SerializationContext()).DebugPrintTokens());
 
+			stream.Position = 0;
 			var readedValue = (T)Json.Deserialize(typeof(T), stream);
 			return readedValue;
 		}

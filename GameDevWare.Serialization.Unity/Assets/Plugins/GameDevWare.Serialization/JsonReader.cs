@@ -332,6 +332,7 @@ namespace GameDevWare.Serialization
 								return typeof(List<object>);
 							case JsonToken.Number:
 								return typeof(double);
+							case JsonToken.Member:
 							case JsonToken.StringLiteral:
 								return typeof(string);
 							case JsonToken.DateTime:

@@ -151,6 +151,12 @@ namespace GameDevWare.Serialization.Serializers
 					reader.NextToken();
 					var typeName = reader.ReadString(false);
 					var type = reader.Context.GetType(typeName, true, true);
+					if (type == typeof(object))
+					{
+						this.DeserializeMembers(reader, container, ref serializerOverride);
+						return new object();
+					}
+
 					var serializer = reader.Context.GetSerializerForType(type);
 					if (serializer is ObjectSerializer)
 					{
