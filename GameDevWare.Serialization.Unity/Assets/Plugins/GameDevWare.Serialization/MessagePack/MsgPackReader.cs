@@ -23,6 +23,9 @@ namespace GameDevWare.Serialization.MessagePack
 {
 	public class MsgPackReader : IJsonReader
 	{
+	    private static readonly object TrueObject = true;
+	    private static readonly object FalseObject = false;
+
 		internal class MsgPackValueInfo : IValueInfo
 		{
 			private readonly MsgPackReader reader;
@@ -119,7 +122,9 @@ namespace GameDevWare.Serialization.MessagePack
 			}
 			public void SetValue(object rawValue, JsonToken token, int position)
 			{
-				this.HasValue = true;
+				this.HasValue = token == JsonToken.Boolean || token == JsonToken.DateTime || 
+					token == JsonToken.Member || token == JsonToken.Null || 
+					token == JsonToken.Number || token == JsonToken.StringLiteral;
 				this.value = rawValue;
 				this.Token = token;
 				this.ColumnNumber = position;
@@ -256,12 +261,12 @@ namespace GameDevWare.Serialization.MessagePack
 			else if (formatValue >= (byte)MsgPackType.NegativeFixIntStart && formatValue <= (byte)MsgPackType.NegativeFixIntEnd)
 			{
 				var value = -(formatValue - (byte)MsgPackType.NegativeFixIntStart);
-				this.Value.SetValue(value, JsonToken.Number, pos);
+				this.Value.SetValue((sbyte)value, JsonToken.Number, pos);
 			}
 			else if (formatValue >= (byte)MsgPackType.PositiveFixIntStart && formatValue <= (byte)MsgPackType.PositiveFixIntEnd)
 			{
 				var value = formatValue - (byte)MsgPackType.PositiveFixIntStart;
-				this.Value.SetValue(value, JsonToken.Number, pos);
+				this.Value.SetValue((byte)value, JsonToken.Number, pos);
 			}
 			else
 			{
@@ -399,10 +404,10 @@ namespace GameDevWare.Serialization.MessagePack
 						this.ReadExtType(extType, data, pos);
 						break;
 					case MsgPackType.False:
-						this.Value.SetValue(false, JsonToken.Boolean, pos);
+						this.Value.SetValue(FalseObject, JsonToken.Boolean, pos);
 						break;
 					case MsgPackType.True:
-						this.Value.SetValue(true, JsonToken.Boolean, pos);
+						this.Value.SetValue(TrueObject, JsonToken.Boolean, pos);
 						break;
 					case MsgPackType.Float32:
 						this.ReadToBuffer(4, throwOnEos: true);
@@ -411,6 +416,10 @@ namespace GameDevWare.Serialization.MessagePack
 					case MsgPackType.Float64:
 						this.ReadToBuffer(8, throwOnEos: true);
 						this.Value.SetValue(bitConverter.ToDouble(buffer, this.bufferOffset), JsonToken.Number, pos);
+						break;
+					case MsgPackType.Int8:
+						this.ReadToBuffer(1, throwOnEos: true);
+						this.Value.SetValue((sbyte)buffer[this.bufferOffset], JsonToken.Number, pos);
 						break;
 					case MsgPackType.Int16:
 						this.ReadToBuffer(2, throwOnEos: true);
@@ -424,9 +433,9 @@ namespace GameDevWare.Serialization.MessagePack
 						this.ReadToBuffer(8, throwOnEos: true);
 						this.Value.SetValue(bitConverter.ToInt64(buffer, this.bufferOffset), JsonToken.Number, pos);
 						break;
-					case MsgPackType.Int8:
+					case MsgPackType.UInt8:
 						this.ReadToBuffer(1, throwOnEos: true);
-						this.Value.SetValue((sbyte)buffer[this.bufferOffset], JsonToken.Number, pos);
+						this.Value.SetValue(buffer[this.bufferOffset], JsonToken.Number, pos);
 						break;
 					case MsgPackType.UInt16:
 						this.ReadToBuffer(2, throwOnEos: true);
@@ -439,10 +448,6 @@ namespace GameDevWare.Serialization.MessagePack
 					case MsgPackType.UInt64:
 						this.ReadToBuffer(8, throwOnEos: true);
 						this.Value.SetValue(bitConverter.ToUInt64(buffer, this.bufferOffset), JsonToken.Number, pos);
-						break;
-					case MsgPackType.UInt8:
-						this.ReadToBuffer(1, throwOnEos: true);
-						this.Value.SetValue(buffer[this.bufferOffset], JsonToken.Number, pos);
 						break;
 					case MsgPackType.PositiveFixIntStart:
 					case MsgPackType.PositiveFixIntEnd:
