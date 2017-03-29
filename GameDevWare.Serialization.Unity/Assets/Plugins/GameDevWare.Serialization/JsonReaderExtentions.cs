@@ -14,6 +14,8 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
@@ -728,6 +730,39 @@ namespace GameDevWare.Serialization
 				reader.NextToken();
 
 			return value;
+		}
+
+		public static string DebugPrintTokens(this IJsonReader reader)
+		{
+			if (reader == null) throw new ArgumentNullException("reader");
+
+			var output = new StringBuilder();
+			var stack = new Stack<JsonToken>();
+			stack.Push(JsonToken.None);
+			while (reader.NextToken())
+			{
+				var strValue = reader.Token + (reader.Value.HasValue && reader.Value != null ? "[<" + reader.Value.Type.Name + "> " + JsonUtils.EscapeAndQuote(reader.Value.AsString).Trim('"') + "]" : "");
+
+				if (stack.Peek() != JsonToken.Member)
+				{
+					var endingTokenIndent = (reader.Token == JsonToken.EndOfObject || reader.Token == JsonToken.EndOfArray ? -1 : 0);
+					output.Append(Environment.NewLine);
+					for (var i = 0; i < System.Linq.Enumerable.Count(stack, t => t != JsonToken.Member && t != JsonToken.None) + endingTokenIndent; i++)
+						output.Append("\t");
+				}
+				else
+				{
+					output.Append(" ");
+				}
+
+				output.Append(strValue);
+
+				if (reader.Token == JsonToken.EndOfObject || reader.Token == JsonToken.EndOfArray || stack.Peek() == JsonToken.Member)
+					stack.Pop();
+				if (reader.Token == JsonToken.BeginObject || reader.Token == JsonToken.BeginArray || reader.Token == JsonToken.Member)
+					stack.Push(reader.Token);
+			}
+			return output.ToString();
 		}
 	}
 }
