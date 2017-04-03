@@ -26,7 +26,6 @@ namespace GameDevWare.Serialization.Serializers
 	{
 		public const string TYPE_MEMBER_NAME = "_type";
 
-		private static readonly Dictionary<Type, TypeDescription> TypeDescriptions = new Dictionary<Type, TypeDescription>();
 		private static readonly Regex VersionRegEx = new Regex(@", Version=[^\]]+", RegexOptions.None);
 
 		private readonly Type objectType;
@@ -58,11 +57,7 @@ namespace GameDevWare.Serialization.Serializers
 				this.baseTypeSerializer = (ObjectSerializer)baseSerializer;
 			}
 
-			lock (TypeDescriptions)
-			{
-				if (!TypeDescriptions.TryGetValue(type, out this.objectTypeDescription))
-					TypeDescriptions.Add(type, this.objectTypeDescription = new TypeDescription(type));
-			}
+		    this.objectTypeDescription = TypeDescription.Get(type);
 		}
 
 		public override object Deserialize(IJsonReader reader)

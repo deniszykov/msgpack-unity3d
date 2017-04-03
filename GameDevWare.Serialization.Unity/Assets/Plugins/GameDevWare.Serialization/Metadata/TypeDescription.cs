@@ -14,6 +14,7 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -25,6 +26,8 @@ namespace GameDevWare.Serialization.Metadata
 {
 	internal class TypeDescription : MemberDescription
 	{
+		private static readonly Dictionary<Type, TypeDescription> TypeDescriptions = new Dictionary<Type, TypeDescription>();
+
 		private readonly Type objectType;
 		private readonly Func<object> constructorFn;
 		private readonly ReadOnlyCollection<DataMemberDescription> members;
@@ -32,6 +35,8 @@ namespace GameDevWare.Serialization.Metadata
 
 		public Type ObjectType { get { return this.objectType; } }
 		public bool IsAnonymousType { get; private set; }
+		public bool IsEnumerable { get; private set; }
+		public bool IsDictionary { get; private set; }
 		public bool IsDataContract { get; private set; }
 		public bool IsSerializable { get; private set; }
 		public ReadOnlyCollection<DataMemberDescription> Members { get { return this.members; } }
@@ -43,7 +48,9 @@ namespace GameDevWare.Serialization.Metadata
 
 			this.objectType = objectType;
 			this.IsDataContract = this.Attributes.Any(attribute => attribute.GetType().Name == DATA_CONTRACT_ATTRIBUTE_NAME);
-			this.IsSerializable = IsSerializable;
+			this.IsSerializable = objectType.IsSerializable;
+			this.IsEnumerable = objectType.IsInstantiationOf(typeof(Enumerable)) && objectType != typeof(string);
+			this.IsDictionary = typeof(IDictionary).IsAssignableFrom(objectType);
 			this.IsAnonymousType = objectType.IsSealed && objectType.IsNotPublic && objectType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), true).Length > 0; ;
 
 			var allMembers = this.FindMembers(objectType);
@@ -111,6 +118,19 @@ namespace GameDevWare.Serialization.Metadata
 				return this.constructorFn();
 			else
 				return Activator.CreateInstance(this.objectType);
+		}
+
+		public static TypeDescription Get(Type type)
+		{
+			if (type == null) throw new ArgumentNullException("type");
+
+			lock (TypeDescriptions)
+			{
+				TypeDescription objectTypeDescription;
+				if (!TypeDescriptions.TryGetValue(type, out objectTypeDescription))
+					TypeDescriptions.Add(type, objectTypeDescription = new TypeDescription(type));
+				return objectTypeDescription;
+			}
 		}
 
 		public override string ToString()
