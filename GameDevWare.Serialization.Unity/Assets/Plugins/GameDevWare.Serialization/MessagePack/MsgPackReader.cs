@@ -500,14 +500,15 @@ namespace GameDevWare.Serialization.MessagePack
 				while (this.bufferAvailable < bytesRequired)
 				{
 					var read = this.inputStream.Read(this.buffer, this.bufferAvailable, this.buffer.Length - this.bufferAvailable);
-					if (read == 0)
-					{
-						if (throwOnEos)
-							JsonSerializationException.UnexpectedEndOfStream(this);
-						else
-							return false;
-					}
 					this.bufferAvailable += read;
+
+					if (read != 0 || this.bufferAvailable >= bytesRequired)
+						continue;
+
+					if (throwOnEos)
+						JsonSerializationException.UnexpectedEndOfStream(this);
+					else
+						return false;
 				}
 			}
 
@@ -537,7 +538,7 @@ namespace GameDevWare.Serialization.MessagePack
 			{
 				var bytes = new byte[bytesRequired];
 				var bytesOffset = 0;
-				while (this.bufferAvailable > 0 && bytesOffset < bytes.Length)
+				if (this.bufferAvailable > 0 && bytesOffset < bytes.Length)
 				{
 					var bytesToCopy = Math.Min(bytes.Length - bytesOffset, this.bufferAvailable);
 					Buffer.BlockCopy(this.buffer, this.bufferOffset, bytes, bytesOffset, bytesToCopy);
@@ -555,10 +556,12 @@ namespace GameDevWare.Serialization.MessagePack
 				while (bytesOffset < bytes.Length)
 				{
 					var read = this.inputStream.Read(bytes, bytesOffset, bytes.Length - bytesOffset);
-					if (read == 0)
-						throw JsonSerializationException.UnexpectedEndOfStream(this);
 
+					bytesOffset += read;
 					this.totalBytesReaded += read;
+
+					if (read == 0 && bytesOffset < bytes.Length)
+						throw JsonSerializationException.UnexpectedEndOfStream(this);
 				}
 
 				return new ArraySegment<byte>(bytes, 0, bytes.Length);
