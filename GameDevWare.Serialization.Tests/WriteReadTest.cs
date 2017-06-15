@@ -43,6 +43,21 @@ namespace GameDevWare.Serialization.Tests
 		}
 
 		[Test]
+		public void WriteReadIndexedDictionary2MsgPack()
+		{
+			var expectedValue = new IndexedDictionary<string, int>
+			{
+				{ "a", 1 },
+				{ "b", 2 },
+				{ "c", 3 },
+			};
+			var actualValue = WriteReadMessagePack(expectedValue);
+
+			Assert.IsNotNull(actualValue, "actualValue != null");
+			Assert.AreEqual(expectedValue.Count, actualValue.Count);
+		}
+
+		[Test]
 		public void WriteReadHashtableMsgPack()
 		{
 			var expectedValue = new Hashtable
@@ -179,6 +194,21 @@ namespace GameDevWare.Serialization.Tests
 				{ "c", 3 },
 			};
 			var actualValue = WriteReadJson<IDictionary<string, int>>(expectedValue);
+
+			Assert.IsNotNull(actualValue, "actualValue != null");
+			Assert.AreEqual(expectedValue.Count, actualValue.Count);
+		}
+
+		[Test]
+		public void WriteReadIndexedDictionary2Json()
+		{
+			var expectedValue = new IndexedDictionary<string, int>
+			{
+				{ "a", 1 },
+				{ "b", 2 },
+				{ "c", 3 },
+			};
+			var actualValue = WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -369,8 +399,8 @@ namespace GameDevWare.Serialization.Tests
 			Debug.WriteLine(new MsgPackReader(stream, new SerializationContext()).DebugPrintTokens());
 
 			stream.Position = 0;			
-			var readedValue = (T)MsgPack.Deserialize(typeof(T), stream);
-			return readedValue;
+			var readValue = (T)MsgPack.Deserialize(typeof(T), stream);
+			return readValue;
 		}
 		private T WriteReadJson<T>(T value)
 		{
@@ -383,8 +413,8 @@ namespace GameDevWare.Serialization.Tests
 			Debug.WriteLine(new JsonStreamReader(stream, new SerializationContext()).DebugPrintTokens());
 
 			stream.Position = 0;
-			var readedValue = (T)Json.Deserialize(typeof(T), stream);
-			return readedValue;
+			var readValue = (T)Json.Deserialize(typeof(T), stream);
+			return readValue;
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace GameDevWare.Serialization.Serializers
 		private readonly Type valueType;
 		private readonly bool isStringKeyType;
 
-		public override Type SerializedType { get { return dictionaryType; } }
+		public override Type SerializedType { get { return this.dictionaryType; } }
 
 		public DictionarySerializer(Type dictionaryType)
 		{
@@ -42,28 +42,35 @@ namespace GameDevWare.Serialization.Serializers
 			this.valueType = typeof(object);
 
 			if (dictionaryType.HasMultipleInstantiations(typeof(IDictionary<,>)))
-				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "have only one generic IDictionary interface");
+				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "have only one generic IDictionary<,> interface");
+
 
 			if (dictionaryType.IsInstantiationOf(typeof(IDictionary<,>)))
 			{
 				var genArgs = dictionaryType.GetInstantiationArguments(typeof(IDictionary<,>));
-				keyType = genArgs[0];
-				valueType = genArgs[1];
+				this.keyType = genArgs[0];
+				this.valueType = genArgs[1];
 
 				if (dictionaryType.IsInterface && dictionaryType.IsGenericType && dictionaryType.GetGenericTypeDefinition() == typeof(IDictionary<,>))
 					this.instantiatedDictionaryType = typeof(Dictionary<,>).MakeGenericType(genArgs);
+				else if (typeof(IDictionary).IsAssignableFrom(dictionaryType) == false)
+					throw JsonSerializationException.TypeIsNotValid(this.GetType(), "should implement IDictionary interface");
 			}
 			else if (typeof(IDictionary).IsAssignableFrom(dictionaryType))
 			{
 				if (dictionaryType == typeof(IDictionary))
-					this.instantiatedDictionaryType = typeof(Hashtable);
+				{
+					this.instantiatedDictionaryType = typeof(IndexedDictionary<string, object>);
+					this.keyType = typeof(string);
+					this.valueType = typeof(object);
+				}
 			}
 			else
 			{
-				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be dictionary");
+				throw JsonSerializationException.TypeIsNotValid(this.GetType(), "should implement IDictionary interface");
 			}
 
-			this.isStringKeyType = keyType == typeof(string);
+			this.isStringKeyType = this.keyType == typeof(string);
 		}
 
 		public override object Deserialize(IJsonReader reader)
@@ -84,10 +91,10 @@ namespace GameDevWare.Serialization.Serializers
 						if (reader.Token == JsonToken.BeginArray)
 						{
 							reader.ReadArrayBegin();
-							try { entry.Key = reader.ReadValue(keyType); }
-							catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e); }
-							try { entry.Value = reader.ReadValue(valueType); }
-							catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, entry.Key, e.Message), e); }
+							try { entry.Key = reader.ReadValue(this.keyType); }
+							catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
+							try { entry.Value = reader.ReadValue(this.valueType); }
+							catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key, e.Message), e); }
 							reader.ReadArrayEnd();
 						}
 						else
@@ -99,12 +106,12 @@ namespace GameDevWare.Serialization.Serializers
 								switch (memberName)
 								{
 									case DictionaryEntrySerializer.KEY_MEMBER_NAME:
-										try { entry.Key = reader.ReadValue(keyType); }
-										catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e); }
+										try { entry.Key = reader.ReadValue(this.keyType); }
+										catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
 										break;
 									case DictionaryEntrySerializer.VALUE_MEMBER_NAME:
-										try { entry.Value = reader.ReadValue(valueType); }
-										catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, entry.Key ?? "<unknown>", e.Message), e); }
+										try { entry.Value = reader.ReadValue(this.valueType); }
+										catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key ?? "<unknown>", e.Message), e); }
 										break;
 									case ObjectSerializer.TYPE_MEMBER_NAME:
 										reader.ReadValue(typeof(object));
@@ -126,11 +133,11 @@ namespace GameDevWare.Serialization.Serializers
 					{
 						var entry = default(DictionaryEntry);
 
-						try { entry.Key = reader.ReadValue(keyType); }
-						catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", keyType.Name, e.Message), e); }
+						try { entry.Key = reader.ReadValue(this.keyType); }
+						catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
 
-						try { entry.Value = reader.ReadValue(valueType); }
-						catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", valueType.Name, entry.Key, e.Message), e); }
+						try { entry.Value = reader.ReadValue(this.valueType); }
+						catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key, e.Message), e); }
 
 						container.Add(entry);
 					}
@@ -177,7 +184,7 @@ namespace GameDevWare.Serialization.Serializers
 			// ReSharper disable PossibleMultipleEnumeration
 			writer.Context.Hierarchy.Push(value);
 			// object
-			if (isStringKeyType)
+			if (this.isStringKeyType)
 			{
 				writer.WriteObjectBegin(dictionary.Count);
 				foreach (DictionaryEntry pair in dictionary)
@@ -186,7 +193,7 @@ namespace GameDevWare.Serialization.Serializers
 					// key
 					writer.WriteMember(keyStr);
 					// value
-					writer.WriteValue(pair.Value, valueType);
+					writer.WriteValue(pair.Value, this.valueType);
 				}
 				writer.WriteObjectEnd();
 			}
@@ -196,8 +203,8 @@ namespace GameDevWare.Serialization.Serializers
 				foreach (DictionaryEntry pair in dictionary)
 				{
 					writer.WriteArrayBegin(2);
-					writer.WriteValue(pair.Key, keyType);
-					writer.WriteValue(pair.Value, valueType);
+					writer.WriteValue(pair.Key, this.keyType);
+					writer.WriteValue(pair.Value, this.valueType);
 					writer.WriteArrayEnd();
 				}
 				writer.WriteArrayEnd();
@@ -209,7 +216,7 @@ namespace GameDevWare.Serialization.Serializers
 
 		public override string ToString()
 		{
-			return string.Format("dictionary of {1}:{2}, {0}", dictionaryType, keyType, valueType);
+			return string.Format("dictionary of {1}:{2}, {0}", this.dictionaryType, this.keyType, this.valueType);
 		}
 	}
 }
