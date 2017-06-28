@@ -17,12 +17,12 @@ Supported Platforms:
 	* Serialize
 	* Deserialize
 
-##Installation
-Nuget
+## Installation
+#### Nuget
 ```bash
 PM> Install-Package GameDevWare.Serialization 
 ```
-Unity3D
+#### Unity3D
 
 [Json + MessagePack Serializer](https://www.assetstore.unity3d.com/#!/content/59918)
 
@@ -31,6 +31,7 @@ Serialize object into [Stream](https://msdn.microsoft.com/en-us/library/system.i
 ```csharp
 var outputStream = new MemoryStream();
 MsgPack.Serialize(new { field1 = 1, field2 = 2 }, outputStream);
+outputStream.Position = 0; // rewind stream before copying/read
 ```
 Deserialize object from [Stream](https://msdn.microsoft.com/en-us/library/system.io.stream%28v=vs.90%29.aspx) using MessagePack serializer:
 ```csharp
@@ -83,8 +84,8 @@ Attributes can be from *System.Runtime.Serialization.dll* or your attributes wit
 * Lists: Array, ArrayList, List<T>, HashSet<T> and any other [IEnumerable](https://msdn.microsoft.com/en-us/library/system.collections.ienumerable%28v=vs.110%29.aspx) types with **Add** method.
 * Maps: Hashtable, Dictionary<K,V>, and other [IDictionary](https://msdn.microsoft.com/en-us/library/system.collections.idictionary%28v=vs.110%29.aspx) types
 * [Nullable](https://msdn.microsoft.com/en-us/library/b3h38hb0%28v=vs.110%29.aspx) types
-* Enumeration
-* Objects
+* Enums
+* Custom classes
 
 ## Custom Type Serializers
 To implement a custom [TypeSerializer](https://github.com/deniszykov/msgpack-unity3d/blob/master/Assets/Plugins/GameDevWare.Serialization/TypeSerializer.cs) you need to inherit it from *TypeSerializer* and override Deserialize and Serialize methods. 
