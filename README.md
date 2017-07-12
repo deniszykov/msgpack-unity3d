@@ -99,8 +99,9 @@ public sealed class GuidSerializer : TypeSerializer
 		// General rule of 'Deserialize' is to leave reader on 
 		// last token of deserialized value. It is EndOfObject or EndOfArray, or Value.
 		
+		// 'nextToken: true' will call 'reader.NextToken()' AFTER 'ReadString()'.
+		// Since it is last token on de-serialized value we set 'nextToken: false'.
 		var guidStr = reader.ReadString(nextToken: false);
-		// nextToken: true will call 'reader.NextToken()' AFTER 'ReadString()'.
 		var value = new Guid(guidStr);
 		return value;
 	}
