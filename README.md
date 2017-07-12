@@ -96,14 +96,16 @@ public sealed class GuidSerializer : TypeSerializer
 
 	public override object Deserialize(IJsonReader reader)
 	{
-		var guidStr = reader.ReadString(advance: false); // advance mean 'call reader.NextToken' after ReadString
+		// General rule of 'Deserialize' is to leave reader on last token of deserialized value. It is EndOfObject or EndOfArray, or Value.
+		
+		var guidStr = reader.ReadString(nextToken: false); // nextToken: true will call 'reader.NextToken()' after 'ReadString()'.
 		var value = new Guid(guidStr);
 		return value;
 	}
 
 	public override void Serialize(IJsonWriter writer, object valueObj)
 	{
-		var value = (Guid)valueObj; // you never get null here
+		var value = (Guid)valueObj; // valueObj is not null
 		var guidStr = value.ToString();
 		writer.Write(guidStr);
 	}
