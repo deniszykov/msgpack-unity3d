@@ -44,7 +44,7 @@ MsgPack.Deserialize<MyObject>(inputStream); -> instance of MyObject
 ## Breaking Change in v2.0
 ### Message Pack Endianness
 Message Pack serialization prior to v2.0 uses [little-endian](https://en.wikipedia.org/wiki/Endianness) byte order for multi-byte integers. That doesn't correspond to [specification](https://github.com/msgpack/msgpack/blob/master/spec.md). 
-Data saved with **little-endian** formatting should be re-written to **big-endian** with following code:
+Data saved with **little-endian** formatting could be re-written to **big-endian** with following code:
 ```csharp
 var context = new SerializationContext { Options = SerializationOptions.SuppressTypeInformation };
 using (var fileStream = File.Open("<path to file>", FileMode.Open, FileAccess.ReadWrite))
@@ -96,9 +96,11 @@ public sealed class GuidSerializer : TypeSerializer
 
 	public override object Deserialize(IJsonReader reader)
 	{
-		// General rule of 'Deserialize' is to leave reader on last token of deserialized value. It is EndOfObject or EndOfArray, or Value.
+		// General rule of 'Deserialize' is to leave reader on 
+		// last token of deserialized value. It is EndOfObject or EndOfArray, or Value.
 		
-		var guidStr = reader.ReadString(nextToken: false); // nextToken: true will call 'reader.NextToken()' after 'ReadString()'.
+		var guidStr = reader.ReadString(nextToken: false);
+		// nextToken: true will call 'reader.NextToken()' AFTER 'ReadString()'.
 		var value = new Guid(guidStr);
 		return value;
 	}
