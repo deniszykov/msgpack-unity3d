@@ -34,7 +34,7 @@ namespace GameDevWare.Serialization.Metadata
 
 		static GettersAndSetters()
 		{
-#if (UNITY_WEBGL && !UNITY_EDITOR)
+#if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
 			AotRuntime = true;
 #else
 			try { Expression.Lambda<Func<bool>>(Expression.Constant(true)).Compile(); }
@@ -110,7 +110,6 @@ namespace GameDevWare.Serialization.Metadata
 
 			if (AotRuntime || fieldInfo.IsStatic)
 				return false;
-
 
 			lock (ReadFunctions)
 			{
