@@ -146,7 +146,17 @@ namespace GameDevWare.Serialization.Serializers
 				{
 					reader.NextToken();
 					var typeName = reader.ReadString(false);
-					var type = reader.Context.GetType(typeName, true, true);
+					var type = default(Type);
+					try
+					{
+						type = reader.Context.GetType(typeName, true, true);
+					}
+					catch (Exception getTypeError)
+					{
+						throw new SerializationException(string.Format("Failed to resolve type '{0}' of value for '{1}' of '{2}' type.\r\n" +
+							"More detailed information in inner exception.", typeName, memberName, this.objectType.Name), getTypeError);
+					}
+
 					if (type == typeof(object))
 					{
 						this.DeserializeMembers(reader, container, ref serializerOverride);
