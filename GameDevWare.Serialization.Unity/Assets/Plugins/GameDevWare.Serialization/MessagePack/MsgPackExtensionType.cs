@@ -143,8 +143,8 @@ namespace GameDevWare.Serialization.MessagePack
 				if (jo > 0) jo = 0;
 
 				// get bytes with offsets
-				var ib = i + io >= 0 ? this[i + io] : 0;
-				var jb = j + jo >= 0 ? other[j + jo] : 0;
+				var ib = i + io >= 0 ? this[i + io] : (byte)0;
+				var jb = j + jo >= 0 ? other[j + jo] : (byte)0;
 
 				// compare
 				if (ib > jb) return 1;
