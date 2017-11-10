@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +22,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadMessagePack(expectedValue);
+			var actualValue = this.WriteReadMessagePack(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -37,7 +37,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadMessagePack<IDictionary<string, int>>(expectedValue);
+			var actualValue = this.WriteReadMessagePack<IDictionary<string, int>>(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -52,7 +52,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadMessagePack(expectedValue);
+			var actualValue = this.WriteReadMessagePack(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -67,7 +67,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadMessagePack(expectedValue);
+			var actualValue = this.WriteReadMessagePack(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -82,7 +82,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadMessagePack<IDictionary>(expectedValue);
+			var actualValue = this.WriteReadMessagePack<IDictionary>(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -92,7 +92,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadListMsgPack()
 		{
 			var expectedValue = new List<int> { 1, 2, 3 };
-			var actualValue = WriteReadMessagePack(expectedValue);
+			var actualValue = this.WriteReadMessagePack(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -102,7 +102,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadHashSetMsgPack()
 		{
 			var expectedValue = new HashSet<int> { 1, 2, 3 };
-			var actualValue = WriteReadMessagePack(expectedValue);
+			var actualValue = this.WriteReadMessagePack(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -112,7 +112,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadArrayListMsgPack()
 		{
 			var expectedValue = new ArrayList { 1, 2, 3 };
-			var actualValue = WriteReadMessagePack(expectedValue);
+			var actualValue = this.WriteReadMessagePack(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -154,7 +154,7 @@ namespace GameDevWare.Serialization.Tests
 				ObjectArrayProperty = new[] { new TestObject(), new TestObject() },
 				AnyProperty = "",
 			};
-			var actualValue = WriteReadMessagePack(expectedValue);
+			var actualValue = this.WriteReadMessagePack(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue, actualValue);
@@ -164,10 +164,82 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadIListMsgPack()
 		{
 			var expectedValue = new List<int> { 1, 2, 3 };
-			var actualValue = WriteReadMessagePack<IList<int>>(expectedValue);
+			var actualValue = this.WriteReadMessagePack<IList<int>>(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
+		}
+
+		[Test]
+		public void WriteReadUtcDateMsgPack()
+		{
+			var expectedValue = DateTime.UtcNow;
+			var actualValue = this.WriteReadMessagePack(expectedValue);
+
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadLocalDateMsgPack()
+		{
+			var expectedValue = DateTime.Now;
+			var actualValue = this.WriteReadMessagePack(expectedValue);
+
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadUnspecifiedDateMsgPack()
+		{
+			var expectedValue = new DateTime(DateTime.Now.Ticks, DateTimeKind.Unspecified);
+			var actualValue = this.WriteReadMessagePack(expectedValue);
+
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadDateTimeOffsetLocalMsgPack()
+		{
+			var expectedValue = DateTimeOffset.Now;
+			var actualValue = this.WriteReadMessagePack(expectedValue);
+
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadDateTimeOffsetUtcMsgPack()
+		{
+			var expectedValue = DateTimeOffset.UtcNow;
+			var actualValue = this.WriteReadMessagePack(expectedValue);
+
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadDecimalMaxMsgPack()
+		{
+			var expectedValue = decimal.MaxValue;
+			var actualValue = this.WriteReadMessagePack(expectedValue);
+
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadDecimalMinMsgPack()
+		{
+			var expectedValue = decimal.MinValue;
+			var actualValue = this.WriteReadMessagePack(expectedValue);
+
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void WriteReadDecimalOneMsgPack()
+		{
+			var expectedValue = decimal.One;
+			var actualValue = this.WriteReadMessagePack(expectedValue);
+
+			Assert.AreEqual(expectedValue, actualValue);
 		}
 
 		[Test]
@@ -179,7 +251,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -194,7 +266,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadJson<IDictionary<string, int>>(expectedValue);
+			var actualValue = this.WriteReadJson<IDictionary<string, int>>(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -209,7 +281,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -224,7 +296,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -239,7 +311,7 @@ namespace GameDevWare.Serialization.Tests
 				{ "b", 2 },
 				{ "c", 3 },
 			};
-			var actualValue = WriteReadJson<IDictionary>(expectedValue);
+			var actualValue = this.WriteReadJson<IDictionary>(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -249,7 +321,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadEmptyDictionaryJson()
 		{
 			var expectedValue = new Dictionary<string, int>();
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -264,7 +336,7 @@ namespace GameDevWare.Serialization.Tests
 				{ new Version(1, 0, 1), 1 },
 				{ new Version(1, 0, 2), 1 },
 			};
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -275,7 +347,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadEmptyNonStringKeyDictionaryJson()
 		{
 			var expectedValue = new Dictionary<Version, int>();
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -286,7 +358,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadListJson()
 		{
 			var expectedValue = new List<int> { 1, 2, 3 };
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -296,7 +368,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadIListJson()
 		{
 			var expectedValue = new List<int> { 1, 2, 3 };
-			var actualValue = WriteReadJson<IList<int>>(expectedValue);
+			var actualValue = this.WriteReadJson<IList<int>>(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -306,7 +378,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadHashSetJson()
 		{
 			var expectedValue = new HashSet<int> { 1, 2, 3 };
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -316,7 +388,7 @@ namespace GameDevWare.Serialization.Tests
 		public void WriteReadArrayListJson()
 		{
 			var expectedValue = new ArrayList { 1, 2, 3 };
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue.Count, actualValue.Count);
@@ -358,7 +430,7 @@ namespace GameDevWare.Serialization.Tests
 				ObjectArrayProperty = new[] { new TestObject(), new TestObject() },
 				AnyProperty = "",
 			};
-			var actualValue = WriteReadJson(expectedValue);
+			var actualValue = this.WriteReadJson(expectedValue);
 
 			Assert.IsNotNull(actualValue, "actualValue != null");
 			Assert.AreEqual(expectedValue, actualValue);

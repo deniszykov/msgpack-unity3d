@@ -135,6 +135,9 @@
     <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\BigEndianBitConverter.cs">
       <Link>MessagePack\BigEndianBitConverter.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\DefaultMsgPackExtensionTypeHandler.cs">
+      <Link>MessagePack\DefaultMsgPackExtensionTypeHandler.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\EndianBitConverter.cs">
       <Link>MessagePack\EndianBitConverter.cs</Link>
     </Compile>
@@ -144,11 +147,17 @@
     <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\LittleEndianBitConverter.cs">
       <Link>MessagePack\LittleEndianBitConverter.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackExtType.cs">
-      <Link>MessagePack\MsgPackExtType.cs</Link>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackExtensionType.cs">
+      <Link>MessagePack\MsgPackExtensionType.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackExtensionTypeHandler.cs">
+      <Link>MessagePack\MsgPackExtensionTypeHandler.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackReader.cs">
       <Link>MessagePack\MsgPackReader.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackTimestamp.cs">
+      <Link>MessagePack\MsgPackTimestamp.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\MessagePack\MsgPackType.cs">
       <Link>MessagePack\MsgPackType.cs</Link>
@@ -224,6 +233,12 @@
     </Compile>
     <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\Matrix4x4Serializer.cs">
       <Link>Serializers\Matrix4x4Serializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\MsgPackExtensionTypeSerializer.cs">
+      <Link>Serializers\MsgPackExtensionTypeSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\MsgPackTimestampSerializer.cs">
+      <Link>Serializers\MsgPackTimestampSerializer.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\Serializers\ObjectSerializer.cs">
       <Link>Serializers\ObjectSerializer.cs</Link>
