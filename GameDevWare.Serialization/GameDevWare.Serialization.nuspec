@@ -10,7 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright © 2016 GameDevWare, Denis Zykov</copyright>
+    <copyright>Copyright © 2018 GameDevWare, Denis Zykov</copyright>
     <tags>messagepack msgpack json binary serialization text unity3d</tags>
   </metadata>
 </package>
