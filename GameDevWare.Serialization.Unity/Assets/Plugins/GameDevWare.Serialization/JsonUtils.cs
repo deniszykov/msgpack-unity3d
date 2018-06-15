@@ -752,15 +752,5 @@ namespace GameDevWare.Serialization
 			valueStr.CopyTo(0, buffer, start, valueStr.Length);
 			return valueStr.Length;
 		}
-
-		private static bool LookupAt(char[] buffer, int start, int len, string matchString)
-		{
-			for (var i = 0; i < len; i++)
-			{
-				if (buffer[start + i] != matchString[i])
-					return false;
-			}
-			return true;
-		}
 	}
 }
