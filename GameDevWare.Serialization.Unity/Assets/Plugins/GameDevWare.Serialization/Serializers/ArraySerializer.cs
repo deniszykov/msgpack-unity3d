@@ -1,4 +1,4 @@
-﻿/* 
+/* 
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
@@ -38,7 +38,7 @@ namespace GameDevWare.Serialization.Serializers
 			this.instantiatedArrayType = enumerableType;
 			this.elementType = this.GetElementType(arrayType);
 
-			if (this.elementType == null) JsonSerializationException.TypeIsNotValid(this.GetType(), "be enumerable");
+			if (this.elementType == null) throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be enumerable");
 
 			if (this.arrayType == typeof(IList) || this.arrayType == typeof(ICollection) || this.arrayType == typeof(IEnumerable))
 				this.instantiatedArrayType = typeof(ArrayList);
