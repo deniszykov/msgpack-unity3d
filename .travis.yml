@@ -1,0 +1,10 @@
+language: csharp
+mono: none
+dotnet: 2.0.3
+dist: trusty
+install:
+- dotnet restore
+script:
+- dotnet build -f netcoreapp2.0
+- cd GameDevWare.Serialization.Tests
+- dotnet xunit -f netcoreapp2.0
