@@ -506,7 +506,7 @@ namespace GameDevWare.Serialization.MessagePack
 						continue;
 
 					if (throwOnEos)
-						JsonSerializationException.UnexpectedEndOfStream(this);
+						throw JsonSerializationException.UnexpectedEndOfStream(this);
 					else
 						return false;
 				}
