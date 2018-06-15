@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 using System.Security;
 using GameDevWare.Serialization.Serializers;
@@ -38,8 +38,7 @@ namespace GameDevWare.Serialization
 		public int LineNumber { get; set; }
 		public int ColumnNumber { get; set; }
 		public ulong CharactersWritten { get; set; }
-		public string Path { get; set; }
-
+		
 		internal JsonSerializationException(string message, ErrorCode errorCode, IJsonReader reader = null)
 			: base(message)
 		{
@@ -67,7 +66,6 @@ namespace GameDevWare.Serialization
 			this.LineNumber = info.GetInt32("LineNumber");
 			this.ColumnNumber = info.GetInt32("ColumnNumber");
 			this.CharactersWritten = info.GetUInt64("CharactersWritten");
-			this.Path = info.GetString("Path");
 		}
 
 		private void Update(IJsonReader reader)
@@ -84,7 +82,6 @@ namespace GameDevWare.Serialization
 			info.AddValue("LineNumber", this.LineNumber);
 			info.AddValue("ColumnNumber", this.ColumnNumber);
 			info.AddValue("CharactersWritten", this.CharactersWritten);
-			info.AddValue("Path", this.Path);
 
 			base.GetObjectData(info, context);
 		}
