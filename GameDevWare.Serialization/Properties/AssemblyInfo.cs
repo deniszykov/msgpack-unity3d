@@ -14,7 +14,7 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 
-#if !(UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5)
+#if !(UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_5_3_OR_NEWER)
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -52,7 +52,7 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.3.3.0")]
-[assembly: AssemblyFileVersion("2.3.3.0")]
-[assembly: AssemblyInformationalVersion("2.3.3")]
+[assembly: AssemblyVersion("2.4.1.0")]
+[assembly: AssemblyFileVersion("2.4.1.0")]
+[assembly: AssemblyInformationalVersion("2.4.1")]
 #endif
