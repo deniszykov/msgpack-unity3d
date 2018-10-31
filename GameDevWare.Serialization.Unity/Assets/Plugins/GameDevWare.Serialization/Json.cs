@@ -95,7 +95,7 @@ namespace GameDevWare.Serialization
 				new TimeSpanSerializer(),
 				new DictionaryEntrySerializer(),
 
-#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
+#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_5_3_OR_NEWER
 				new BoundsSerializer(),
 				new Matrix4x4Serializer(),
 				new QuaternionSerializer(),

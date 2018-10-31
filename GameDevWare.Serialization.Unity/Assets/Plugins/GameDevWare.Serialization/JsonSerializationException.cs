@@ -9,7 +9,7 @@ namespace GameDevWare.Serialization
 	[Serializable]
 	public class JsonSerializationException : SerializationException
 	{
-		internal enum ErrorCode
+		public enum ErrorCode
 		{
 			SerializationException = 1,
 			EmptyMemberName,
@@ -34,7 +34,7 @@ namespace GameDevWare.Serialization
 			TypeRequiresCustomSerializer
 		}
 
-		public int Code { get; set; }
+		public ErrorCode Code { get; set; }
 		public int LineNumber { get; set; }
 		public int ColumnNumber { get; set; }
 		public ulong CharactersWritten { get; set; }
@@ -42,27 +42,27 @@ namespace GameDevWare.Serialization
 		internal JsonSerializationException(string message, ErrorCode errorCode, IJsonReader reader = null)
 			: base(message)
 		{
-			this.Code = (int)errorCode;
+			this.Code = errorCode;
 			if (reader != null)
 				this.Update(reader);
 		}
 		internal JsonSerializationException(string message, ErrorCode errorCode, IJsonReader reader, Exception innerException)
 			: base(message, innerException)
 		{
-			this.Code = (int)errorCode;
+			this.Code = errorCode;
 			if (reader != null)
 				this.Update(reader);
 		}
 		internal JsonSerializationException(string message, Exception innerException)
 			: base(message, innerException)
 		{
-			this.Code = (int)ErrorCode.SerializationException;
+			this.Code = ErrorCode.SerializationException;
 		}
 
 		protected JsonSerializationException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{
-			this.Code = info.GetInt32("Code");
+			this.Code = (ErrorCode)info.GetInt32("Code");
 			this.LineNumber = info.GetInt32("LineNumber");
 			this.ColumnNumber = info.GetInt32("ColumnNumber");
 			this.CharactersWritten = info.GetUInt64("CharactersWritten");
@@ -78,7 +78,7 @@ namespace GameDevWare.Serialization
 		[SecurityCritical]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("Code", this.Code);
+			info.AddValue("Code", (int)this.Code);
 			info.AddValue("LineNumber", this.LineNumber);
 			info.AddValue("ColumnNumber", this.ColumnNumber);
 			info.AddValue("CharactersWritten", this.CharactersWritten);
