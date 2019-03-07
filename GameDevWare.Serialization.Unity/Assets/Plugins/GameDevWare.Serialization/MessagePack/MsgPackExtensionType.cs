@@ -182,7 +182,7 @@ namespace GameDevWare.Serialization.MessagePack
 
 		public override string ToString()
 		{
-			return Convert.ToBase64String(this.data.Array ?? EmptyBytes, this.data.Offset, this.Length);
+			return Convert.ToBase64String(this.data.Array ?? EmptyBytes, this.data.Offset, Math.Min(this.Length, 64)) + ( this.Length > 64 ? "..." : "");
 		}
 	}
 }
