@@ -305,14 +305,14 @@ namespace GameDevWare.Serialization.MessagePack
 			else if (value.Length < ushort.MaxValue)
 			{
 				this.buffer[0] = (byte)MsgPackType.Bin16;
-				this.bitConverter.CopyBytes(checked((ushort)value.LongLength), this.buffer, 1);
+				this.bitConverter.CopyBytes(checked((ushort)value.Length), this.buffer, 1);
 				this.outputStream.Write(this.buffer, 0, 3);
 				this.bytesWritten += 3;
 			}
 			else
 			{
 				this.buffer[0] = (byte)MsgPackType.Bin32;
-				this.bitConverter.CopyBytes(checked((uint)value.LongLength), this.buffer, 1);
+				this.bitConverter.CopyBytes(checked((uint)value.Length), this.buffer, 1);
 				this.outputStream.Write(this.buffer, 0, 5);
 				this.bytesWritten += 5;
 			}

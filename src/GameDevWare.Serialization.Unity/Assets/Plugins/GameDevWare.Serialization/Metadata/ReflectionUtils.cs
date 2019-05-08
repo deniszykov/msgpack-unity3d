@@ -26,7 +26,7 @@ namespace GameDevWare.Serialization.Metadata
 {
 	internal static class GettersAndSetters
 	{
-#if !NET_STANDARD_2_0
+#if !NETSTANDARD
 		private static readonly bool AotRuntime;
 
 		private static readonly Dictionary<MemberInfo, Func<object, object>> ReadFunctions;
@@ -34,7 +34,7 @@ namespace GameDevWare.Serialization.Metadata
 		private static readonly Dictionary<MemberInfo, Func<object>> ConstructorFunctions;
 #endif
 
-#if !NET_STANDARD_2_0
+#if !NETSTANDARD
 		static GettersAndSetters()
 		{
 #if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
@@ -54,7 +54,7 @@ namespace GameDevWare.Serialization.Metadata
 			getFn = null;
 			setFn = null;
 
-#if NET_STANDARD_2_0
+#if NETSTANDARD
 			return false;
 #else
 			if (AotRuntime)
@@ -107,7 +107,6 @@ namespace GameDevWare.Serialization.Metadata
 					}
 				}
 			}
-
 			return true;
 #endif
 		}
@@ -116,7 +115,7 @@ namespace GameDevWare.Serialization.Metadata
 			getFn = null;
 			setFn = null;
 
-#if NET_STANDARD_2_0
+#if NETSTANDARD
 			return false;
 #else
 
@@ -179,7 +178,7 @@ namespace GameDevWare.Serialization.Metadata
 
 			ctrFn = null;
 
-#if NET_STANDARD_2_0
+#if NETSTANDARD
 			return false;
 #else
 			if (AotRuntime || type.IsAbstract || type.IsInterface)

@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
 using GameDevWare.Serialization.Serializers;
@@ -38,7 +39,7 @@ namespace GameDevWare.Serialization
 		public int LineNumber { get; set; }
 		public int ColumnNumber { get; set; }
 		public ulong CharactersWritten { get; set; }
-		
+
 		internal JsonSerializationException(string message, ErrorCode errorCode, IJsonReader reader = null)
 			: base(message)
 		{
@@ -117,7 +118,7 @@ namespace GameDevWare.Serialization
 			return new JsonSerializationException
 			(
 				string.Format("Unable to deserialize instance of '{0}' because ", type.Name) +
-					(type.IsAbstract ? "it is an abstract type." : "there is no parameterless constructor is defined on type."),
+					(type.GetTypeInfo().IsAbstract ? "it is an abstract type." : "there is no parameterless constructor is defined on type."),
 				ErrorCode.CantCreateInstanceOfType,
 				reader
 			);
@@ -194,7 +195,7 @@ namespace GameDevWare.Serialization
 #if NET40
 				tokensStr = String.Join(", ", expectedTokens);
 #else
-				var tokens = Array.ConvertAll(expectedTokens, c => c.ToString());
+				var tokens = expectedTokens.ConvertAll(c => c.ToString());
 				tokensStr = String.Join(", ", tokens);
 #endif
 			}
