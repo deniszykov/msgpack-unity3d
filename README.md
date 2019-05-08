@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/deniszykov/msgpack-unity3d.svg?branch=master)](https://travis-ci.org/deniszykov/msgpack-unity3d)
+
 # Introduction
 
 This [package](https://www.assetstore.unity3d.com/#!/content/59918) provides API for data serialization/deserialization into [MessagePack](https://en.wikipedia.org/wiki/MessagePack) and [JSON](https://ru.wikipedia.org/wiki/JSON) formats. 
