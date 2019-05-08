@@ -3,8 +3,10 @@ mono: none
 dotnet: 2.0.3
 dist: trusty
 install:
+- cd src
 - dotnet restore
 script:
+- cd src
 - dotnet build -f netcoreapp2.0
 - cd GameDevWare.Serialization.Tests
 - dotnet xunit -f netcoreapp2.0
