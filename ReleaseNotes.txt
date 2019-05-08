@@ -1,0 +1,4 @@
+converted projects to SDK-style format
+added multiple framework targets: net35, net45, netstandard2.0, netcoreapp2.0
+limited MsgPackExtensionType.ToString() length
+fixed compilation errors for .NET Standard 2.0 mode of Unity
