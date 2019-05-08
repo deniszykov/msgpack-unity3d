@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2016 Denis Zykov, GameDevWare.com
+	Copyright (c) 2019 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -713,15 +713,15 @@ namespace GameDevWare.Serialization
 				valueType = reader.Value.Type;
 
 			var value = default(object);
-			var isNullable = valueType.GetTypeInfo().IsValueType == false || valueType.IsInstantiationOf(typeof(Nullable<>));
+			var isNullable = valueType.IsValueType == false || valueType.IsInstantiationOf(typeof(Nullable<>));
 			if (reader.Token == JsonToken.Null && isNullable)
 			{
 				value = null;
 			}
 			else
 			{
-				if (isNullable && valueType.GetTypeInfo().IsValueType)
-					valueType = valueType.GetTypeInfo().GetGenericArguments()[0]; // get subtype of Nullable<T>
+				if (isNullable && valueType.IsValueType)
+					valueType = valueType.GetGenericArguments()[0]; // get subtype of Nullable<T>
 
 				var serializer = reader.Context.GetSerializerForType(valueType);
 				value = serializer.Deserialize(reader);

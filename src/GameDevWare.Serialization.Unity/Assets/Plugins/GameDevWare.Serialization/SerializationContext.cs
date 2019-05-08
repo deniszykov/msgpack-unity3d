@@ -1,5 +1,5 @@
 /* 
-	Copyright (c) 2016 Denis Zykov, GameDevWare.com
+	Copyright (c) 2019 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -78,21 +78,21 @@ namespace GameDevWare.Serialization
 		{
 			if (valueType == null) throw new ArgumentNullException("valueType");
 
-			if (valueType.GetTypeInfo().BaseType == typeof(MulticastDelegate) || valueType.GetTypeInfo().BaseType == typeof(Delegate))
+			if (valueType.BaseType == typeof(MulticastDelegate) || valueType.BaseType == typeof(Delegate))
 				throw new InvalidOperationException(string.Format("Unable to serialize delegate type '{0}'.", valueType));
 
 			var serializer = default(TypeSerializer);
 			if (this.serializers.TryGetValue(valueType, out serializer))
 				return serializer;
 
-			var typeSerializerAttribute = valueType.GetTypeInfo().GetCustomAttributes(typeof(TypeSerializerAttribute), inherit: false).FirstOrDefault() as TypeSerializerAttribute;
+			var typeSerializerAttribute = valueType.GetCustomAttributes(typeof(TypeSerializerAttribute), inherit: false).FirstOrDefault() as TypeSerializerAttribute;
 			if (typeSerializerAttribute != null)
 				serializer = this.CreateCustomSerializer(valueType, typeSerializerAttribute);
-			else if (valueType.GetTypeInfo().IsEnum)
+			else if (valueType.IsEnum)
 				serializer = this.CreateEnumSerializer(valueType);
-			else if (typeof(IDictionary).GetTypeInfo().IsAssignableFrom(valueType.GetTypeInfo()) || valueType.IsInstantiationOf(typeof(IDictionary<,>)))
+			else if (typeof(IDictionary).IsAssignableFrom(valueType) || valueType.IsInstantiationOf(typeof(IDictionary<,>)))
 				serializer = this.CreateDictionarySerializer(valueType);
-			else if (valueType.IsArray || typeof(IEnumerable).GetTypeInfo().IsAssignableFrom(valueType.GetTypeInfo()))
+			else if (valueType.IsArray || typeof(IEnumerable).IsAssignableFrom(valueType))
 				serializer = this.CreateArraySerializer(valueType);
 			else
 				serializer = (this.SerializerFactory != null ? this.SerializerFactory(valueType) : null) ?? this.CreateObjectSerializer(valueType);
@@ -133,15 +133,15 @@ namespace GameDevWare.Serialization
 		{
 			var serializerType = typeSerializerAttribute.SerializerType;
 
-			var typeCtr = serializerType.GetTypeInfo().GetConstructor(new[] { typeof(Type) });
+			var typeCtr = serializerType.GetConstructor(new[] { typeof(Type) });
 			if (typeCtr != null)
 				return (TypeSerializer)typeCtr.Invoke(new object[] { valueType });
 
-			var ctxTypeCtr = serializerType.GetTypeInfo().GetConstructor(new[] { typeof(SerializationContext), typeof(Type) });
+			var ctxTypeCtr = serializerType.GetConstructor(new[] { typeof(SerializationContext), typeof(Type) });
 			if (ctxTypeCtr != null)
 				return (TypeSerializer)ctxTypeCtr.Invoke(new object[] { this, valueType });
 
-			var ctxCtr = serializerType.GetTypeInfo().GetConstructor(new[] { typeof(SerializationContext) });
+			var ctxCtr = serializerType.GetConstructor(new[] { typeof(SerializationContext) });
 			if (ctxCtr != null)
 				return (TypeSerializer)ctxCtr.Invoke(new object[] { this });
 

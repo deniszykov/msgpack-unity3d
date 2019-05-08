@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2016 Denis Zykov, GameDevWare.com
+	Copyright (c) 2019 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -30,7 +30,7 @@ namespace GameDevWare.Serialization.Metadata
 {
 	internal class TypeDescription : MemberDescription
 	{
-		private static readonly Dictionary<Type, TypeDescription> TypeDescriptions = new Dictionary<Type, TypeDescription>();
+		private static readonly Dictionary<TypeInfo, TypeDescription> TypeDescriptions = new Dictionary<TypeInfo, TypeDescription>();
 
 		private readonly TypeInfo objectType;
 		private readonly Func<object> constructorFn;
@@ -45,19 +45,19 @@ namespace GameDevWare.Serialization.Metadata
 		public bool IsSerializable { get; private set; }
 		public ReadOnlyCollection<DataMemberDescription> Members { get { return this.members; } }
 
-		public TypeDescription(Type objectType)
-			: base(null, objectType.GetTypeInfo())
+		public TypeDescription(TypeInfo objectType)
+			: base(null, objectType)
 		{
 			if (objectType == null) throw new ArgumentNullException("objectType");
 
-			this.objectType = objectType.GetTypeInfo();
+			this.objectType = objectType;
 			this.IsDataContract = this.Attributes.Any(attribute => attribute.GetType().Name == DATA_CONTRACT_ATTRIBUTE_NAME);
 #if NETSTANDARD
 			this.IsSerializable = this.objectType.GetCustomAttributes(typeof(SerializableAttribute), true).Any();
 #else
 			this.IsSerializable = objectType.IsSerializable;
 #endif
-			this.IsEnumerable = objectType.IsInstantiationOf(typeof(Enumerable)) && objectType != typeof(string);
+			this.IsEnumerable = this.objectType.IsInstantiationOf(typeof(Enumerable)) && this.objectType != typeof(string);
 			this.IsDictionary = typeof(IDictionary).GetTypeInfo().IsAssignableFrom(this.objectType);
 			this.IsAnonymousType = this.objectType.IsSealed && this.objectType.IsNotPublic && this.objectType.GetCustomAttributes(typeof(CompilerGeneratedAttribute), true).Any();
 
@@ -66,7 +66,7 @@ namespace GameDevWare.Serialization.Metadata
 			this.members = allMembers.AsReadOnly();
 			this.membersByName = allMembers.ToDictionary(m => m.Name, StringComparer.Ordinal);
 
-			GettersAndSetters.TryGetConstructor(objectType, out this.constructorFn);
+			MetadataReflection.TryGetConstructor(this.objectType, out this.constructorFn);
 		}
 
 		private List<DataMemberDescription> FindMembers(TypeInfo objectType)
@@ -131,11 +131,12 @@ namespace GameDevWare.Serialization.Metadata
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
+			var typeInfo = type.GetTypeInfo();
 			lock (TypeDescriptions)
 			{
 				TypeDescription objectTypeDescription;
-				if (!TypeDescriptions.TryGetValue(type, out objectTypeDescription))
-					TypeDescriptions.Add(type, objectTypeDescription = new TypeDescription(type));
+				if (!TypeDescriptions.TryGetValue(typeInfo, out objectTypeDescription))
+					TypeDescriptions.Add(typeInfo, objectTypeDescription = new TypeDescription(typeInfo));
 				return objectTypeDescription;
 			}
 		}
