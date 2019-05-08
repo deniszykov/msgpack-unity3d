@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net45</TargetFrameworks>
+		<Version>0.0.0</Version>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<OutputType>Library</OutputType>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="NUnit" Version="3.11.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\GameDevWare.Serialization\GameDevWare.Serialization.csproj" />
+	</ItemGroup>
+</Project>

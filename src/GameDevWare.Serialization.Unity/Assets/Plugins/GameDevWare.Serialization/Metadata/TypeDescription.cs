@@ -1,3 +1,6 @@
+#if UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#define UNITY
+#endif
 /*
 	Copyright (c) 2019 Denis Zykov, GameDevWare.com
 
@@ -21,7 +24,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-#if NET35
+#if NET35 || UNITY
 using TypeInfo = System.Type;
 #endif
 
