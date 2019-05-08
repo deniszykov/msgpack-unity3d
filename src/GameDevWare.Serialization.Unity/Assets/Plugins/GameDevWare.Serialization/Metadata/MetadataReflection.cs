@@ -1,5 +1,8 @@
+#if UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#define UNITY
+#endif
 /* 
-	Copyright (c) 2016 Denis Zykov, GameDevWare.com
+	Copyright (c) 2019 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -24,18 +27,15 @@ using System.Reflection.Emit;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Metadata
 {
-	internal static class GettersAndSetters
+	internal static class MetadataReflection
 	{
-#if !NETSTANDARD
 		private static readonly bool AotRuntime;
 
 		private static readonly Dictionary<MemberInfo, Func<object, object>> ReadFunctions;
 		private static readonly Dictionary<MemberInfo, Action<object, object>> WriteFunctions;
 		private static readonly Dictionary<MemberInfo, Func<object>> ConstructorFunctions;
-#endif
 
-#if !NETSTANDARD
-		static GettersAndSetters()
+		static MetadataReflection()
 		{
 #if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
 			AotRuntime = true;
@@ -47,16 +47,13 @@ namespace GameDevWare.Serialization.Metadata
 			WriteFunctions = new Dictionary<MemberInfo, Action<object, object>>();
 			ConstructorFunctions = new Dictionary<MemberInfo, Func<object>>();
 		}
-#endif
 
-		public static bool TryGetAssessors(MethodInfo getMethod, MethodInfo setMethod, out Func<object, object> getFn, out Action<object, object> setFn)
+		public static bool TryGetMemberAccessFunc(MethodInfo getMethod, MethodInfo setMethod, out Func<object, object> getFn, out Action<object, object> setFn)
 		{
 			getFn = null;
 			setFn = null;
 
-#if NETSTANDARD
-			return false;
-#else
+
 			if (AotRuntime)
 				return false;
 
@@ -68,7 +65,7 @@ namespace GameDevWare.Serialization.Metadata
 					{
 						var instanceParam = Expression.Parameter(typeof(object), "instance");
 						var declaringType = getMethod.DeclaringType;
-						Debug.Assert(declaringType != null, "getMethodDeclaringType != null");
+						Debug.Assert(declaringType != null, "getMethod.DeclaringType != null");
 						getFn = Expression.Lambda<Func<object, object>>(
 							Expression.Convert(
 								Expression.Call(
@@ -87,37 +84,30 @@ namespace GameDevWare.Serialization.Metadata
 				{
 					if (WriteFunctions.TryGetValue(setMethod, out setFn) == false)
 					{
+						var instanceParam = Expression.Parameter(typeof(object), "instance");
+						var valueParam = Expression.Parameter(typeof(object), "value");
 						var declaringType = setMethod.DeclaringType;
-						var valueParameter = setMethod.GetParameters().Single();
-						Debug.Assert(declaringType != null, "getMethodDeclaringType != null");
-						var setDynamicMethod = new DynamicMethod(declaringType.FullName + "::" + setMethod.Name, typeof(void), new Type[] { typeof(object), typeof(object) }, restrictedSkipVisibility: true);
-						var il = setDynamicMethod.GetILGenerator();
+						var valueType = setMethod.GetParameters()[0].ParameterType;
+						Debug.Assert(declaringType != null, "setMethod.DeclaringType != null");
 
-						il.Emit(OpCodes.Ldarg_0); // instance
-						il.Emit(OpCodes.Castclass, declaringType);
-						il.Emit(OpCodes.Ldarg_1); // value
-						if (valueParameter.ParameterType.IsValueType)
-							il.Emit(OpCodes.Unbox_Any, valueParameter.ParameterType);
-						else
-							il.Emit(OpCodes.Castclass, valueParameter.ParameterType);
-						il.Emit(OpCodes.Callvirt, setMethod); // call instance.Set(value)
-						il.Emit(OpCodes.Ret);
-						setFn = (Action<object, object>)setDynamicMethod.CreateDelegate(typeof(Action<object, object>));
+						setFn = ((Expression<Action<object, object>>)Expression.Lambda(typeof(Action<object, object>),
+							Expression.Call(
+								Expression.Convert(instanceParam, declaringType),
+								setMethod,
+								Expression.Convert(valueParam, valueType)),
+							instanceParam,
+							valueParam
+						)).Compile();
 						WriteFunctions.Add(setMethod, setFn);
 					}
 				}
 			}
 			return true;
-#endif
 		}
-		public static bool TryGetAssessors(FieldInfo fieldInfo, out Func<object, object> getFn, out Action<object, object> setFn)
+		public static bool TryGetMemberAccessFunc(FieldInfo fieldInfo, out Func<object, object> getFn, out Action<object, object> setFn)
 		{
 			getFn = null;
 			setFn = null;
-
-#if NETSTANDARD
-			return false;
-#else
 
 			if (AotRuntime || fieldInfo.IsStatic)
 				return false;
@@ -148,8 +138,9 @@ namespace GameDevWare.Serialization.Metadata
 					if (WriteFunctions.TryGetValue(fieldInfo, out setFn) == false)
 					{
 						var declaringType = fieldInfo.DeclaringType;
+						Debug.Assert(declaringType != null, "fieldInfo.DeclaringType != null");
 						var fieldType = fieldInfo.FieldType;
-						Debug.Assert(declaringType != null, "getMethodDeclaringType != null");
+#if NET35 || UNITY
 						var setDynamicMethod = new DynamicMethod(declaringType.FullName + "::" + fieldInfo.Name, typeof(void), new Type[] { typeof(object), typeof(object) }, restrictedSkipVisibility: true);
 						var il = setDynamicMethod.GetILGenerator();
 
@@ -164,13 +155,24 @@ namespace GameDevWare.Serialization.Metadata
 						il.Emit(OpCodes.Ret);
 
 						setFn = (Action<object, object>)setDynamicMethod.CreateDelegate(typeof(Action<object, object>));
+#else
+						var instanceParam = Expression.Parameter(typeof(object), "instance");
+						var valueParam = Expression.Parameter(typeof(object), "value");
+
+						setFn = ((Expression<Action<object, object>>)Expression.Lambda(typeof(Action<object, object>),
+							Expression.Assign(
+								Expression.Field(Expression.Convert(instanceParam, declaringType), fieldInfo), 
+								Expression.Convert(valueParam, fieldType)),
+							instanceParam,
+							valueParam
+						)).Compile();
+#endif
 						WriteFunctions.Add(fieldInfo, setFn);
 					}
 				}
 			}
 
 			return true;
-#endif
 		}
 		public static bool TryGetConstructor(Type type, out Func<object> ctrFn)
 		{
@@ -178,9 +180,6 @@ namespace GameDevWare.Serialization.Metadata
 
 			ctrFn = null;
 
-#if NETSTANDARD
-			return false;
-#else
 			if (AotRuntime || type.IsAbstract || type.IsInterface)
 				return false;
 
@@ -204,7 +203,6 @@ namespace GameDevWare.Serialization.Metadata
 			}
 
 			return true;
-#endif
 		}
 	}
 }
