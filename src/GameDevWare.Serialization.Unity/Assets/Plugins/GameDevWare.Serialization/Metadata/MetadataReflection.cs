@@ -140,7 +140,7 @@ namespace GameDevWare.Serialization.Metadata
 						var declaringType = fieldInfo.DeclaringType;
 						Debug.Assert(declaringType != null, "fieldInfo.DeclaringType != null");
 						var fieldType = fieldInfo.FieldType;
-#if NET35 || UNITY
+#if (NET35 || UNITY) && !NET_STANDARD_2_0
 						var setDynamicMethod = new DynamicMethod(declaringType.FullName + "::" + fieldInfo.Name, typeof(void), new Type[] { typeof(object), typeof(object) }, restrictedSkipVisibility: true);
 						var il = setDynamicMethod.GetILGenerator();
 
