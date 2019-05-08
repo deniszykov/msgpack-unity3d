@@ -9,4 +9,4 @@ script:
 - cd src
 - dotnet build -f netcoreapp2.0
 - cd GameDevWare.Serialization.Tests
-- dotnet xunit -f netcoreapp2.0
+- dotnet test -f netcoreapp2.0
