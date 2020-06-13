@@ -1,4 +1,4 @@
-#if UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#if UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_4 || UNITY_4_7 || UNITY_5 || UNITY_5_3_OR_NEWER
 #define UNITY
 #endif
 /* 

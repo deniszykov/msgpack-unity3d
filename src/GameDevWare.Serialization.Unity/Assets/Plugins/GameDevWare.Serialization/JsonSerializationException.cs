@@ -113,14 +113,13 @@ namespace GameDevWare.Serialization
 				reader
 			);
 		}
-		public static Exception CantCreateInstanceOfType(IJsonReader reader, Type type)
+		public static Exception CantCreateInstanceOfType(Type type)
 		{
 			return new JsonSerializationException
 			(
 				string.Format("Unable to deserialize instance of '{0}' because ", type.Name) +
 					(type.GetTypeInfo().IsAbstract ? "it is an abstract type." : "there is no parameterless constructor is defined on type."),
-				ErrorCode.CantCreateInstanceOfType,
-				reader
+				ErrorCode.CantCreateInstanceOfType
 			);
 		}
 		public static Exception SerializationGraphIsTooBig(ulong maxObjects)
@@ -169,7 +168,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				"Unexpected end of stream.",
+				"Unexpected end of stream while more data is expected.",
 				ErrorCode.UnexpectedEndOfStream,
 				reader
 			);
@@ -200,20 +199,29 @@ namespace GameDevWare.Serialization
 #endif
 			}
 
-			if (expectedTokens.Length > 1)
+			if (reader.Token == JsonToken.EndOfStream)
+			{
+				return UnexpectedEndOfStream(reader);
+			}
+			else if (expectedTokens.Length > 1)
+			{
 				return new JsonSerializationException
 				(
 					string.Format("Unexpected token readed '{0}' while any of '{1}' are expected.", reader.Token, tokensStr),
 					ErrorCode.UnexpectedToken,
 					reader
 				);
+
+			}
 			else
+			{
 				return new JsonSerializationException
 				(
 					string.Format("Unexpected token readed '{0}' while '{1}' is expected.", reader.Token, tokensStr),
 					ErrorCode.UnexpectedToken,
 					reader
 				);
+			}
 		}
 		public static Exception UnknownEscapeSequence(string escape, IJsonReader reader)
 		{

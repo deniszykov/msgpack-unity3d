@@ -1,4 +1,4 @@
-#if UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_4 || UNITY_5 || UNITY_5_3_OR_NEWER
+#if UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_4 || UNITY_4_7 || UNITY_5 || UNITY_5_3_OR_NEWER
 #define UNITY
 #endif
 /*
@@ -34,9 +34,11 @@ namespace GameDevWare.Serialization.Metadata
 	internal class TypeDescription : MemberDescription
 	{
 		private static readonly Dictionary<TypeInfo, TypeDescription> TypeDescriptions = new Dictionary<TypeInfo, TypeDescription>();
+		private static readonly object[] EmptyParameters = new object[0];
 
 		private readonly TypeInfo objectType;
 		private readonly Func<object> constructorFn;
+		private readonly ConstructorInfo defaultConstructor;
 		private readonly ReadOnlyCollection<DataMemberDescription> members;
 		private readonly Dictionary<string, DataMemberDescription> membersByName;
 
@@ -69,7 +71,7 @@ namespace GameDevWare.Serialization.Metadata
 			this.members = allMembers.AsReadOnly();
 			this.membersByName = allMembers.ToDictionary(m => m.Name, StringComparer.Ordinal);
 
-			MetadataReflection.TryGetConstructor(this.objectType, out this.constructorFn);
+			MetadataReflection.TryGetConstructor(this.objectType, out this.constructorFn, out this.defaultConstructor);
 		}
 
 		private List<DataMemberDescription> FindMembers(TypeInfo objectType)
@@ -126,8 +128,10 @@ namespace GameDevWare.Serialization.Metadata
 		{
 			if (this.constructorFn != null)
 				return this.constructorFn();
+			else if (this.defaultConstructor != null && !this.objectType.IsAbstract)
+				return this.defaultConstructor.Invoke(EmptyParameters);
 			else
-				return Activator.CreateInstance(this.objectType);
+				throw JsonSerializationException.CantCreateInstanceOfType(this.objectType);
 		}
 
 		public static TypeDescription Get(Type type)
