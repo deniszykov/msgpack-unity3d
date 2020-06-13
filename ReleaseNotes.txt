@@ -1,4 +1,3 @@
-converted projects to SDK-style format
-added multiple framework targets: net35, net45, netstandard2.0, netcoreapp2.0
-limited MsgPackExtensionType.ToString() length
-fixed compilation errors for .NET Standard 2.0 mode of Unity
+add check for DynamicMethod support in MetadataReflection (for some environments where Expression.Compile is supported but DynamicMethod is not)
+added better error messages in case of missing empty constructor and EOS during deserialization.
+added byte[] deserialization options in MsgPack and Json helper classes.

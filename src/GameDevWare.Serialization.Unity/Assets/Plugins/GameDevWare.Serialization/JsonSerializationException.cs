@@ -117,7 +117,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				string.Format("Unable to deserialize instance of '{0}' because ", type.Name) +
+				string.Format("Unable to deserialize instance of '{0}' because ", type.FullName) +
 					(type.GetTypeInfo().IsAbstract ? "it is an abstract type." : "there is no parameterless constructor is defined on type."),
 				ErrorCode.CantCreateInstanceOfType
 			);

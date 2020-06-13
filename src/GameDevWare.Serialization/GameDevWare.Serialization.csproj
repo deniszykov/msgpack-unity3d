@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net35;net45;netstandard2.0;netcoreapp2.0</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
-		<Version>2.4.2</Version>
+		<Version>2.4.3</Version>
 	    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName).xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/deniszykov/msgpack-unity3d</PackageProjectUrl>
 		<PackageLicenseUrl>https://raw.githubusercontent.com/deniszykov/msgpack-unity3d/master/License.md</PackageLicenseUrl>
@@ -30,6 +30,10 @@
 	
 	<ItemGroup>
 	  <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\**\*.cs" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Content Include="..\..\ReleaseNotes.txt" Link="ReleaseNotes.txt" />
 	</ItemGroup>
 	
 	<Target Name="ReadPackageMetadataromFile" BeforeTargets="GenerateNuspec">
