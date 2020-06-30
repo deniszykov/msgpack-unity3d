@@ -2,7 +2,7 @@
 
 # Introduction
 
-This [package](https://www.assetstore.unity3d.com/#!/content/59918) provides API for data serialization/deserialization into [MessagePack](https://en.wikipedia.org/wiki/MessagePack) and [JSON](https://ru.wikipedia.org/wiki/JSON) formats. 
+This [package](https://assetstore.unity.com/packages/tools/network/json-messagepack-serialization-59918) provides API for data serialization/deserialization into [MessagePack](https://en.wikipedia.org/wiki/MessagePack) and [JSON](https://ru.wikipedia.org/wiki/JSON) formats. 
 
 Supported Platforms:
 * PC/Mac
@@ -127,6 +127,9 @@ If you want to ignore type information when deserializing an object, specify *Su
 ```csharp
 MsgPack.Deserialize(typeof(MyObject), stream, SerializationOptions.SuppressTypeInformation);
 ```
+
+## IL2CPP - AOT
+:grey_exclamation: An additional preparation should be made for AOT execution platforms. A `link.xml` file should be added in project's root folder. This file should exclude `DataMemberAttribute` type from IL stripping. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
 
 ## Contacts
 Please send any questions at support@gamedevware.com
