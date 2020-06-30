@@ -129,7 +129,7 @@ MsgPack.Deserialize(typeof(MyObject), stream, SerializationOptions.SuppressTypeI
 ```
 
 ## IL2CPP - AOT
-:grey_exclamation: An additional preparation should be made for AOT execution platforms. A `link.xml` file should be added in project's root folder. This file should exclude `DataMemberAttribute` type from IL stripping. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
+:grey_exclamation: An additional preparation should be made for AOT execution platforms. A `link.xml` file should be added in project's root folder. This file should exclude _System.Runtime.Serialization.dll_ assembly from IL stripping. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
 
 ## Contacts
 Please send any questions at support@gamedevware.com
