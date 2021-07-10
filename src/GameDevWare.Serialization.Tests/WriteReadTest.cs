@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace GameDevWare.Serialization.Tests
 {
-	[TestFixture, Category("WriteReadTest")]
+	[TestFixture, Category("WriteReadTests")]
 	public class WriteReadTest
 	{
 		[Test]
