@@ -32,6 +32,7 @@ namespace GameDevWare.Serialization
 		private MessagePackExtensionTypeHandler extensionTypeHandler;
 
 		public Stack<object> Hierarchy { get; private set; }
+		public Stack<PathSegment> Path { get; private set; }
 
 		public IFormatProvider Format { get; set; }
 		public string[] DateTimeFormats { get; set; }
@@ -65,6 +66,7 @@ namespace GameDevWare.Serialization
 		public SerializationContext()
 		{
 			this.Hierarchy = new Stack<object>();
+			this.Path = new Stack<PathSegment>();
 
 			this.Format = Json.DefaultFormat;
 			this.DateTimeFormats = Json.DefaultDateTimeFormats;
@@ -161,28 +163,39 @@ namespace GameDevWare.Serialization
 			return Type.GetType(name);
 		}
 
-		#region NotSupported
-
-		public Assembly GetAssembly(AssemblyName name, bool throwOnError)
+		/// <summary>
+		/// Reset serialization context for future re-use. Clears <see cref="Hierarchy"/> and <see cref="Path"/> collections.
+		/// </summary>
+		public void Reset()
 		{
-			throw new NotSupportedException();
+			this.Hierarchy.Clear();
+			this.Path.Clear();
 		}
 
-		public Assembly GetAssembly(AssemblyName name)
+		/// <summary>
+		/// Get object hierarchy (arrays/objects) path to current reader position.
+		/// </summary>
+		/// <returns></returns>
+		public string GetPath()
 		{
-			throw new NotSupportedException();
-		}
+			var path = new StringBuilder();
+			foreach (var segment in this.Path.Reverse())
+			{
+				var segmentString = segment.ToString();
+				if (string.IsNullOrEmpty(segmentString))
+				{
+					continue;
+				}
+				path.Append(segmentString);
+				path.Append(".");
+			}
 
-		public string GetPathOfAssembly(AssemblyName name)
-		{
-			throw new NotSupportedException();
-		}
+			if (path.Length > 0)
+			{
+				path.Length--;
+			}
 
-		public void ReferenceAssembly(AssemblyName name)
-		{
-			throw new NotSupportedException();
+			return path.ToString();
 		}
-
-		#endregion
 	}
 }

@@ -58,10 +58,15 @@ namespace GameDevWare.Serialization.Serializers
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginArray);
 
 			reader.Context.Hierarchy.Push(container);
+			var i = 0;
 			while (reader.NextToken() && reader.Token != JsonToken.EndOfArray)
 			{
+				reader.Context.Path.Push(new PathSegment(i++));
+
 				var value = reader.ReadValue(this.elementType, false);
 				container.Add(value);
+
+				reader.Context.Path.Pop();
 			}
 			reader.Context.Hierarchy.Pop();
 
@@ -88,8 +93,13 @@ namespace GameDevWare.Serialization.Serializers
 				size = ((IEnumerable)value).Cast<object>().Count();
 
 			writer.WriteArrayBegin(size);
+			var i = 0;
 			foreach (var item in (IEnumerable)value)
+			{
+				writer.Context.Path.Push(new PathSegment(i++));
 				writer.WriteValue(item, this.elementType);
+				writer.Context.Path.Pop();
+			}
 			writer.WriteArrayEnd();
 		}
 

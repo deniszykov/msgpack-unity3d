@@ -465,14 +465,23 @@ namespace GameDevWare.Serialization.Tests
 
 		private T WriteReadMessagePack<T>(T value)
 		{
+			var writeContext = new SerializationContext();
 			var stream = new MemoryStream();
-			MsgPack.Serialize(value, stream);
+			MsgPack.Serialize(value, stream, writeContext);
+
+			Assert.IsEmpty(writeContext.Path);
+			Assert.IsEmpty(writeContext.Hierarchy);
 
 			stream.Position = 0;
 			Debug.WriteLine(new MsgPackReader(stream, new SerializationContext()).DebugPrintTokens());
 
+			var readContext = new SerializationContext();
 			stream.Position = 0;			
-			var readValue = (T)MsgPack.Deserialize(typeof(T), stream);
+			var readValue = (T)MsgPack.Deserialize(typeof(T), stream, readContext);
+
+			Assert.IsEmpty(readContext.Path);
+			Assert.IsEmpty(readContext.Hierarchy);
+
 			return readValue;
 		}
 		private T WriteReadJson<T>(T value)
