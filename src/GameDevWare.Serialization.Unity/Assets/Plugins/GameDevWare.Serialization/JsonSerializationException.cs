@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
@@ -117,10 +118,17 @@ namespace GameDevWare.Serialization
 		}
 		public static Exception CantCreateInstanceOfType(Type type)
 		{
+			var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			var allConstructors = "<empty>";
+			if (constructors.Length > 0)
+			{
+				allConstructors = string.Join("\r\n", constructors.Select(ctr => ctr.ToString()).ToArray());
+			}
+
 			return new JsonSerializationException
 			(
 				string.Format("Unable to deserialize instance of '{0}' because ", type.FullName) +
-					(type.GetTypeInfo().IsAbstract ? "it is an abstract type." : "there is no parameterless constructor is defined on type."),
+					(type.GetTypeInfo().IsAbstract ? "it is an abstract type." : "there is no parameter-less constructor is defined on type. All constructors: \r\n\t" + allConstructors),
 				ErrorCode.CantCreateInstanceOfType
 			);
 		}
