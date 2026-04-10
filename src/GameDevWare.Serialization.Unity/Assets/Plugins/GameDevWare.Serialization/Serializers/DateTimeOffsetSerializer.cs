@@ -45,7 +45,7 @@ namespace GameDevWare.Serialization.Serializers
 			}
 			catch (FormatException fe)
 			{
-				throw new SerializationException(string.Format("Failed to parse date '{0}' in with pattern '{1}'.", dateTimeOffsetStr, reader.Context.DateTimeFormats[0]), fe);
+				throw new SerializationException(string.Format("Failed to parse date '{0}' with pattern '{1}'.", dateTimeOffsetStr, reader.Context.DateTimeFormats[0]), fe);
 			}
 		}
 

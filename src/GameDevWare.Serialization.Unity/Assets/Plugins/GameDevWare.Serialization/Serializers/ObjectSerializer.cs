@@ -160,7 +160,7 @@ namespace GameDevWare.Serialization.Serializers
 					}
 					catch (Exception getTypeError)
 					{
-						throw new SerializationException(string.Format("Failed to resolve type '{0}' of value for '{1}' of '{2}' type.\r\n" +
+						throw new SerializationException(string.Format("Failed to resolve type '{0}' of value for member '{1}' of type '{2}'.\r\n" +
 							"More detailed information in inner exception.", typeName, memberName, this.objectType.Name), getTypeError);
 					}
 					this.context.Path.Pop();
@@ -202,7 +202,7 @@ namespace GameDevWare.Serialization.Serializers
 				}
 				catch (Exception e)
 				{
-					throw new SerializationException(string.Format("Failed to read value for member '{0}' of '{1}' type.\r\nMore detailed information in inner exception.", memberName, this.objectType.Name), e);
+					throw new SerializationException(string.Format("Failed to read value for member '{0}' of type '{1}'.\r\nMore detailed information in inner exception.", memberName, this.objectType.Name), e);
 				}
 
 				container[memberName] = value;

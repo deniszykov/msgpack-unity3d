@@ -14,8 +14,8 @@
 *.user
 *.log
 _ReSharper*
-*.csproj
-*.sln
+src/GameDevWare.Serialization.Unity/**/*.csproj
+src/GameDevWare.Serialization.Unity/**/*.sln
 *.userprefs
 *.exe
 *.dll

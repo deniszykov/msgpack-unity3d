@@ -92,10 +92,10 @@ namespace GameDevWare.Serialization.Serializers
 						{
 							reader.ReadArrayBegin();
 							try { entry.Key = reader.ReadValue(this.keyType); }
-							catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
+							catch (Exception e) { throw new SerializationException(string.Format("Failed to read dictionary key of type '{0}': {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
 							reader.Context.Path.Push(new PathSegment(entry.Key));
 							try { entry.Value = reader.ReadValue(this.valueType); }
-							catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key, e.Message), e); }
+							catch (Exception e) { throw new SerializationException(string.Format("Failed to read dictionary value of type '{0}' for key '{1}': {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key, e.Message), e); }
 							reader.Context.Path.Pop();
 							reader.ReadArrayEnd();
 						}
@@ -110,7 +110,7 @@ namespace GameDevWare.Serialization.Serializers
 								{
 									case DictionaryEntrySerializer.KEY_MEMBER_NAME:
 										try { entry.Key = reader.ReadValue(this.keyType); }
-										catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
+										catch (Exception e) { throw new SerializationException(string.Format("Failed to read dictionary key of type '{0}': {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
 										if (!keyIsPushed)
 										{
 											reader.Context.Path.Push(new PathSegment(entry.Key));
@@ -119,13 +119,13 @@ namespace GameDevWare.Serialization.Serializers
 										break;
 									case DictionaryEntrySerializer.VALUE_MEMBER_NAME:
 										try { entry.Value = reader.ReadValue(this.valueType); }
-										catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key ?? "<unknown>", e.Message), e); }
+										catch (Exception e) { throw new SerializationException(string.Format("Failed to read dictionary value of type '{0}' for key '{1}': {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key ?? "<unknown>", e.Message), e); }
 										break;
 									case ObjectSerializer.TYPE_MEMBER_NAME:
 										reader.ReadValue(typeof(object));
 										break;
 									default:
-										throw new SerializationException(string.Format("Unknown member found '{0}' in dictionary entry while '{1}' or '{2}' are expected.", memberName, DictionaryEntrySerializer.KEY_MEMBER_NAME, DictionaryEntrySerializer.VALUE_MEMBER_NAME));
+										throw new SerializationException(string.Format("Unknown member '{0}' found in dictionary entry. Expected '{1}' or '{2}'.", memberName, DictionaryEntrySerializer.KEY_MEMBER_NAME, DictionaryEntrySerializer.VALUE_MEMBER_NAME));
 								}
 
 							}
@@ -147,11 +147,11 @@ namespace GameDevWare.Serialization.Serializers
 						var entry = default(DictionaryEntry);
 
 						try { entry.Key = reader.ReadValue(this.keyType); }
-						catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' key of dictionary: {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
+						catch (Exception e) { throw new SerializationException(string.Format("Failed to read dictionary key of type '{0}': {1}\r\nMore detailed information in inner exception.", this.keyType.Name, e.Message), e); }
 						reader.Context.Path.Push(new PathSegment(entry.Key));
 
 						try { entry.Value = reader.ReadValue(this.valueType); }
-						catch (Exception e) { throw new SerializationException(string.Format("Failed to read '{0}' value for key '{1}' in dictionary: {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key, e.Message), e); }
+						catch (Exception e) { throw new SerializationException(string.Format("Failed to read dictionary value of type '{0}' for key '{1}': {2}\r\nMore detailed information in inner exception.", this.valueType.Name, entry.Key, e.Message), e); }
 
 						reader.Context.Path.Pop();
 						container.Add(entry);

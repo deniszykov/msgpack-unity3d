@@ -128,7 +128,7 @@ namespace GameDevWare.Serialization
 			return new JsonSerializationException
 			(
 				string.Format("Unable to deserialize instance of '{0}' because ", type.FullName) +
-					(type.GetTypeInfo().IsAbstract ? "it is an abstract type." : "there is no parameter-less constructor is defined on type. All constructors: \r\n\t" + allConstructors),
+					(type.GetTypeInfo().IsAbstract ? "it is an abstract type." : "no parameter-less constructor is defined for the type. All constructors: \r\n\t" + allConstructors),
 				ErrorCode.CantCreateInstanceOfType
 			);
 		}
@@ -136,7 +136,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				string.Format("Serialization graph is too big. Maximum serialized objects is {0}. Path: '{1}'", maxObjects, reader.Context.GetPath()),
+				string.Format("Serialization graph is too big. Maximum allowed objects is {0}. Path: '{1}'", maxObjects, reader.Context.GetPath()),
 				ErrorCode.SerializationGraphIsTooBig
 			);
 		}
@@ -144,7 +144,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-					string.Format("Serialization graph is too deep. Maximum depth is {0}. Path: '{1}'", maxDepth, reader.Context.GetPath()),
+					string.Format("Serialization graph is too deep. Maximum allowed depth is {0}. Path: '{1}'", maxDepth, reader.Context.GetPath()),
 				ErrorCode.SerializationGraphIsTooDeep)
 			;
 		}
@@ -170,7 +170,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				string.Format("Attempt to serialize special system type '{0}' failed. This type is could be serialized.", type.FullName),
+				string.Format("Attempt to serialize special system type '{0}' failed. This type cannot be serialized.", type.FullName),
 				ErrorCode.SerializingSpecialSystemType
 			);
 		}
@@ -178,7 +178,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				string.Format("Unexpected end of stream while more data is expected. Path: '{0}'.", reader.Context.GetPath()),
+				string.Format("Unexpected end of stream while more data was expected. Path: '{0}'.", reader.Context.GetPath()),
 				ErrorCode.UnexpectedEndOfStream,
 				reader
 			);
@@ -187,7 +187,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				string.Format("Unexpected member '{0}' is read while '{1}' is expected. Path: '{2}'.", memberName, expected, reader.Context.GetPath()),
+				string.Format("Unexpected member '{0}' was read while '{1}' was expected. Path: '{2}'.", memberName, expected, reader.Context.GetPath()),
 				ErrorCode.UnexpectedMemberName,
 				reader
 			);
@@ -217,7 +217,7 @@ namespace GameDevWare.Serialization
 			{
 				return new JsonSerializationException
 				(
-					string.Format("Unexpected token read '{0}' while any of '{1}' are expected. Path: '{2}'.", reader.Token, tokensStr, reader.Context.GetPath()),
+					string.Format("Unexpected token '{0}' was read while any of '{1}' were expected. Path: '{2}'.", reader.Token, tokensStr, reader.Context.GetPath()),
 					ErrorCode.UnexpectedToken,
 					reader
 				);
@@ -227,7 +227,7 @@ namespace GameDevWare.Serialization
 			{
 				return new JsonSerializationException
 				(
-					string.Format("Unexpected token read '{0}' while '{1}' is expected. Path: '{2}'.", reader.Token, tokensStr, reader.Context.GetPath()),
+					string.Format("Unexpected token '{0}' was read while '{1}' was expected. Path: '{2}'.", reader.Token, tokensStr, reader.Context.GetPath()),
 					ErrorCode.UnexpectedToken,
 					reader
 				);
@@ -237,7 +237,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				string.Format("An unknown escape sequence '{0}' is read. Path: '{1}'.", escape, reader.Context.GetPath()),
+				string.Format("An unknown escape sequence '{0}' was read. Path: '{1}'.", escape, reader.Context.GetPath()),
 				ErrorCode.UnknownEscapeSequence,
 				reader
 			);
@@ -246,7 +246,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				"Serialization frames are corrupted. Probably invalid Push/Pop sequence in TypeSerializers implementation.",
+				"Serialization frames are corrupted. This is likely due to an invalid Push/Pop sequence in a TypeSerializer implementation.",
 				ErrorCode.SerializationFramesCorruption
 			);
 		}
@@ -254,7 +254,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				"Can\'t perform deserialization from stream which doesn't support reading.",
+				"Cannot perform deserialization from a stream that does not support reading.",
 				ErrorCode.StreamIsNotReadable
 			);
 		}
@@ -262,7 +262,7 @@ namespace GameDevWare.Serialization
 		{
 			return new JsonSerializationException
 			(
-				"Can\'t perform serialization to stream which doesn't support writing.",
+				"Cannot perform serialization to a stream that does not support writing.",
 				ErrorCode.StreamIsNotWriteable
 			);
 		}

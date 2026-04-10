@@ -51,7 +51,7 @@ namespace GameDevWare.Serialization.Serializers
 
 			var stream = value as Stream;
 			if (value != null && stream == null) throw JsonSerializationException.TypeIsNotValid(this.GetType(), "be a Stream");
-			if (!stream.CanRead) throw new JsonSerializationException("Stream couldn't be readed.", JsonSerializationException.ErrorCode.StreamIsNotReadable);
+			if (!stream.CanRead) throw new JsonSerializationException("Stream could not be read.", JsonSerializationException.ErrorCode.StreamIsNotReadable);
 
 			if (stream.CanSeek)
 			{
