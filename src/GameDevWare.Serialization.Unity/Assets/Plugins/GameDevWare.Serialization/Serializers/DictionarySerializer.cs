@@ -77,6 +77,9 @@ namespace GameDevWare.Serialization.Serializers
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
 
+			if (reader.Context.Hierarchy.Count >= reader.Context.MaxHierarchyDepth)
+				throw new SerializationException(string.Format("Deserialization graph is too deep. Maximum depth is {0}. Path: '{1}'.", reader.Context.MaxHierarchyDepth, reader.Context.GetPath()));
+
 			var container = new List<DictionaryEntry>();
 			reader.Context.Hierarchy.Push(container);
 			try
@@ -195,44 +198,54 @@ namespace GameDevWare.Serialization.Serializers
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
 
+			if (writer.Context.Hierarchy.Contains(value))
+				throw new SerializationException(string.Format("Circular reference detected for type '{0}'. Path: '{1}'.", this.dictionaryType.FullName, writer.Context.GetPath()));
+			if (writer.Context.Hierarchy.Count >= writer.Context.MaxHierarchyDepth)
+				throw new SerializationException(string.Format("Serialization graph is too deep. Maximum depth is {0}. Path: '{1}'.", writer.Context.MaxHierarchyDepth, writer.Context.GetPath()));
+
 			var dictionary = (IDictionary)value;
 			// ReSharper disable PossibleMultipleEnumeration
 			writer.Context.Hierarchy.Push(value);
-			// object
-			if (this.isStringKeyType)
+			try
 			{
-				writer.WriteObjectBegin(dictionary.Count);
-				foreach (DictionaryEntry pair in dictionary)
+				// object
+				if (this.isStringKeyType)
 				{
-					var keyStr = Convert.ToString(pair.Key, writer.Context.Format);
-					writer.Context.Path.Push(new PathSegment(keyStr));
+					writer.WriteObjectBegin(dictionary.Count);
+					foreach (DictionaryEntry pair in dictionary)
+					{
+						var keyStr = Convert.ToString(pair.Key, writer.Context.Format);
+						writer.Context.Path.Push(new PathSegment(keyStr));
 
-					// key
-					writer.WriteMember(keyStr);
-					// value
-					writer.WriteValue(pair.Value, this.valueType);
+						// key
+						writer.WriteMember(keyStr);
+						// value
+						writer.WriteValue(pair.Value, this.valueType);
 
-					writer.Context.Path.Pop();
+						writer.Context.Path.Pop();
+					}
+					writer.WriteObjectEnd();
 				}
-				writer.WriteObjectEnd();
-			}
-			else
-			{
-				writer.WriteArrayBegin(dictionary.Count);
-				foreach (DictionaryEntry pair in dictionary)
+				else
 				{
-					writer.Context.Path.Push(new PathSegment(pair.Key));
-					writer.WriteArrayBegin(2);
-					writer.WriteValue(pair.Key, this.keyType);
-					writer.WriteValue(pair.Value, this.valueType);
+					writer.WriteArrayBegin(dictionary.Count);
+					foreach (DictionaryEntry pair in dictionary)
+					{
+						writer.Context.Path.Push(new PathSegment(pair.Key));
+						writer.WriteArrayBegin(2);
+						writer.WriteValue(pair.Key, this.keyType);
+						writer.WriteValue(pair.Value, this.valueType);
+						writer.WriteArrayEnd();
+						writer.Context.Path.Pop();
+					}
 					writer.WriteArrayEnd();
-					writer.Context.Path.Pop();
 				}
-				writer.WriteArrayEnd();
+			}
+			finally
+			{
+				writer.Context.Hierarchy.Pop();
 			}
 			// ReSharper restore PossibleMultipleEnumeration
-
-			writer.Context.Hierarchy.Pop();
 		}
 
 		public override string ToString()

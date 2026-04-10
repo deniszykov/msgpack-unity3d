@@ -14,6 +14,7 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 using System;
+using System.Runtime.Serialization;
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
@@ -271,6 +272,9 @@ namespace GameDevWare.Serialization
 				writer.WriteNull();
 				return;
 			}
+
+			if (writer.Context.Hierarchy.Count >= writer.Context.MaxHierarchyDepth)
+				throw new SerializationException(string.Format("Serialization graph is too deep. Maximum depth is {0}. Path: '{1}'.", writer.Context.MaxHierarchyDepth, writer.Context.GetPath()));
 
 			var actualValueType = value.GetType();
 			var serializer = writer.Context.GetSerializerForType(actualValueType);

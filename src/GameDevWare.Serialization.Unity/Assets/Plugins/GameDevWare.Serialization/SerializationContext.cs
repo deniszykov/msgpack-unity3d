@@ -34,6 +34,7 @@ namespace GameDevWare.Serialization
 		public Stack<object> Hierarchy { get; private set; }
 		public Stack<PathSegment> Path { get; private set; }
 
+		public int MaxHierarchyDepth { get; set; }
 		public IFormatProvider Format { get; set; }
 		public string[] DateTimeFormats { get; set; }
 		public Encoding Encoding { get; set; }
@@ -68,6 +69,7 @@ namespace GameDevWare.Serialization
 			this.Hierarchy = new Stack<object>();
 			this.Path = new Stack<PathSegment>();
 
+			this.MaxHierarchyDepth = 64;
 			this.Format = Json.DefaultFormat;
 			this.DateTimeFormats = Json.DefaultDateTimeFormats;
 			this.Encoding = Json.DefaultEncoding;
@@ -85,22 +87,37 @@ namespace GameDevWare.Serialization
 
 			var serializer = default(TypeSerializer);
 			if (this.serializers.TryGetValue(valueType, out serializer))
+			{
+				if (serializer == null)
+					return null; // recursion during creation
+
 				return serializer;
+			}
 
-			var typeSerializerAttribute = valueType.GetCustomAttributes(typeof(TypeSerializerAttribute), inherit: false).FirstOrDefault() as TypeSerializerAttribute;
-			if (typeSerializerAttribute != null)
-				serializer = this.CreateCustomSerializer(valueType, typeSerializerAttribute);
-			else if (valueType.IsEnum)
-				serializer = this.CreateEnumSerializer(valueType);
-			else if (typeof(IDictionary).IsAssignableFrom(valueType) || valueType.IsInstantiationOf(typeof(IDictionary<,>)))
-				serializer = this.CreateDictionarySerializer(valueType);
-			else if (valueType.IsArray || typeof(IEnumerable).IsAssignableFrom(valueType))
-				serializer = this.CreateArraySerializer(valueType);
-			else
-				serializer = (this.SerializerFactory != null ? this.SerializerFactory(valueType) : null) ?? this.CreateObjectSerializer(valueType);
+			// prevent infinite recursion during creation
+			this.serializers.Add(valueType, null);
+			try
+			{
+				var typeSerializerAttribute = valueType.GetCustomAttributes(typeof(TypeSerializerAttribute), inherit: false).FirstOrDefault() as TypeSerializerAttribute;
+				if (typeSerializerAttribute != null)
+					serializer = this.CreateCustomSerializer(valueType, typeSerializerAttribute);
+				else if (valueType.IsEnum)
+					serializer = this.CreateEnumSerializer(valueType);
+				else if (typeof(IDictionary).IsAssignableFrom(valueType) || valueType.IsInstantiationOf(typeof(IDictionary<,>)))
+					serializer = this.CreateDictionarySerializer(valueType);
+				else if (valueType.IsArray || typeof(IEnumerable).IsAssignableFrom(valueType))
+					serializer = this.CreateArraySerializer(valueType);
+				else
+					serializer = (this.SerializerFactory != null ? this.SerializerFactory(valueType) : null) ?? this.CreateObjectSerializer(valueType);
 
-			this.serializers.Add(valueType, serializer);
-			return serializer;
+				this.serializers[valueType] = serializer;
+				return serializer;
+			}
+			catch
+			{
+				this.serializers.Remove(valueType);
+				throw;
+			}
 		}
 
 		private TypeSerializer CreateDictionarySerializer(Type valueType)

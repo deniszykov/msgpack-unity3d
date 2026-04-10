@@ -70,55 +70,77 @@ namespace GameDevWare.Serialization.Serializers
 			if (reader.Token != JsonToken.BeginObject)
 				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginObject);
 
+			if (reader.Context.Hierarchy.Count >= reader.Context.MaxHierarchyDepth)
+				throw new SerializationException(string.Format("Deserialization graph is too deep. Maximum depth is {0}. Path: '{1}'.", reader.Context.MaxHierarchyDepth, reader.Context.GetPath()));
+
 			var serializerOverride = default(ObjectSerializer);
 			var container = new IndexedDictionary<string, object>(10);
 			reader.Context.Hierarchy.Push(container);
-			var instance = this.DeserializeMembers(reader, container, ref serializerOverride);
-			reader.Context.Hierarchy.Pop();
+			try
+			{
+				var instance = this.DeserializeMembers(reader, container, ref serializerOverride);
 
-			if (reader.Token != JsonToken.EndOfObject)
-				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfObject);
+				if (reader.Token != JsonToken.EndOfObject)
+					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfObject);
 
-			if (instance != null)
-				return instance;
-			else if (serializerOverride != null)
-				return serializerOverride.PopulateInstance(container, null);
-			else
-				return this.PopulateInstance(container, null);
+				if (instance != null)
+					return instance;
+				else if (serializerOverride != null)
+					return serializerOverride.PopulateInstance(container, null);
+				else
+					return this.PopulateInstance(container, null);
+			}
+			finally
+			{
+				reader.Context.Hierarchy.Pop();
+			}
 		}
 		public override void Serialize(IJsonWriter writer, object value)
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
 			if (value == null) throw new ArgumentNullException("value");
 
-			var container = new IndexedDictionary<DataMemberDescription, object>();
+			if (writer.Context.Hierarchy.Contains(value))
+				throw new SerializationException(string.Format("Circular reference detected for type '{0}'. Path: '{1}'.", this.objectType.FullName, writer.Context.GetPath()));
+			if (writer.Context.Hierarchy.Count >= writer.Context.MaxHierarchyDepth)
+				throw new SerializationException(string.Format("Serialization graph is too deep. Maximum depth is {0}. Path: '{1}'.", writer.Context.MaxHierarchyDepth, writer.Context.GetPath()));
 
-			this.CollectMemberValues(value, container);
-
-			if (this.SuppressTypeInformation || this.objectTypeDescription.IsAnonymousType)
+			writer.Context.Hierarchy.Push(value);
+			try
 			{
-				writer.WriteObjectBegin(container.Count);
+				var container = new IndexedDictionary<DataMemberDescription, object>();
 
+				this.CollectMemberValues(value, container);
+
+				if (this.SuppressTypeInformation || this.objectTypeDescription.IsAnonymousType)
+				{
+					writer.WriteObjectBegin(container.Count);
+
+				}
+				else
+				{
+					writer.WriteObjectBegin(container.Count + 1);
+
+					writer.Context.Path.Push(new PathSegment(TYPE_MEMBER_NAME));
+					writer.WriteMember(TYPE_MEMBER_NAME);
+					writer.WriteString(objectTypeNameWithoutVersion);
+					this.context.Path.Pop();
+				}
+
+				foreach (var kv in container)
+				{
+					writer.Context.Path.Push(new PathSegment(kv.Key.Name));
+					writer.WriteMember(kv.Key.Name);
+					writer.WriteValue(kv.Value, kv.Key.ValueType);
+					this.context.Path.Pop();
+				}
+
+				writer.WriteObjectEnd();
 			}
-			else
+			finally
 			{
-				writer.WriteObjectBegin(container.Count + 1);
-
-				writer.Context.Path.Push(new PathSegment(TYPE_MEMBER_NAME));
-				writer.WriteMember(TYPE_MEMBER_NAME);
-				writer.WriteString(objectTypeNameWithoutVersion);
-				this.context.Path.Pop();
+				writer.Context.Hierarchy.Pop();
 			}
-
-			foreach (var kv in container)
-			{
-				writer.Context.Path.Push(new PathSegment(kv.Key.Name));
-				writer.WriteMember(kv.Key.Name);
-				writer.WriteValue(kv.Value, kv.Key.ValueType);
-				this.context.Path.Pop();
-			}
-
-			writer.WriteObjectEnd();
 		}
 
 		private void CollectMemberValues(object instance, IndexedDictionary<DataMemberDescription, object> container)

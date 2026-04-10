@@ -764,10 +764,15 @@ namespace GameDevWare.Serialization
 			do
 			{
 				eos = this.buffer.IsBeyondOfStream(position);
-				escaped = ch == '\\';
+				var prevWasBackslash = ch == '\\';
 				ch = this.buffer[position];
 				position++;
-			} while (!IsLiteralTerminator(ch, quoted, quoteCh, escaped, eos, this));
+
+				if (IsLiteralTerminator(ch, quoted, quoteCh, escaped, eos, this))
+					break;
+
+				escaped = !escaped && prevWasBackslash;
+			} while (true);
 
 			var literalEnd = position - 1; // minus terminator character
 

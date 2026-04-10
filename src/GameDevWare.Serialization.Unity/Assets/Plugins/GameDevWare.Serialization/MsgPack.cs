@@ -48,6 +48,7 @@ namespace GameDevWare.Serialization
 		{
 			if (msgPackOutput == null) throw new ArgumentNullException("msgPackOutput");
 			if (context == null) throw new ArgumentNullException("context");
+			if (!msgPackOutput.CanWrite) throw JsonSerializationException.StreamIsNotWriteable();
 
 			var writer = new MsgPackWriter(msgPackOutput, context);
 			if (objectToSerialize == null)

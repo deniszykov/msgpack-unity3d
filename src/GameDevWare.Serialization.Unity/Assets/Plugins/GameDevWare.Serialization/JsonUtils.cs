@@ -76,15 +76,27 @@ namespace GameDevWare.Serialization
 			{
 				var charToCheck = stringToEscape[i];
 
-				if ((int) charToCheck < 32 || charToCheck == '\\' || charToCheck == '"')
+				switch (charToCheck)
 				{
-					sb.Append("\\u");
-					Buffer.BlockCopy(ZerBuff, 0, hexBuff, 0, sizeof (char)*8); // clear buffer with "0"
-					var hexlen = UInt32ToHexBuffer((uint) charToCheck, hexBuff, 4);
-					sb.Append(hexBuff, hexlen, 4);
+					case '\\': sb.Append("\\\\"); break;
+					case '"': sb.Append("\\\""); break;
+					case '\n': sb.Append("\\n"); break;
+					case '\r': sb.Append("\\r"); break;
+					case '\t': sb.Append("\\t"); break;
+					case '\b': sb.Append("\\b"); break;
+					case '\f': sb.Append("\\f"); break;
+					default:
+						if ((int)charToCheck < 32)
+						{
+							sb.Append("\\u");
+							Buffer.BlockCopy(ZerBuff, 0, hexBuff, 0, sizeof(char) * 8); // clear buffer with "0"
+							var hexlen = UInt32ToHexBuffer((uint)charToCheck, hexBuff, 4);
+							sb.Append(hexBuff, hexlen, 4);
+						}
+						else
+							sb.Append(charToCheck);
+						break;
 				}
-				else
-					sb.Append(charToCheck);
 			}
 			sb.Append('"');
 

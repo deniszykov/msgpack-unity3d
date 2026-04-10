@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 
 // ReSharper disable once CheckNamespace
@@ -707,6 +708,9 @@ namespace GameDevWare.Serialization
 		public static object ReadValue(this IJsonReader reader, Type valueType, bool nextToken = true)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
+
+			if (reader.Context.Hierarchy.Count >= reader.Context.MaxHierarchyDepth)
+				throw new SerializationException(string.Format("Deserialization graph is too deep. Maximum depth is {0}. Path: '{1}'.", reader.Context.MaxHierarchyDepth, reader.Context.GetPath()));
 
 			// try guess type
 			if (valueType == typeof(object))
