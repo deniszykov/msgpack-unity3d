@@ -19,9 +19,9 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
-	internal static class JsonUtils
+	public static class JsonUtils
 	{
-		internal static readonly long UnixEpochTicks = new DateTime(0x7b2, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
+		public static readonly long UnixEpochTicks = new DateTime(0x7b2, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
 
 		private static readonly char[] ZerBuff = new char[] {'0', '0', '0', '0', '0', '0', '0', '0',};
 		private static readonly char[] HexChar = "0123456789ABCDEF".ToCharArray();

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFrameworks>net45;netcoreapp2.0</TargetFrameworks>
-		<RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.3</RuntimeFrameworkVersion>
-		<Version>0.0.0</Version>
-		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-		<OutputType>Library</OutputType>
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
-	  <PackageReference Include="NUnit" Version="3.11.0" />
-	  <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\GameDevWare.Serialization\GameDevWare.Serialization.csproj" />
-	</ItemGroup>
+        <PropertyGroup>
+                <TargetFrameworks>net45;net10.0</TargetFrameworks>
+                <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.3</RuntimeFrameworkVersion>
+                <Version>0.0.0</Version>
+                <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+                <OutputType>Library</OutputType>
+                <IsPackable>false</IsPackable>
+        </PropertyGroup>
+        <ItemGroup>
+          <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+          <PackageReference Include="xunit" Version="2.4.1" />
+          <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
+        </ItemGroup>
+        <ItemGroup>
+          <ProjectReference Include="..\GameDevWare.Serialization\GameDevWare.Serialization.csproj" />
+        </ItemGroup>
 </Project>

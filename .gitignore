@@ -20,11 +20,15 @@ src/GameDevWare.Serialization.Unity/**/*.sln
 *.exe
 *.dll
 
+AGENT.md
+.idea/
+
 bin/
 obj/
 .vs
 media/
 packages/
+TestResults/
 
 src/GameDevWare.Serialization.Unity/Assembly*
 src/GameDevWare.Serialization.Unity/obj/

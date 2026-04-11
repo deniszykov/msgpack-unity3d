@@ -1,13 +1,12 @@
 using System;
 using GameDevWare.Serialization.MessagePack;
-using NUnit.Framework;
+using Xunit;
 
 namespace GameDevWare.Serialization.Tests
 {
-	[TestFixture, Category("DefaultMessagePackExtensionTypeHandlerTests")]
 	public class DefaultMessagePackExtensionTypeHandlerTests
 	{
-		[Test]
+		[Fact]
 		public void TryReadWriteDateTimeLocal()
 		{
 			var expectedValue = DateTime.Now;
@@ -15,12 +14,12 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<DateTime>(actualValue);
-			Assert.AreEqual(expectedValue, (DateTime)actualValue);
-			Assert.AreEqual(expectedValue.Kind, ((DateTime)actualValue).Kind);
+			Assert.IsType<DateTime>(actualValue);
+			Assert.Equal(expectedValue, (DateTime)actualValue);
+			Assert.Equal(expectedValue.Kind, ((DateTime)actualValue).Kind);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteDateTimeUtc()
 		{
 			var expectedValue = DateTime.UtcNow;
@@ -28,12 +27,12 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<DateTime>(actualValue);
-			Assert.AreEqual(expectedValue, (DateTime)actualValue);
-			Assert.AreEqual(expectedValue.Kind, ((DateTime)actualValue).Kind);
+			Assert.IsType<DateTime>(actualValue);
+			Assert.Equal(expectedValue, (DateTime)actualValue);
+			Assert.Equal(expectedValue.Kind, ((DateTime)actualValue).Kind);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteDateTimeUnspecified()
 		{
 			var expectedValue = new DateTime(DateTime.UtcNow.Ticks, DateTimeKind.Unspecified);
@@ -41,11 +40,11 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.AreEqual(expectedValue, (DateTime)actualValue);
-			Assert.AreEqual(expectedValue.Kind, ((DateTime)actualValue).Kind);
+			Assert.Equal(expectedValue, (DateTime)actualValue);
+			Assert.Equal(expectedValue.Kind, ((DateTime)actualValue).Kind);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteDateTimeMax()
 		{
 			var expectedValue = DateTime.MaxValue;
@@ -53,13 +52,13 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<DateTime>(actualValue);
-			Assert.AreEqual(expectedValue, (DateTime)actualValue);
-			Assert.AreEqual(expectedValue.Kind, ((DateTime)actualValue).Kind);
+			Assert.IsType<DateTime>(actualValue);
+			Assert.Equal(expectedValue, (DateTime)actualValue);
+			Assert.Equal(expectedValue.Kind, ((DateTime)actualValue).Kind);
 		}
 
 
-		[Test]
+		[Fact]
 		public void TryReadWriteDateTimeMin()
 		{
 			var expectedValue = DateTime.MinValue;
@@ -67,12 +66,12 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<DateTime>(actualValue);
-			Assert.AreEqual(expectedValue, (DateTime)actualValue);
-			Assert.AreEqual(expectedValue.Kind, ((DateTime)actualValue).Kind);
+			Assert.IsType<DateTime>(actualValue);
+			Assert.Equal(expectedValue, (DateTime)actualValue);
+			Assert.Equal(expectedValue.Kind, ((DateTime)actualValue).Kind);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteDateTimeExact()
 		{
 			var expectedValue = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Local);
@@ -80,11 +79,11 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var now);
 
-			Assert.IsInstanceOf<DateTime>(now);
-			Assert.AreEqual(expectedValue, (DateTime)now);
+			Assert.IsType<DateTime>(now);
+			Assert.Equal(expectedValue, (DateTime)now);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteDateTimeOffset()
 		{
 			var expectedValue = DateTimeOffset.Now;
@@ -92,11 +91,11 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<DateTimeOffset>(actualValue);
-			Assert.AreEqual(expectedValue, (DateTimeOffset)actualValue);
+			Assert.IsType<DateTimeOffset>(actualValue);
+			Assert.Equal(expectedValue, (DateTimeOffset)actualValue);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteDecimalMax()
 		{
 			var expectedValue = decimal.MaxValue;
@@ -104,11 +103,11 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<decimal>(actualValue);
-			Assert.AreEqual(expectedValue, (decimal)actualValue);
+			Assert.IsType<decimal>(actualValue);
+			Assert.Equal(expectedValue, (decimal)actualValue);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteDecimalMin()
 		{
 			var expectedValue = decimal.MinValue;
@@ -116,11 +115,11 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<decimal>(actualValue);
-			Assert.AreEqual(expectedValue, (decimal)actualValue);
+			Assert.IsType<decimal>(actualValue);
+			Assert.Equal(expectedValue, (decimal)actualValue);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteGuid()
 		{
 			var expectedValue = Guid.NewGuid();
@@ -128,11 +127,11 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<Guid>(actualValue);
-			Assert.AreEqual(expectedValue, (Guid)actualValue);
+			Assert.IsType<Guid>(actualValue);
+			Assert.Equal(expectedValue, (Guid)actualValue);
 		}
 
-		[Test]
+		[Fact]
 		public void TryReadWriteMessagePackTimestamp()
 		{
 			var expectedValue = new MessagePackTimestamp(1500, 1500);
@@ -140,8 +139,8 @@ namespace GameDevWare.Serialization.Tests
 			DefaultMessagePackExtensionTypeHandler.Instance.TryWrite(expectedValue, out var type, ref writeBuffer);
 			DefaultMessagePackExtensionTypeHandler.Instance.TryRead(type, writeBuffer, out var actualValue);
 
-			Assert.IsInstanceOf<MessagePackTimestamp>(actualValue);
-			Assert.AreEqual(expectedValue, (MessagePackTimestamp)actualValue);
+			Assert.IsType<MessagePackTimestamp>(actualValue);
+			Assert.Equal(expectedValue, (MessagePackTimestamp)actualValue);
 		}
 	}
 }

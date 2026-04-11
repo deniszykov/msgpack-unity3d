@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+// ReSharper disable SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
