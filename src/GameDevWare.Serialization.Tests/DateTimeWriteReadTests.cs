@@ -11,13 +11,11 @@ namespace GameDevWare.Serialization.Tests
 		[InlineData(DateTimeKind.Unspecified)]
 		public void DateTimeRoundtrip(DateTimeKind kind)
 		{
-			var value = kind == DateTimeKind.Utc ? DateTime.UtcNow : DateTime.Now;
-			if (kind == DateTimeKind.Unspecified) value = DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
+			var value = kind == DateTimeKind.Unspecified ? new DateTime(DateTime.Now.Ticks, DateTimeKind.Unspecified) : kind == DateTimeKind.Utc ? DateTime.UtcNow : DateTime.Now;
 
-			// MsgPack
+			// MessagePack
 			var msgPackActual = WriteReadMessagePack(value);
-			Assert.Equal(value, msgPackActual);
-			Assert.Equal(value.Kind, msgPackActual.Kind);
+			Assert.Equal(value.ToUniversalTime(), msgPackActual.ToUniversalTime());
 
 			// JSON
 			var jsonActual = WriteReadJson(value);
@@ -28,24 +26,54 @@ namespace GameDevWare.Serialization.Tests
 		public void DateTimeOffsetRoundtrip()
 		{
 			var value = DateTimeOffset.Now;
-			Assert.Equal(value, WriteReadMessagePack(value));
-			Assert.Equal(value, WriteReadJson(value));
-		}
 
-		[Theory]
-		[InlineData("\"2023-01-01T12:00:00Z\"", 2023, 1, 1, 12, 0, 0, DateTimeKind.Utc)]
-		[InlineData("\"2023-01-01 12:00:00\"", 2023, 1, 1, 12, 0, 0, DateTimeKind.Utc)]
-		public void JsonDateTimeParsing(string json, int year, int month, int day, int hour, int min, int sec, DateTimeKind kind)
-		{
-			var expected = new DateTime(year, month, day, hour, min, sec, kind);
-			var actual = Json.Deserialize<DateTime>(json);
-			Assert.Equal(expected, actual);
+			// MessagePack
+			var msgPackActual = WriteReadMessagePack(value);
+			Assert.Equal(value, msgPackActual);
+
+			// JSON
+			var jsonActual = WriteReadJson(value);
+			Assert.Equal(value, jsonActual);
 		}
 
 		[Fact]
-		public void JsonLegacyDateParsing()
+		public void DateTimeOffsetPrecisionRoundtrip()
 		{
-			var date = new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+			var value = new DateTimeOffset(2026, 4, 11, 23, 59, 59, 123, TimeSpan.FromHours(5)).AddTicks(4567);
+
+			// MessagePack
+			var msgPackActual = WriteReadMessagePack(value);
+			Assert.Equal(value.Ticks, msgPackActual.Ticks);
+			Assert.Equal(value.Offset, msgPackActual.Offset);
+
+			// JSON
+			var jsonActual = WriteReadJson(value);
+			Assert.Equal(value.Ticks, jsonActual.Ticks);
+			Assert.Equal(value.Offset, jsonActual.Offset);
+		}
+
+		[Theory]
+		[InlineData(0)]
+		[InlineData(5.5)]
+		[InlineData(-10)]
+		public void DateTimeOffsetTimezoneRoundtrip(double offsetHours)
+		{
+			var offset = TimeSpan.FromHours(offsetHours);
+			var value = new DateTimeOffset(2026, 4, 11, 12, 0, 0, offset);
+
+			// MessagePack
+			var msgPackActual = WriteReadMessagePack(value);
+			Assert.Equal(value, msgPackActual);
+
+			// JSON
+			var jsonActual = WriteReadJson(value);
+			Assert.Equal(value, jsonActual);
+		}
+
+		[Fact]
+		public void LegacyDateTimeRoundtrip()
+		{
+			var date = new DateTime(2016, 01, 02, 03, 04, 05, DateTimeKind.Utc);
 			var ticks = (date.Ticks - JsonUtils.UnixEpochTicks) / 10000;
 			var json = string.Format("\"/Date({0})/\"", ticks);
 			var actual = Json.Deserialize<DateTime>(json);

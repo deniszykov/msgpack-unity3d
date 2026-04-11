@@ -84,6 +84,9 @@ namespace GameDevWare.Serialization
 			// ReSharper disable StringLiteralTypo
 			_DefaultDateTimeFormats = new[]
 			{
+				"yyyy-MM-ddTHH:mm:ss.fffffffK", // ISO 8601, full precision, kind-aware
+				"yyyy-MM-ddTHH:mm:ss.fffffffZ", // ISO 8601, without timezone, full precision
+				"o", // ISO 8601 roundtrip
 				"yyyy-MM-ddTHH:mm:ss.fffzzz", // ISO 8601, with timezone
 				"yyyy-MM-ddTHH:mm:ss.ffzzz", // ISO 8601, with timezone
 				"yyyy-MM-ddTHH:mm:ss.fzzz", // ISO 8601, with timezone
@@ -93,8 +96,7 @@ namespace GameDevWare.Serialization
 				"yyyy-MM-ddTHH:mm:ss.fffZ", // also ISO 8601, without timezone
 				"yyyy-MM-ddTHH:mm:ss.ffffZ", // also ISO 8601, without timezone
 				"yyyy-MM-ddTHH:mm:ss.fffffZ", // also ISO 8601, without timezone
-				"yyyy-MM-ddTHH:mm:ss.ffffffZ", // also ISO 8601, without timezone
-				"yyyy-MM-ddTHH:mm:ss.fffffffZ" // also ISO 8601, without timezone
+				"yyyy-MM-ddTHH:mm:ss.ffffffZ" // also ISO 8601, without timezone
 			};
 			// ReSharper restore StringLiteralTypo
 
@@ -729,7 +731,7 @@ namespace GameDevWare.Serialization
 		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
 		/// <param name="jsonString">The string containing the JSON data.</param>
 		/// <param name="options">The serialization options.</param>
-		/// <returns>The deserialized object.</returns>
+		/// <returns>A JSON string representing the object.</returns>
 		public static T Deserialize<T>(string jsonString, SerializationOptions options)
 		{
 			return (T)Deserialize(typeof(T), jsonString, CreateDefaultContext(options));

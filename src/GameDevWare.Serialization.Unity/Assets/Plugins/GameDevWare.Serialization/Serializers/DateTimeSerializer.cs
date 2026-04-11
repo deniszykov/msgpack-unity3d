@@ -41,6 +41,12 @@ namespace GameDevWare.Serialization.Serializers
 			try
 			{
 				var value = default(DateTime);
+				if (DateTime.TryParseExact(dateTimeStr, reader.Context.DateTimeFormats, reader.Context.Format, DateTimeStyles.RoundtripKind, out value))
+					return value;
+
+				if (DateTime.TryParseExact(dateTimeStr, "o", reader.Context.Format, DateTimeStyles.RoundtripKind, out value))
+					return value;
+
 				if (!DateTime.TryParse(dateTimeStr, reader.Context.Format, DateTimeStyles.RoundtripKind, out value))
 					value = DateTime.ParseExact(dateTimeStr, reader.Context.DateTimeFormats, reader.Context.Format, DateTimeStyles.RoundtripKind);
 
