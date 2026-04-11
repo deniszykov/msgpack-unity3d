@@ -1,5 +1,5 @@
 /* 
-	Copyright (c) 2019 Denis Zykov, GameDevWare.com
+	Copyright (c) 2026 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -22,8 +22,16 @@ using GameDevWare.Serialization.Metadata;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
 {
+	/// <summary>
+	/// Serializer for object types.
+	/// </summary>
 	public class ObjectSerializer : TypeSerializer
 	{
+		/// <summary>
+		/// The name of the member used to store polymorphic type metadata during serialization.
+		/// <para>While allowing this metadata enables the reconstruction of complex inheritance hierarchies, it introduces a significant security risk. 
+		/// An attacker providing untrusted data can use this field to force the instantiation of arbitrary types, which may lead to Remote Code Execution (RCE).</para>
+		/// </summary>
 		public const string TYPE_MEMBER_NAME = "_type";
 
 		private static readonly Regex VersionRegEx = new Regex(@", Version=[^\]]+", RegexOptions.None);
@@ -35,10 +43,19 @@ namespace GameDevWare.Serialization.Serializers
 		private readonly ObjectSerializer baseTypeSerializer;
 		private readonly SerializationContext context;
 
+		/// <inheritdoc />
 		public override Type SerializedType { get { return this.objectType; } }
 
+		/// <summary>
+		/// Gets or sets a value indicating whether to suppress type information.
+		/// </summary>
 		public bool SuppressTypeInformation { get; set; }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ObjectSerializer"/> class.
+		/// </summary>
+		/// <param name="context">The serialization context.</param>
+		/// <param name="type">The type of the object to serialize or deserialize.</param>
 		public ObjectSerializer(SerializationContext context, Type type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
@@ -63,6 +80,7 @@ namespace GameDevWare.Serialization.Serializers
 			this.objectTypeDescription = TypeDescription.Get(type);
 		}
 
+		/// <inheritdoc />
 		public override object Deserialize(IJsonReader reader)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
@@ -95,6 +113,8 @@ namespace GameDevWare.Serialization.Serializers
 				reader.Context.Hierarchy.Pop();
 			}
 		}
+
+		/// <inheritdoc />
 		public override void Serialize(IJsonWriter writer, object value)
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
@@ -302,6 +322,11 @@ namespace GameDevWare.Serialization.Serializers
 			return this.baseTypeSerializer.TryGetMember(memberName, out member);
 		}
 
+		/// <summary>
+		/// Creates an instance of an object from the specified values.
+		/// </summary>
+		/// <param name="values">The values to populate the instance with.</param>
+		/// <returns>The created instance.</returns>
 		public static object CreateInstance(IndexedDictionary<string, object> values)
 		{
 			if (values == null) throw new ArgumentNullException("values");
@@ -315,6 +340,13 @@ namespace GameDevWare.Serialization.Serializers
 			}
 			return CreateInstance(values, instanceType);
 		}
+
+		/// <summary>
+		/// Creates an instance of the specified type from the specified values.
+		/// </summary>
+		/// <param name="values">The values to populate the instance with.</param>
+		/// <param name="instanceType">The type of the instance to create.</param>
+		/// <returns>The created instance.</returns>
 		public static object CreateInstance(IndexedDictionary<string, object> values, Type instanceType)
 		{
 			if (instanceType == null) throw new ArgumentNullException("instanceType");
@@ -324,6 +356,12 @@ namespace GameDevWare.Serialization.Serializers
 			var serializer = new ObjectSerializer(context, instanceType);
 			return serializer.PopulateInstance(values, null);
 		}
+
+		/// <summary>
+		/// Gets the version-invariant name of the specified type.
+		/// </summary>
+		/// <param name="type">The type to get the name for.</param>
+		/// <returns>The version-invariant name.</returns>
 		public static string GetVersionInvariantObjectTypeName(Type type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
@@ -334,6 +372,7 @@ namespace GameDevWare.Serialization.Serializers
 			return fullName;
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return string.Format("object, {0}", this.objectType);

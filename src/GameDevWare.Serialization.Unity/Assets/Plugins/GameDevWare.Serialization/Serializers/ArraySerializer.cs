@@ -1,5 +1,5 @@
 /* 
-	Copyright (c) 2019 Denis Zykov, GameDevWare.com
+	Copyright (c) 2026 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -23,14 +23,22 @@ using System.Runtime.Serialization;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
 {
+	/// <summary>
+	/// Serializer for array and collection types.
+	/// </summary>
 	public sealed class ArraySerializer : TypeSerializer
 	{
 		private readonly Type arrayType;
 		private readonly Type instantiatedArrayType;
 		private readonly Type elementType;
 
+		/// <inheritdoc />
 		public override Type SerializedType { get { return this.arrayType; } }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ArraySerializer"/> class.
+		/// </summary>
+		/// <param name="enumerableType">The type of the array or collection to serialize.</param>
 		public ArraySerializer(Type enumerableType)
 		{
 			if (enumerableType == null) throw new ArgumentNullException("enumerableType");
@@ -47,6 +55,7 @@ namespace GameDevWare.Serialization.Serializers
 				this.instantiatedArrayType = typeof(List<>).MakeGenericType(this.elementType);
 		}
 
+		/// <inheritdoc />
 		public override object Deserialize(IJsonReader reader)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
@@ -91,6 +100,7 @@ namespace GameDevWare.Serialization.Serializers
 			}
 		}
 
+		/// <inheritdoc />
 		public override void Serialize(IJsonWriter writer, object value)
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
@@ -154,6 +164,7 @@ namespace GameDevWare.Serialization.Serializers
 			return elementType;
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return string.Format("array of {1}, {0}", this.arrayType, this.elementType);

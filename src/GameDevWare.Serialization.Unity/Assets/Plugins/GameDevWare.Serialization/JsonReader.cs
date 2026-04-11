@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2019 Denis Zykov, GameDevWare.com
+	Copyright (c) 2026 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -22,8 +22,17 @@ using System.Globalization;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
+	/// <summary>
+	/// Base implementation for a streaming JSON reader.
+	/// <para>This class handles the core logic of scanning input for JSON lexemes and maintaining structural state. 
+	/// It provides a high-performance alternative to traditional DOM-based parsers by processing data in a forward-only 
+	/// manner, keeping only the current token and a small buffer in memory.</para>
+	/// </summary>
 	public abstract class JsonReader : IJsonReader
 	{
+		/// <summary>
+		/// The size of the internal character buffer used for token scanning.
+		/// </summary>
 		protected const int DEFAULT_BUFFER_SIZE = 1024;
 
 		private sealed class Buffer : IList<char>
@@ -432,6 +441,11 @@ namespace GameDevWare.Serialization
 		private JsonToken token;
 		private readonly Buffer buffer;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="JsonReader"/> class.
+		/// </summary>
+		/// <param name="context">The serialization context.</param>
+		/// <param name="buffer">The character buffer to use.</param>
 		protected JsonReader(SerializationContext context, char[] buffer = null)
 		{
 			if (context == null) throw new ArgumentNullException("context");
@@ -444,8 +458,14 @@ namespace GameDevWare.Serialization
 
 		#region IJsonReader Members
 
+		/// <summary>
+		/// Gets the serialization context.
+		/// </summary>
 		public SerializationContext Context { get; private set; }
 
+		/// <summary>
+		/// Gets the value info for the current token.
+		/// </summary>
 		public IValueInfo Value
 		{
 			get
@@ -456,6 +476,9 @@ namespace GameDevWare.Serialization
 			}
 		}
 
+		/// <summary>
+		/// Gets the current JSON token.
+		/// </summary>
 		public JsonToken Token
 		{
 			get
@@ -467,6 +490,9 @@ namespace GameDevWare.Serialization
 			}
 		}
 
+		/// <summary>
+		/// Gets the raw value of the current token.
+		/// </summary>
 		public object RawValue
 		{
 			get
@@ -478,11 +504,18 @@ namespace GameDevWare.Serialization
 			}
 		}
 
+		/// <summary>
+		/// Gets the total number of characters read.
+		/// </summary>
 		public long CharactersReaded
 		{
 			get { return this.buffer.CharactersReaded; }
 		}
 
+		/// <summary>
+		/// Moves the reader to the next token.
+		/// </summary>
+		/// <returns>True if the next token was read successfully; otherwise, false.</returns>
 		public bool NextToken()
 		{
 			var start = 0;
@@ -553,11 +586,18 @@ namespace GameDevWare.Serialization
 			return true;
 		}
 
+		/// <summary>
+		/// Checks if the end of the stream has been reached.
+		/// </summary>
+		/// <returns>True if the end of the stream has been reached; otherwise, false.</returns>
 		public bool IsEndOfStream()
 		{
 			return this.token == JsonToken.EndOfStream;
 		}
 
+		/// <summary>
+		/// Resets the reader's state.
+		/// </summary>
 		public void Reset()
 		{
 			this.buffer.Reset();

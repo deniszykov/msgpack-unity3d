@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2019 Denis Zykov, GameDevWare.com
+	Copyright (c) 2026 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -23,8 +23,16 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization
 {
+	/// <summary>
+	/// Provides extension methods for <see cref="IJsonReader"/> to facilitate reading various JSON tokens and values.
+	/// </summary>
 	public static class JsonReaderExtentions
 	{
+		/// <summary>
+		/// Asserts that the current token is <see cref="JsonToken.BeginArray"/> and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
 		public static void ReadArrayBegin(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -39,6 +47,11 @@ namespace GameDevWare.Serialization
 			if (nextToken)
 				reader.NextToken();
 		}
+		/// <summary>
+		/// Asserts that the current token is <see cref="JsonToken.EndOfArray"/> and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
 		public static void ReadArrayEnd(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -52,6 +65,11 @@ namespace GameDevWare.Serialization
 				reader.NextToken();
 		}
 
+		/// <summary>
+		/// Asserts that the current token is <see cref="JsonToken.BeginObject"/> and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
 		public static void ReadObjectBegin(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -66,6 +84,11 @@ namespace GameDevWare.Serialization
 			if (nextToken)
 				reader.NextToken();
 		}
+		/// <summary>
+		/// Asserts that the current token is <see cref="JsonToken.EndOfObject"/> and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
 		public static void ReadObjectEnd(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -78,6 +101,12 @@ namespace GameDevWare.Serialization
 				reader.NextToken();
 		}
 
+		/// <summary>
+		/// Reads an object member name and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The member name.</returns>
 		public static string ReadMember(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -95,6 +124,12 @@ namespace GameDevWare.Serialization
 			return memberName;
 		}
 
+		/// <summary>
+		/// Reads a byte value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The byte value.</returns>
 		public static byte ReadByte(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -112,6 +147,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable byte value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The byte value, or null.</returns>
 		public static byte? ReadByteOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -139,6 +180,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a signed byte value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The signed byte value.</returns>
 		public static sbyte ReadSByte(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -156,6 +203,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable signed byte value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The signed byte value, or null.</returns>
 		public static sbyte? ReadSByteOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -183,6 +236,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a 16-bit signed integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 16-bit signed integer value.</returns>
 		public static short ReadInt16(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -200,6 +259,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable 16-bit signed integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 16-bit signed integer value, or null.</returns>
 		public static short? ReadInt16OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -227,6 +292,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a 32-bit signed integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 32-bit signed integer value.</returns>
 		public static int ReadInt32(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -244,6 +315,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable 32-bit signed integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 32-bit signed integer value, or null.</returns>
 		public static int? ReadInt32OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -271,6 +348,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a 64-bit signed integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 64-bit signed integer value.</returns>
 		public static long ReadInt64(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -288,6 +371,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable 64-bit signed integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 64-bit signed integer value, or null.</returns>
 		public static long? ReadInt64OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -314,6 +403,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a 16-bit unsigned integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 16-bit unsigned integer value.</returns>
 		public static ushort ReadUInt16(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -331,6 +426,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable 16-bit unsigned integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 16-bit unsigned integer value, or null.</returns>
 		public static ushort? ReadUInt16OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -358,6 +459,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a 32-bit unsigned integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 32-bit unsigned integer value.</returns>
 		public static uint ReadUInt32(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -375,6 +482,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable 32-bit unsigned integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 32-bit unsigned integer value, or null.</returns>
 		public static uint? ReadUInt32OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -402,6 +515,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a 64-bit unsigned integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 64-bit unsigned integer value.</returns>
 		public static ulong ReadUInt64(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -419,6 +538,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable 64-bit unsigned integer value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The 64-bit unsigned integer value, or null.</returns>
 		public static ulong? ReadUInt64OrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -446,6 +571,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a single-precision floating-point value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The single-precision floating-point value.</returns>
 		public static float ReadSingle(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -463,6 +594,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable single-precision floating-point value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The single-precision floating-point value, or null.</returns>
 		public static float? ReadSingleOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -490,6 +627,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a double-precision floating-point value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The double-precision floating-point value.</returns>
 		public static double ReadDouble(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -507,6 +650,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable double-precision floating-point value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The double-precision floating-point value, or null.</returns>
 		public static double? ReadDoubleOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -534,6 +683,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a decimal value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The decimal value.</returns>
 		public static decimal ReadDecimal(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -551,6 +706,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable decimal value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The decimal value, or null.</returns>
 		public static decimal? ReadDecimalOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -578,6 +739,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a boolean value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The boolean value.</returns>
 		public static bool ReadBoolean(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -595,6 +762,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable boolean value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The boolean value, or null.</returns>
 		public static bool? ReadBooleanOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -622,6 +795,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a <see cref="DateTime"/> value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The <see cref="DateTime"/> value.</returns>
 		public static DateTime ReadDateTime(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -639,6 +818,12 @@ namespace GameDevWare.Serialization
 
 			return value;
 		}
+		/// <summary>
+		/// Reads a nullable <see cref="DateTime"/> value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The <see cref="DateTime"/> value, or null.</returns>
 		public static DateTime? ReadDateTimeOrNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -667,6 +852,12 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Reads a string value and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The string value.</returns>
 		public static string ReadString(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -694,6 +885,11 @@ namespace GameDevWare.Serialization
 			return stringValue;
 		}
 
+		/// <summary>
+		/// Asserts that the current token is <see cref="JsonToken.Null"/> and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
 		public static void ReadNull(this IJsonReader reader, bool nextToken = true)
 		{
 			if (reader == null)
@@ -706,6 +902,13 @@ namespace GameDevWare.Serialization
 				reader.NextToken();
 		}
 
+		/// <summary>
+		/// Reads a value of the specified type and optionally moves to the next token.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <param name="valueType">The type of the value to read.</param>
+		/// <param name="nextToken">A value indicating whether to advance to the next token after reading.</param>
+		/// <returns>The deserialized value.</returns>
 		public static object ReadValue(this IJsonReader reader, Type valueType, bool nextToken = true)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
@@ -738,6 +941,11 @@ namespace GameDevWare.Serialization
 			return value;
 		}
 
+		/// <summary>
+		/// Advances the reader through all tokens and returns a string representation for debugging.
+		/// </summary>
+		/// <param name="reader">The JSON reader.</param>
+		/// <returns>A string representation of the tokens.</returns>
 		public static string DebugPrintTokens(this IJsonReader reader)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");

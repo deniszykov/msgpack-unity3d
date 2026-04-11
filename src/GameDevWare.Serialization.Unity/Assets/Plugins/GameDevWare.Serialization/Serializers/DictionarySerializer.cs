@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2019 Denis Zykov, GameDevWare.com
+	Copyright (c) 2026 Denis Zykov, GameDevWare.com
 
 	This a part of "Json & MessagePack Serialization" Unity Asset - https://www.assetstore.unity3d.com/#!/content/59918
 
@@ -21,6 +21,9 @@ using System.Runtime.Serialization;
 // ReSharper disable once CheckNamespace
 namespace GameDevWare.Serialization.Serializers
 {
+	/// <summary>
+	/// Serializer for <see cref="IDictionary"/> types.
+	/// </summary>
 	public sealed class DictionarySerializer : TypeSerializer
 	{
 		private readonly Type dictionaryType;
@@ -29,8 +32,13 @@ namespace GameDevWare.Serialization.Serializers
 		private readonly Type valueType;
 		private readonly bool isStringKeyType;
 
+		/// <inheritdoc />
 		public override Type SerializedType { get { return this.dictionaryType; } }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DictionarySerializer"/> class.
+		/// </summary>
+		/// <param name="dictionaryType">The type of the dictionary to serialize or deserialize.</param>
 		public DictionarySerializer(Type dictionaryType)
 		{
 			if (dictionaryType == null)
@@ -73,6 +81,7 @@ namespace GameDevWare.Serialization.Serializers
 			this.isStringKeyType = this.keyType == typeof(string);
 		}
 
+		/// <inheritdoc />
 		public override object Deserialize(IJsonReader reader)
 		{
 			if (reader == null) throw new ArgumentNullException("reader");
@@ -193,6 +202,8 @@ namespace GameDevWare.Serialization.Serializers
 				reader.Context.Hierarchy.Pop();
 			}
 		}
+
+		/// <inheritdoc />
 		public override void Serialize(IJsonWriter writer, object value)
 		{
 			if (writer == null) throw new ArgumentNullException("writer");
@@ -248,6 +259,7 @@ namespace GameDevWare.Serialization.Serializers
 			// ReSharper restore PossibleMultipleEnumeration
 		}
 
+		/// <inheritdoc />
 		public override string ToString()
 		{
 			return string.Format("dictionary of {1}:{2}, {0}", this.dictionaryType, this.keyType, this.valueType);
