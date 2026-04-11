@@ -662,19 +662,12 @@ namespace GameDevWare.Serialization
 			return symbol == INSIGNIFICANT_NEWLINE || symbol == INSIGNIFICANT_RETURN || symbol == INSIGNIFICANT_SPACE ||
 				   symbol == INSIGNIFICANT_TAB || symbol == INSIGNIFICANT_NAME_SEPARATOR || symbol == INSIGNIFICANT_VALUE_SEPARATOR;
 		}
-		private static bool IsLiteralTerminator(char ch, bool quoted, char quoteCh, bool escaped, bool eos, IJsonReader reader)
+		private static bool IsLiteralTerminator(char ch, bool quoted, char quoteCh, IJsonReader reader)
 		{
-			if (!escaped && quoted && ch == quoteCh)
+			if (quoted && ch == quoteCh)
 				return true;
 			else if (quoted && (ch == INSIGNIFICANT_NEWLINE || ch == INSIGNIFICANT_RETURN))
 				throw JsonSerializationException.UnterminatedStringLiteral(reader);
-			else if (eos)
-			{
-				if (quoted)
-					throw JsonSerializationException.UnexpectedEndOfStream(reader);
-				else
-					return true;
-			}
 			else if (!quoted &&
 					 (ch == SIGNIFICANT_BEGIN_ARRAY || ch == SIGNIFICANT_BEGIN_OBJECT || ch == SIGNIFICANT_END_ARRAY ||
 					  ch == SIGNIFICANT_END_OBJECT || ch == INSIGNIFICANT_VALUE_SEPARATOR || ch == INSIGNIFICANT_NAME_SEPARATOR))
@@ -761,16 +754,25 @@ namespace GameDevWare.Serialization
 #endif
 			do
 			{
-				eos = this.buffer.IsBeyondOfStream(position);
-				var prevWasBackslash = ch == '\\';
+				var eos = this.buffer.IsBeyondOfStream(position);
+				var escaped = ch == '\\';
 				ch = this.buffer[position];
 				position++;
 
-				if (IsLiteralTerminator(ch, quoted, quoteCh, escaped, eos, this))
-					break;
+				if (eos)
+				{
+					if (quoted)
+						return false;
+					else
+						break;
+				}
+				else if (escaped)
+				{
+					escaped = false;
+					ch = '\0';
+				}
 
-				escaped = !escaped && prevWasBackslash;
-			} while (true);
+			} while (!IsLiteralTerminator(ch, quoted, quoteCh, this));
 
 			var literalEnd = position - 1; // minus terminator character
 
