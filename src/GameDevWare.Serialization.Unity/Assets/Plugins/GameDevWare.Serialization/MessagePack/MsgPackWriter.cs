@@ -323,9 +323,6 @@ namespace GameDevWare.Serialization.MessagePack
 			}
 			else
 			{
-				if (dateTime.Kind == DateTimeKind.Unspecified)
-					dateTime = new DateTime(dateTime.Ticks, DateTimeKind.Utc);
-
 				var dateTimeFormat = this.Context.DateTimeFormats.FirstOrDefault() ?? "o";
 				if (dateTimeFormat.IndexOf('z') >= 0 && dateTime.Kind != DateTimeKind.Local)
 					dateTime = dateTime.ToLocalTime();
