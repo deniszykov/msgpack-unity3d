@@ -64,7 +64,7 @@ namespace GameDevWare.Serialization.Serializers
 				return null;
 
 			if (reader.Token != JsonToken.BeginArray)
-				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginArray);
+				throw JsonSerializationException.UnexpectedToken(reader, this.arrayType, JsonToken.BeginArray);
 
 			if (reader.Context.Hierarchy.Count >= reader.Context.MaxHierarchyDepth)
 				throw new SerializationException(string.Format("Deserialization graph is too deep. Maximum depth is {0}. Path: '{1}'.", reader.Context.MaxHierarchyDepth, reader.Context.GetPath()));
@@ -84,8 +84,13 @@ namespace GameDevWare.Serialization.Serializers
 					reader.Context.Path.Pop();
 				}
 
-				if (reader.IsEndOfStream())
-					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfArray);
+				if (reader.Token != JsonToken.EndOfArray)
+				{
+					if (reader.Token == JsonToken.EndOfStream)
+						throw JsonSerializationException.UnexpectedEndOfStream(reader, "reading array elements");
+
+					throw JsonSerializationException.UnexpectedToken(reader, this.arrayType, JsonToken.EndOfArray);
+				}
 
 				if (this.instantiatedArrayType == typeof(ArrayList))
 					return container;

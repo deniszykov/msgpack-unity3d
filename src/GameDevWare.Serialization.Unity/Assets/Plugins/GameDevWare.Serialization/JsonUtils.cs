@@ -256,7 +256,7 @@ namespace GameDevWare.Serialization
 							break;
 						default:
 #if STRICT
-                            throw new Exceptions.UnknownEscapeSequence("\\" + seqKind.ToString(), null);
+                            throw JsonSerializationException.UnknownEscapeSequence("\\" + seqKind.ToString(), null);
 #else
 							sb.Append(charsToUnescape[i + 1]);
 							break;

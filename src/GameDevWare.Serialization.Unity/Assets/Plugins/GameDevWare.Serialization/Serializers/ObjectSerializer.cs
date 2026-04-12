@@ -86,7 +86,7 @@ namespace GameDevWare.Serialization.Serializers
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			if (reader.Token != JsonToken.BeginObject)
-				throw JsonSerializationException.UnexpectedToken(reader, JsonToken.BeginObject);
+				throw JsonSerializationException.UnexpectedToken(reader, this.objectType, JsonToken.BeginObject);
 
 			if (reader.Context.Hierarchy.Count >= reader.Context.MaxHierarchyDepth)
 				throw new SerializationException(string.Format("Deserialization graph is too deep. Maximum depth is {0}. Path: '{1}'.", reader.Context.MaxHierarchyDepth, reader.Context.GetPath()));
@@ -99,7 +99,12 @@ namespace GameDevWare.Serialization.Serializers
 				var instance = this.DeserializeMembers(reader, container, ref serializerOverride);
 
 				if (reader.Token != JsonToken.EndOfObject)
-					throw JsonSerializationException.UnexpectedToken(reader, JsonToken.EndOfObject);
+				{
+					if (reader.Token == JsonToken.EndOfStream)
+						throw JsonSerializationException.UnexpectedEndOfStream(reader, "reading object members");
+
+					throw JsonSerializationException.UnexpectedToken(reader, this.objectType, JsonToken.EndOfObject);
+				}
 
 				if (instance != null)
 					return instance;

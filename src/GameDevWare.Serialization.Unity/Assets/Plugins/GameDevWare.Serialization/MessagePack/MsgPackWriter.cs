@@ -46,7 +46,7 @@ namespace GameDevWare.Serialization.MessagePack
 		{
 			if (stream == null) throw new ArgumentNullException("stream");
 			if (context == null) throw new ArgumentNullException("context");
-			if (!stream.CanWrite) throw JsonSerializationException.StreamIsNotReadable();
+			if (!stream.CanWrite) throw JsonSerializationException.StreamIsNotWriteable();
 			if (buffer != null && buffer.Length < 32) throw new ArgumentOutOfRangeException("buffer", "Buffer should be at least 32 bytes long.");
 
 			this.context = context;
