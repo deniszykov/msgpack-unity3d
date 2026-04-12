@@ -1,0 +1,15 @@
+{
+  "name": "com.gamedevware.serialization",
+  "displayName": "JSON & MessagePack Serialization",
+  "version": "2.4.3",
+  "unity": "2019.4",
+  "description": "High-performance, allocation-free, AOT-compatible JSON and MessagePack serializers for Unity.",
+  "repository": "https://github.com/deniszykov/msgpack-unity3d",
+  "author": {
+    "name": "Denis Zykov",
+    "email": "support@gamedevware.com",
+    "url": "https://github.com/deniszykov/"
+  },
+  "documentationUrl": "https://github.com/deniszykov/msgpack-unity3d/blob/master/Readme.md",
+  "keywords": ["MessagePack", "JSON", "Serialization", "MsgPack", "Binary", "AOT"]
+}

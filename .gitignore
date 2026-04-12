@@ -27,7 +27,6 @@ bin/
 obj/
 .vs
 media/
-packages/
 TestResults/
 
 src/GameDevWare.Serialization.Unity/Assembly*
@@ -37,4 +36,7 @@ src/GameDevWare.Serialization.Unity/Temp/
 src/GameDevWare.Serialization.Unity/Assets/StreamingAssets/
 src/GameDevWare.Serialization.Unity/Assets/Bundles/
 src/GameDevWare.Serialization.Unity/ProjectSettings/
-src/GameDevWare.Serialization.Unity/Assets/AssetStoreTools/
+src/GameDevWare.Serialization.Unity/UserSettings/
+src/GameDevWare.Serialization.Unity/Packages/com.unity.asset-store-tools
+src/GameDevWare.Serialization.Unity/Packages/manifest.json
+src/GameDevWare.Serialization.Unity/Packages/packages-lock.json
