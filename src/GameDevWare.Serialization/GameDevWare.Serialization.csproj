@@ -29,7 +29,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Compile Include="..\GameDevWare.Serialization.Unity\Assets\Plugins\GameDevWare.Serialization\**\*.cs" />
+	  <Compile Include="..\GameDevWare.Serialization.Unity\Packages\com.gamedevware.serialization\Runtime\**\*.cs" />
 	</ItemGroup>
 	
 	<ItemGroup>
