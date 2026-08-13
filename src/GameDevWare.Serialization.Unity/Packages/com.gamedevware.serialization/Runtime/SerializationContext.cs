@@ -143,6 +143,25 @@ namespace GameDevWare.Serialization
 		}
 
 		/// <summary>
+		/// Determines whether the specified instance is already being written higher up in <see cref="Hierarchy"/>,
+		/// which means writing it again would recurse forever.
+		/// <para>Instances are compared by reference, not by <see cref="object.Equals(object)"/>: only the very same
+		/// object appearing inside itself is a circular reference. Two distinct objects that merely compare equal —
+		/// as types overriding equality over a subset of their state routinely do — form a finite graph.</para>
+		/// </summary>
+		/// <param name="value">The instance to look for.</param>
+		/// <returns>True if the same instance is an ancestor of the value being written; otherwise, false.</returns>
+		public bool IsInHierarchy(object value)
+		{
+			foreach (var item in this.Hierarchy)
+			{
+				if (ReferenceEquals(item, value))
+					return true;
+			}
+			return false;
+		}
+
+		/// <summary>
 		/// Gets or creates a serializer for the specified type.
 		/// </summary>
 		/// <param name="valueType">The type to get a serializer for.</param>
