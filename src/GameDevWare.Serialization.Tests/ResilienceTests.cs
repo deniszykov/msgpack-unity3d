@@ -8,6 +8,58 @@ namespace GameDevWare.Serialization.Tests
 {
 	public class ResilienceTests : TestBase
 	{
+		/// <summary>
+		/// Type overriding <see cref="object.Equals(object)"/> over a subset of its state, as is common
+		/// for entity-style types compared by id. Two instances can be equal while being different objects.
+		/// </summary>
+		public class EqualByIdNode
+		{
+			public string Id;
+			public EqualByIdNode Child;
+
+			public override bool Equals(object obj)
+			{
+				return obj is EqualByIdNode && ((EqualByIdNode)obj).Id == this.Id;
+			}
+			public override int GetHashCode()
+			{
+				return this.Id == null ? 0 : this.Id.GetHashCode();
+			}
+		}
+
+		[Fact]
+		public void EqualButDistinctNestedObjectsAreNotCircularMsgPack()
+		{
+			var obj = new EqualByIdNode { Id = "1", Child = new EqualByIdNode { Id = "1" } };
+
+			var readValue = this.WriteReadMessagePack(obj);
+
+			Assert.NotNull(readValue.Child);
+			Assert.Null(readValue.Child.Child);
+		}
+
+		[Fact]
+		public void EqualButDistinctNestedObjectsAreNotCircularJson()
+		{
+			var obj = new EqualByIdNode { Id = "1", Child = new EqualByIdNode { Id = "1" } };
+
+			var readValue = this.WriteReadJson(obj);
+
+			Assert.NotNull(readValue.Child);
+			Assert.Null(readValue.Child.Child);
+		}
+
+		[Fact]
+		public void SameInstanceTwiceIsNotCircularMsgPack()
+		{
+			var shared = new EqualByIdNode { Id = "1" };
+			var list = new List<EqualByIdNode> { shared, shared };
+
+			var readValue = this.WriteReadMessagePack(list);
+
+			Assert.Equal(2, readValue.Count);
+		}
+
 		[Fact]
 		public void CircularReferenceMsgPack()
 		{
