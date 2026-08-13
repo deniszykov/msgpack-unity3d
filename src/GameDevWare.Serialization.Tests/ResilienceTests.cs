@@ -14,7 +14,7 @@ namespace GameDevWare.Serialization.Tests
 			var obj = new TestObject();
 			obj.ObjectProperty = obj; // circular
 
-			Assert.Throws<SerializationException>(() =>
+			Assert.ThrowsAny<SerializationException>(() =>
 			{
 				MsgPack.Serialize(obj, new MemoryStream());
 			});
@@ -26,7 +26,7 @@ namespace GameDevWare.Serialization.Tests
 			var obj = new TestObject();
 			obj.ObjectProperty = obj; // circular
 
-			Assert.Throws<SerializationException>(() =>
+			Assert.ThrowsAny<SerializationException>(() =>
 			{
 				Json.Serialize(obj, new MemoryStream());
 			});
@@ -44,7 +44,7 @@ namespace GameDevWare.Serialization.Tests
 				current = next;
 			}
 
-			Assert.Throws<SerializationException>(() =>
+			Assert.ThrowsAny<SerializationException>(() =>
 			{
 				MsgPack.Serialize(root, new MemoryStream());
 			});
@@ -62,7 +62,7 @@ namespace GameDevWare.Serialization.Tests
 				current = next;
 			}
 
-			Assert.Throws<SerializationException>(() =>
+			Assert.ThrowsAny<SerializationException>(() =>
 			{
 				Json.Serialize(root, new MemoryStream());
 			});

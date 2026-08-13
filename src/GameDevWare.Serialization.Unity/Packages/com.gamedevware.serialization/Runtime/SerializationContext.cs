@@ -152,7 +152,7 @@ namespace GameDevWare.Serialization
 			if (valueType == null) throw new ArgumentNullException("valueType");
 
 			if (valueType.BaseType == typeof(MulticastDelegate) || valueType.BaseType == typeof(Delegate))
-				throw new InvalidOperationException(string.Format("Unable to serialize delegate type '{0}'.", valueType));
+				throw JsonSerializationException.CantSerializeDelegateType(valueType);
 
 			var serializer = default(TypeSerializer);
 			if (this.serializers.TryGetValue(valueType, out serializer))
